@@ -31,6 +31,11 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # Allowed hosts configuration - read from environment or use defaults
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,0.0.0.0,skinnovation-clinic.onrender.com', cast=Csv())
 
+# On Render, ensure the Render hostname is always allowed
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 # Application definition
 
