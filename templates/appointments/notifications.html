@@ -34,7 +34,8 @@
                     {% if notifications %}
                         <div class="list-group">
                             {% for notification in notifications %}
-                            <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
+                            <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}" 
+                                 {% if 'Attendant Unavailable' in notification.title %}data-unavailability-notification="true" data-appointment-id="{{ notification.appointment_id }}"{% endif %}>
                                 <div class="d-flex w-100 justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <h5 class="mb-1">
@@ -150,4 +151,218 @@
         </div>
     </div>
 </div>
+
+<!-- Attendant Unavailability Choice Modal -->
+<div class="modal fade" id="unavailabilityModal" tabindex="-1" aria-labelledby="unavailabilityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="unavailabilityModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Attendant Unavailable - Choose Your Option
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalAppointmentDetails" class="alert alert-info mb-4">
+                    <!-- Appointment details will be loaded here -->
+                </div>
+                
+                <h6 class="mb-3">Please select one of the following options:</h6>
+                
+                <!-- Option 1: Choose Another Attendant -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-user-friends text-primary me-2"></i>
+                            Option 1: Keep Same Time, Choose Another Attendant
+                        </h6>
+                        <p class="card-text text-muted small">Continue with your appointment at the same date and time, but with a different attendant.</p>
+                        <div id="attendantSelectionContainer" class="mb-3">
+                            <label for="newAttendantSelect" class="form-label">Select Available Attendant:</label>
+                            <select class="form-select" id="newAttendantSelect">
+                                <option value="">Loading available attendants...</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100" id="btnChooseAnother" disabled>
+                            Confirm New Attendant
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Option 2: Reschedule with Same Attendant -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-calendar-alt text-info me-2"></i>
+                            Option 2: Keep Same Attendant, Choose New Time
+                        </h6>
+                        <p class="card-text text-muted small">Reschedule your appointment to a different date/time with your original attendant.</p>
+                        <button class="btn btn-info w-100" id="btnReschedule">
+                            Go to Reschedule Calendar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Option 3: Cancel Appointment -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-times-circle text-danger me-2"></i>
+                            Option 3: Cancel Appointment
+                        </h6>
+                        <p class="card-text text-muted small">Cancel this appointment entirely.</p>
+                        <button class="btn btn-danger w-100" id="btnCancel">
+                            Cancel Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentAppointmentId = null;
+    let currentUnavailabilityRequestId = null;
+    
+    // Handle clicks on unavailability notifications
+    document.querySelectorAll('[data-unavailability-notification="true"]').forEach(function(notificationElement) {
+        notificationElement.style.cursor = 'pointer';
+        notificationElement.addEventListener('click', function() {
+            const appointmentId = this.getAttribute('data-appointment-id');
+            if (appointmentId) {
+                openUnavailabilityModal(appointmentId);
+            }
+        });
+    });
+    
+    function openUnavailabilityModal(appointmentId) {
+        currentAppointmentId = appointmentId;
+        
+        // Fetch appointment details and unavailability request
+        fetch(`/appointments/api/unavailability-details/${appointmentId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentUnavailabilityRequestId = data.unavailability_request_id;
+                    
+                    // Display appointment details
+                    document.getElementById('modalAppointmentDetails').innerHTML = `
+                        <strong>Appointment Details:</strong><br>
+                        Service: ${data.service_name}<br>
+                        Original Date: ${data.appointment_date}<br>
+                        Original Time: ${data.appointment_time}<br>
+                        Original Attendant: ${data.attendant_name}
+                    `;
+                    
+                    // Load available attendants
+                    loadAvailableAttendants(data.appointment_date, data.appointment_time);
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('unavailabilityModal'));
+                    modal.show();
+                } else {
+                    alert('Error loading appointment details: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load appointment details. Please try again.');
+            });
+    }
+    
+    function loadAvailableAttendants(date, time) {
+        fetch(`/appointments/api/available-attendants/?date=${date}&time=${time}`)
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('newAttendantSelect');
+                select.innerHTML = '<option value="">-- Select an attendant --</option>';
+                
+                if (data.attendants && data.attendants.length > 0) {
+                    data.attendants.forEach(attendant => {
+                        const option = document.createElement('option');
+                        option.value = attendant.id;
+                        option.textContent = attendant.name;
+                        select.appendChild(option);
+                    });
+                    select.disabled = false;
+                } else {
+                    select.innerHTML = '<option value="">No attendants available for this time</option>';
+                    select.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading attendants:', error);
+                document.getElementById('newAttendantSelect').innerHTML = '<option value="">Error loading attendants</option>';
+            });
+    }
+    
+    // Enable "Confirm New Attendant" button when attendant is selected
+    document.getElementById('newAttendantSelect').addEventListener('change', function() {
+        document.getElementById('btnChooseAnother').disabled = !this.value;
+    });
+    
+    // Option 1: Choose Another Attendant
+    document.getElementById('btnChooseAnother').addEventListener('click', function() {
+        const newAttendantId = document.getElementById('newAttendantSelect').value;
+        
+        if (!newAttendantId) {
+            alert('Please select an attendant');
+            return;
+        }
+        
+        // Submit choice
+        submitChoice('choose_another', { new_attendant_id: newAttendantId });
+    });
+    
+    // Option 2: Reschedule
+    document.getElementById('btnReschedule').addEventListener('click', function() {
+        if (currentAppointmentId) {
+            // Redirect to reschedule calendar with original attendant filter
+            window.location.href = `/appointments/reschedule/${currentAppointmentId}/?keep_attendant=true`;
+        }
+    });
+    
+    // Option 3: Cancel
+    document.getElementById('btnCancel').addEventListener('click', function() {
+        if (confirm('Are you sure you want to cancel this appointment?')) {
+            // Redirect to appointments page where they can cancel
+            window.location.href = `/appointments/my-appointments/?cancel=${currentAppointmentId}`;
+        }
+    });
+    
+    function submitChoice(choice, extraData = {}) {
+        const formData = new FormData();
+        formData.append('choice', choice);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        for (const key in extraData) {
+            formData.append(key, extraData[key]);
+        }
+        
+        fetch(`/appointments/unavailable/${currentUnavailabilityRequestId}/respond/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message || 'Your choice has been saved successfully!');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Failed to save your choice'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to submit your choice. Please try again.');
+        });
+    }
+});
+</script>
 {% endblock %}

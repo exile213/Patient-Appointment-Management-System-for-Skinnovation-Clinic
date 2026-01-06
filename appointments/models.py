@@ -240,6 +240,10 @@ class AttendantUnavailabilityRequest(models.Model):
         null=True
     )
     resolved_at = models.DateTimeField(blank=True, null=True)
+    pending_reassignment_choice = models.BooleanField(
+        default=True,
+        help_text="True if patient needs to make a selection, False after choice is made"
+    )
     
     class Meta:
         db_table = 'attendant_unavailability_requests'

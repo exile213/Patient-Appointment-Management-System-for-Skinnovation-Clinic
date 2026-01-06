@@ -227,7 +227,7 @@ class SMSTemplateService:
             message=rendered_message
         )
     
-    def send_attendant_reassignment(self, appointment, previous_attendant=None, template_name=None):
+    def send_attendant_reassignment(self, appointment, previous_attendant=None, template_name=None, request=None):
         """
         Send attendant reassignment notification SMS
         
@@ -235,6 +235,7 @@ class SMSTemplateService:
             appointment: Appointment object
             previous_attendant: Previous attendant object (optional)
             template_name (str): Not used - transactional messaging
+            request: Django request object to build absolute URI (optional)
         
         Returns:
             dict: SMS sending result
@@ -242,10 +243,31 @@ class SMSTemplateService:
         # Prepare context for attendant reassignment
         context = self._prepare_appointment_context(appointment)
         
-        fallback_message = (
-            "Hi [customer_name], your appointment on [appointment_date] at [appointment_time] "
-            "for [service_name] has been reassigned to [staff_name]."
-        )
+        # Build portal link for patient to make choice
+        portal_link = ""
+        if request and hasattr(appointment, 'unavailability_requests'):
+            # Get the most recent unavailability request for this appointment
+            unavailability_request = appointment.unavailability_requests.filter(
+                status='pending',
+                pending_reassignment_choice=True
+            ).first()
+            
+            if unavailability_request:
+                portal_link = request.build_absolute_uri(
+                    f'/appointments/unavailable/{unavailability_request.id}/'
+                )
+        
+        # Enhanced fallback message with portal link
+        if portal_link:
+            fallback_message = (
+                "Hi [customer_name], your attendant is unavailable for your appointment on [appointment_date] at [appointment_time] "
+                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule: " + portal_link
+            )
+        else:
+            fallback_message = (
+                "Hi [customer_name], your attendant is unavailable for your appointment on [appointment_date] at [appointment_time] "
+                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule."
+            )
 
         from .sms_service import sms_service
         rendered_message = self.render_text(fallback_message, context)

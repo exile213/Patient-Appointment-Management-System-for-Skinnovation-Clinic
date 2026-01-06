@@ -19,6 +19,11 @@ urlpatterns = [
     path('history/', views.patient_history, name='patient_history'),
     path('unavailable-attendant/<int:appointment_id>/', views.handle_unavailable_attendant, name='handle_unavailable_attendant'),
     
+    # API endpoints for unavailability workflow
+    path('api/unavailability-details/<int:appointment_id>/', views.api_unavailability_details, name='api_unavailability_details'),
+    path('api/available-attendants/', views.api_available_attendants, name='api_available_attendants'),
+    path('unavailable/<int:unavailability_request_id>/respond/', views.respond_to_unavailable_attendant, name='respond_to_unavailable_attendant'),
+    
     # API endpoints for notifications
     path('notifications/get_notifications.php', views.get_notifications_api, name='get_notifications_api'),
     path('notifications/update_notifications.php', views.update_notifications_api, name='update_notifications_api'),

@@ -13,6 +13,9 @@ from products.models import Product
 from packages.models import Package
 from services.utils import send_appointment_sms, send_attendant_assignment_sms
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_available_attendants(selected_date=None, selected_time=None):
@@ -1302,6 +1305,10 @@ def request_reschedule(request, appointment_id):
     """Request reschedule for an appointment"""
     appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
     
+    # Check if this is from attendant unavailability workflow
+    keep_attendant = request.GET.get('keep_attendant') == 'true'
+    original_attendant = appointment.attendant if keep_attendant else None
+    
     if request.method == 'POST':
         new_date = request.POST.get('new_appointment_date')
         new_time = request.POST.get('new_appointment_time')
@@ -1442,6 +1449,9 @@ def request_reschedule(request, appointment_id):
         'closed_days': closed_days_json,
         'time_slots': time_slots_json,
         'booked_slots': booked_slots_json,
+        'keep_attendant': keep_attendant,
+        'original_attendant': original_attendant,
+        'original_attendant_id': original_attendant.id if original_attendant else None,
     }
     
     return render(request, 'appointments/request_reschedule.html', context)
@@ -1626,3 +1636,221 @@ def manage_attendants(request):
     return render(request, 'accounts/manage_attendants.html', context)
 
 
+# ===========================
+# ATTENDANT UNAVAILABILITY API ENDPOINTS
+# ===========================
+
+@login_required
+def api_unavailability_details(request, appointment_id):
+    """
+    API endpoint to get appointment details and unavailability request info
+    """
+    try:
+        appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+        
+        # Get the pending unavailability request for this appointment
+        from .models import AttendantUnavailabilityRequest
+        unavailability_request = appointment.unavailability_requests.filter(
+            status='pending',
+            pending_reassignment_choice=True
+        ).first()
+        
+        if not unavailability_request:
+            return JsonResponse({
+                'success': False,
+                'error': 'No pending unavailability request found for this appointment.'
+            })
+        
+        # Format appointment details
+        service_name = "Product Purchase"
+        if appointment.service:
+            service_name = appointment.service.service_name
+        elif appointment.package:
+            service_name = appointment.package.package_name
+        elif appointment.product:
+            service_name = f"Product: {appointment.product.product_name}"
+        
+        attendant_name = appointment.attendant.get_full_name() if appointment.attendant else "Not assigned"
+        
+        return JsonResponse({
+            'success': True,
+            'unavailability_request_id': unavailability_request.id,
+            'service_name': service_name,
+            'appointment_date': appointment.appointment_date.strftime('%B %d, %Y'),
+            'appointment_time': appointment.appointment_time.strftime('%I:%M %p'),
+            'attendant_name': attendant_name,
+            'reason': unavailability_request.reason
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+def api_available_attendants(request):
+    """
+    API endpoint to get available attendants for a specific date/time
+    """
+    try:
+        date_str = request.GET.get('date')
+        time_str = request.GET.get('time')
+        
+        if not date_str or not time_str:
+            return JsonResponse({
+                'success': False,
+                'error': 'Date and time parameters are required'
+            })
+        
+        # Parse date and time
+        appointment_date = datetime.strptime(date_str, '%B %d, %Y').date()
+        appointment_time = datetime.strptime(time_str, '%I:%M %p').time()
+        
+        # Format for get_available_attendants function
+        date_formatted = appointment_date.strftime('%Y-%m-%d')
+        time_formatted = appointment_time.strftime('%H:%M')
+        
+        # Get available attendants
+        available_attendants = get_available_attendants(date_formatted, time_formatted)
+        
+        attendants_data = [
+            {
+                'id': attendant.id,
+                'name': attendant.get_full_name()
+            }
+            for attendant in available_attendants
+        ]
+        
+        return JsonResponse({
+            'success': True,
+            'attendants': attendants_data
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@require_http_methods(["POST"])
+def respond_to_unavailable_attendant(request, unavailability_request_id):
+    """
+    Handle patient's response to attendant unavailability
+    Processes the 3 choices: choose_another, reschedule_same, or cancel
+    """
+    from .models import AttendantUnavailabilityRequest, HistoryLog
+    from services.sms_service import sms_service
+    
+    try:
+        unavailability_request = get_object_or_404(
+            AttendantUnavailabilityRequest,
+            id=unavailability_request_id
+        )
+        
+        # Verify the appointment belongs to the current user
+        if unavailability_request.appointment.patient != request.user:
+            return JsonResponse({
+                'success': False,
+                'error': 'You do not have permission to respond to this request.'
+            })
+        
+        choice = request.POST.get('choice')
+        
+        if choice == 'choose_another':
+            # Option 1: Choose another attendant
+            new_attendant_id = request.POST.get('new_attendant_id')
+            
+            if not new_attendant_id:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Please select a new attendant.'
+                })
+            
+            new_attendant = get_object_or_404(User, id=new_attendant_id, user_type='attendant')
+            appointment = unavailability_request.appointment
+            old_attendant = appointment.attendant
+            
+            # Update appointment with new attendant
+            appointment.attendant = new_attendant
+            appointment.save()
+            
+            # Update unavailability request
+            unavailability_request.patient_choice = 'choose_another'
+            unavailability_request.status = 'resolved'
+            unavailability_request.pending_reassignment_choice = False
+            unavailability_request.resolved_at = timezone.now()
+            unavailability_request.save()
+            
+            # Mark notification as read
+            Notification.objects.filter(
+                patient=request.user,
+                appointment_id=appointment.id,
+                title__icontains='Attendant Unavailable'
+            ).update(is_read=True)
+            
+            # Send success SMS to patient
+            try:
+                message = f"Hi {request.user.first_name}, your appointment on {appointment.appointment_date.strftime('%B %d, %Y')} at {appointment.appointment_time.strftime('%I:%M %p')} has been updated with a new attendant: {new_attendant.get_full_name()}."
+                sms_service.send_sms(request.user.phone, message)
+            except Exception as e:
+                logger.error(f"Failed to send confirmation SMS: {str(e)}")
+            
+            # Create notification for staff
+            Notification.objects.create(
+                type='system',
+                title='Patient Choice: New Attendant Selected',
+                message=f"Patient {request.user.get_full_name()} chose to keep their appointment on {appointment.appointment_date.strftime('%B %d, %Y')} at {appointment.appointment_time.strftime('%I:%M %p')} and selected {new_attendant.get_full_name()} as their new attendant.",
+            )
+            
+            # Log the action
+            HistoryLog.objects.create(
+                action_type='edit',
+                item_type='appointment',
+                performed_by=request.user,
+                details={
+                    'appointment_id': appointment.id,
+                    'action': 'attendant_reassignment',
+                    'old_attendant': old_attendant.get_full_name() if old_attendant else 'None',
+                    'new_attendant': new_attendant.get_full_name(),
+                    'patient_choice': 'choose_another'
+                }
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Your appointment has been updated with {new_attendant.get_full_name()}.'
+            })
+        
+        elif choice == 'reschedule_same':
+            # Option 2: Reschedule with same attendant
+            # This is handled by redirect in JavaScript, but we can mark the choice
+            unavailability_request.patient_choice = 'reschedule_same'
+            unavailability_request.save()
+            
+            return JsonResponse({
+                'success': True,
+                'redirect': f'/appointments/reschedule/{unavailability_request.appointment.id}/?keep_attendant=true'
+            })
+        
+        elif choice == 'cancel':
+            # Option 3: Cancel appointment
+            # This is handled by redirect in JavaScript
+            return JsonResponse({
+                'success': True,
+                'redirect': f'/appointments/my-appointments/?cancel={unavailability_request.appointment.id}'
+            })
+        
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid choice. Please select one of the three options.'
+            })
+            
+    except Exception as e:
+        logger.error(f"Error in respond_to_unavailable_attendant: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
