@@ -516,3 +516,20 @@ def delete_medical_history(request, history_id):
         messages.success(request, 'Medical history document deleted successfully!')
     
     return redirect('accounts:medical_history')
+
+
+# Login view logic
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+
+def login_patient(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to home after login
+        else:
+            return render(request, 'accounts/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'accounts/login.html')
