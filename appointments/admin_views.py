@@ -23,14 +23,20 @@ def admin_dashboard(request):
     today = timezone.now().date()
     
     # Get all appointments (services and packages) - ordered by most recently created
-    all_appointments = Appointment.objects.filter(
-        Q(service__isnull=False) | Q(package__isnull=False)
-    ).order_by('-created_at')[:10]
+    all_appointments = (
+        Appointment.objects.filter(
+            Q(service__isnull=False) | Q(package__isnull=False)
+        )
+        .select_related('patient', 'service', 'package')
+        .order_by('-created_at')[:10]
+    )
     
     # Get orders (product appointments) - ordered by most recently created
-    pre_orders = Appointment.objects.filter(
-        product__isnull=False
-    ).order_by('-created_at')[:10]
+    pre_orders = (
+        Appointment.objects.filter(product__isnull=False)
+        .select_related('patient', 'product')
+        .order_by('-created_at')[:10]
+    )
     
     # Get patient list
     patients = User.objects.filter(user_type='patient').order_by('-date_joined')[:10]
@@ -82,7 +88,12 @@ def admin_appointments(request):
     cancelled_count = Appointment.objects.filter(status='cancelled').count()
     
     # Start with all appointments - latest bookings first (by creation time, then appointment date/time)
-    appointments = Appointment.objects.all().order_by('-created_at', '-appointment_date', '-appointment_time')
+    appointments = (
+        Appointment.objects.all()
+        .select_related('patient', 'attendant', 'service', 'product', 'package')
+        .prefetch_related('feedback')
+        .order_by('-created_at', '-appointment_date', '-appointment_time')
+    )
     
     # Apply filters
     if status_filter:
@@ -123,7 +134,12 @@ def admin_appointments(request):
 @user_passes_test(is_admin)
 def admin_appointment_detail(request, appointment_id):
     """Admin view for appointment details"""
-    appointment = get_object_or_404(Appointment, id=appointment_id)
+    appointment = get_object_or_404(
+        Appointment.objects.select_related(
+            'patient', 'attendant', 'service', 'product', 'package', 'service__category'
+        ),
+        id=appointment_id,
+    )
     
     # Get attendants - get all active attendant users
     attendants = User.objects.filter(user_type='attendant', is_active=True).order_by('first_name', 'last_name')
@@ -765,7 +781,11 @@ def patient_history(request, patient_id):
     patient = get_object_or_404(User, id=patient_id, user_type='patient')
     
     # Get all appointments for this patient, ordered by most recent first
-    appointments = Appointment.objects.filter(patient=patient).order_by('-created_at')
+    appointments = (
+        Appointment.objects.filter(patient=patient)
+        .select_related('service', 'product', 'package', 'attendant')
+        .order_by('-created_at')
+    )
     
     # Calculate statistics
     total_appointments = appointments.count()
@@ -839,9 +859,17 @@ def admin_settings(request):
     
     closed_days = ClosedDay.objects.all()
     # Get all attendant users for the table (both active and inactive)
-    attendant_users = User.objects.filter(user_type='attendant').order_by('username')
+    attendant_users = (
+        User.objects.filter(user_type='attendant')
+        .select_related('attendant_profile')
+        .order_by('username')
+    )
     # Get only active attendant users for the calendar view
-    active_attendant_users = User.objects.filter(user_type='attendant', is_active=True).order_by('username')
+    active_attendant_users = (
+        User.objects.filter(user_type='attendant', is_active=True)
+        .select_related('attendant_profile')
+        .order_by('username')
+    )
     
     # Get attendant profiles - create list of tuples for easier template access
     attendant_users_with_profiles = []
@@ -1117,7 +1145,11 @@ def admin_view_patient(request, patient_id):
     from accounts.models import User
     
     patient = get_object_or_404(User, id=patient_id)
-    appointments = Appointment.objects.filter(patient=patient).order_by('-appointment_date')
+    appointments = (
+        Appointment.objects.filter(patient=patient)
+        .select_related('service', 'product', 'package', 'attendant')
+        .order_by('-appointment_date')
+    )
     
     context = {
         'patient': patient,
@@ -1137,7 +1169,11 @@ def admin_edit_patient(request, patient_id):
     # Data Privacy Act compliance - Staff can only VIEW patient profiles, not edit
     messages.info(request, 'Staff can only view patient profiles. Editing is restricted to comply with Data Privacy Act.')
     
-    appointments = Appointment.objects.filter(patient=patient).order_by('-appointment_date')
+    appointments = (
+        Appointment.objects.filter(patient=patient)
+        .select_related('service', 'product', 'package', 'attendant')
+        .order_by('-appointment_date')
+    )
     
     context = {
         'patient': patient,
@@ -1236,23 +1272,26 @@ def admin_cancellation_requests(request):
     reschedule_page_obj = reschedule_paginator.get_page(reschedule_page_number)
     cancellation_page_obj = cancellation_paginator.get_page(cancellation_page_number)
     
-    # Get appointments for reschedule requests
-    reschedule_requests_with_appointments = []
-    for reschedule_request in reschedule_page_obj:
-        try:
-            appointment = Appointment.objects.get(id=reschedule_request.appointment_id)
-            reschedule_requests_with_appointments.append((reschedule_request, appointment))
-        except Appointment.DoesNotExist:
-            reschedule_requests_with_appointments.append((reschedule_request, None))
-    
-    # Get appointments for cancellation requests
-    cancellation_requests_with_appointments = []
-    for cancellation_request in cancellation_page_obj:
-        try:
-            appointment = Appointment.objects.get(id=cancellation_request.appointment_id)
-            cancellation_requests_with_appointments.append((cancellation_request, appointment))
-        except Appointment.DoesNotExist:
-            cancellation_requests_with_appointments.append((cancellation_request, None))
+    # Bulk-fetch related appointments to avoid N+1 queries
+    res_ids = [req.appointment_id for req in reschedule_page_obj]
+    cancel_ids = [req.appointment_id for req in cancellation_page_obj]
+    all_ids = list(set(res_ids + cancel_ids))
+    appointments_map = {
+        a.id: a
+        for a in Appointment.objects.filter(id__in=all_ids).select_related(
+            'patient', 'service', 'product', 'package'
+        )
+    }
+
+    # Map appointments to reschedule and cancellation requests
+    reschedule_requests_with_appointments = [
+        (res_req, appointments_map.get(res_req.appointment_id))
+        for res_req in reschedule_page_obj
+    ]
+    cancellation_requests_with_appointments = [
+        (can_req, appointments_map.get(can_req.appointment_id))
+        for can_req in cancellation_page_obj
+    ]
     
     context = {
         'cancellation_requests': cancellation_page_obj,
@@ -1478,7 +1517,7 @@ def admin_reject_reschedule(request, request_id):
 def admin_manage_service_images(request):
     """Admin view to manage service images"""
     # Only show active (non-archived) services
-    services = Service.objects.filter(archived=False).order_by('service_name')
+    services = Service.objects.filter(archived=False).prefetch_related('images').order_by('service_name')
     
     if request.method == 'POST':
         service_id = request.POST.get('service_id')
@@ -1521,7 +1560,7 @@ def admin_manage_service_images(request):
 def admin_manage_product_images(request):
     """Admin view to manage product images"""
     # Only show active (non-archived) products
-    products = Product.objects.filter(archived=False).order_by('product_name')
+    products = Product.objects.filter(archived=False).prefetch_related('images').order_by('product_name')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')

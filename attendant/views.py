@@ -23,18 +23,26 @@ def attendant_dashboard(request):
     today = timezone.now().date()
     
     # Get today's appointments - show all appointments for today that have this attendant assigned
-    today_appointments = Appointment.objects.filter(
-        appointment_date=today,
-        attendant=request.user
-    ).order_by('appointment_time')
+    today_appointments = (
+        Appointment.objects.filter(
+            appointment_date=today,
+            attendant=request.user
+        )
+        .select_related('patient', 'service', 'product', 'package', 'room')
+        .order_by('appointment_time')
+    )
     
     # Get upcoming appointments (next 7 days) - show all with this attendant assigned
-    upcoming_appointments = Appointment.objects.filter(
-        appointment_date__gte=today,
-        appointment_date__lte=today + timezone.timedelta(days=7),
-        status__in=['scheduled', 'confirmed', 'pending', 'approved'],
-        attendant=request.user
-    ).order_by('appointment_date', 'appointment_time')
+    upcoming_appointments = (
+        Appointment.objects.filter(
+            appointment_date__gte=today,
+            appointment_date__lte=today + timezone.timedelta(days=7),
+            status__in=['scheduled', 'confirmed', 'pending', 'approved'],
+            attendant=request.user
+        )
+        .select_related('patient', 'service', 'product', 'package', 'room')
+        .order_by('appointment_date', 'appointment_time')
+    )
     
     # Get notifications regarding appointments this attendant is in charge of
     notifications = Notification.objects.filter(

@@ -513,9 +513,10 @@ def owner_patients(request):
     from django.db.models.functions import Coalesce
     
     # Get all patients with database-side analytics to avoid N+1 queries
+    from django.db.models import Prefetch
     patients = (
         User.objects.filter(user_type='patient')
-        .prefetch_related('segments')
+        .prefetch_related(Prefetch('segments', to_attr='prefetched_segments'))
         .annotate(
             total_appointments=Count('appointments', distinct=True),
             completed_appointments=Count(
@@ -569,18 +570,22 @@ def owner_patients(request):
     page_obj = paginator.get_page(page_number)
     
     # Build analytics list with computed total_spent
-    patient_analytics_list = [
-        {
+    patient_analytics_list = []
+    for patient in page_obj:
+        segment = 'unclassified'
+        segments_list = getattr(patient, 'prefetched_segments', None)
+        if segments_list:
+            # Use first prefetched segment if available
+            segment = segments_list[0].segment
+        patient_analytics_list.append({
             'patient': patient,
             'total_appointments': patient.total_appointments,
             'completed_appointments': patient.completed_appointments,
             'cancelled_appointments': patient.cancelled_appointments,
             'total_spent': patient.service_spent + patient.package_spent + patient.product_spent,
             'last_visit': patient.last_visit,
-            'segment': patient.segments.first().segment if patient.segments.exists() else 'unclassified',
-        }
-        for patient in page_obj
-    ]
+            'segment': segment,
+        })
     
     # Get notification count
     from appointments.models import Notification
@@ -605,7 +610,11 @@ def owner_view_patient(request, patient_id):
     from decimal import Decimal
     
     patient = get_object_or_404(User, id=patient_id, user_type='patient')
-    appointments = Appointment.objects.filter(patient=patient).order_by('-appointment_date')
+    appointments = (
+        Appointment.objects.filter(patient=patient)
+        .select_related('service', 'package', 'product', 'attendant')
+        .order_by('-appointment_date')
+    )
     
     # Calculate patient statistics
     total_appointments = appointments.count()
@@ -647,8 +656,14 @@ def owner_appointments(request):
     date_filter = request.GET.get('date', '')
     search_query = request.GET.get('search', '')
     
-    # Start with all appointments - latest bookings first (by creation time, then appointment date/time)
-    appointments = Appointment.objects.all().order_by('-created_at', '-appointment_date', '-appointment_time')
+    # Start with all appointments - eager-load related objects to avoid N+1
+    # Latest bookings first (by creation time, then appointment date/time)
+    appointments = (
+        Appointment.objects
+        .select_related('patient', 'attendant', 'service', 'product', 'package')
+        .prefetch_related('feedback')
+        .order_by('-created_at', '-appointment_date', '-appointment_time')
+    )
     
     # Apply filters
     if status_filter:
@@ -686,7 +701,10 @@ def owner_appointments(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_view_appointment(request, appointment_id):
     """View appointment details"""
-    appointment = get_object_or_404(Appointment, id=appointment_id)
+    appointment = get_object_or_404(
+        Appointment.objects.select_related('patient', 'attendant', 'service', 'product', 'package').prefetch_related('feedback'),
+        id=appointment_id
+    )
     
     context = {
         'appointment': appointment,
@@ -845,7 +863,7 @@ def owner_reschedule_appointment(request, appointment_id):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_services(request):
     """Owner services overview"""
-    services = Service.objects.filter(archived=False).annotate(
+    services = Service.objects.filter(archived=False).select_related('category').annotate(
         total_bookings=Count('appointments'),
         completed_bookings=Count('appointments', filter=Q(appointments__status='completed')),
         cancelled_bookings=Count('appointments', filter=Q(appointments__status='cancelled')),
@@ -1535,7 +1553,7 @@ def owner_view_history_log(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_service_images(request):
     """Owner view to manage service images"""
-    services = Service.objects.all().order_by('service_name')
+    services = Service.objects.all().prefetch_related('images').order_by('service_name')
     
     if request.method == 'POST':
         service_id = request.POST.get('service_id')
@@ -1577,7 +1595,7 @@ def owner_manage_service_images(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_product_images(request):
     """Owner view to manage product images"""
-    products = Product.objects.all().order_by('product_name')
+    products = Product.objects.all().prefetch_related('images').order_by('product_name')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -1688,10 +1706,18 @@ def owner_manage_attendants(request):
     
     attendants = User.objects.filter(user_type='attendant').order_by('first_name', 'last_name')
     closed_days = ClosedDay.objects.all()
-    # Get all attendant users for the table (both active and inactive)
-    attendant_users = User.objects.filter(user_type='attendant').order_by('username')
-    # Get only active attendant users for the calendar view
-    active_attendant_users = User.objects.filter(user_type='attendant', is_active=True).order_by('username')
+    # Get all attendant users for the table (both active and inactive) with profile eager-loaded
+    attendant_users = (
+        User.objects.filter(user_type='attendant')
+        .select_related('attendant_profile')
+        .order_by('username')
+    )
+    # Get only active attendant users for the calendar view with profile eager-loaded
+    active_attendant_users = (
+        User.objects.filter(user_type='attendant', is_active=True)
+        .select_related('attendant_profile')
+        .order_by('username')
+    )
     
     # Get attendant profiles - create list of tuples for easier template access
     attendant_users_with_profiles = []
@@ -2052,33 +2078,31 @@ def owner_notifications(request):
     
     # Show all system notifications (where patient is null) - both read and unread
     notifications = Notification.objects.filter(patient__isnull=True).order_by('-created_at')
-    
-    # Get cancellation requests for notifications that mention cancellation
+
+    # Build bulk maps to avoid N+1 when enriching notifications
+    notifications_list = list(notifications)
+    appointment_ids = [n.appointment_id for n in notifications_list if n.appointment_id]
+
+    appointments_map = {}
+    cancellations_map = {}
+    if appointment_ids:
+        # Bulk fetch related appointments
+        for appt in Appointment.objects.select_related('patient', 'attendant', 'service', 'product', 'package').filter(id__in=appointment_ids):
+            appointments_map[appt.id] = appt
+        # Bulk fetch pending cancellation requests
+        for cr in CancellationRequest.objects.filter(appointment_id__in=appointment_ids, status='pending'):
+            cancellations_map[cr.appointment_id] = cr
+
     notifications_with_actions = []
-    for notification in notifications:
+    for notification in notifications_list:
         notification_data = {
             'notification': notification,
             'cancellation_request': None,
             'appointment': None,
         }
-        
-        # Check if notification is about cancellation and has appointment_id
-        if notification.appointment_id and ('cancellation' in notification.title.lower() or 'cancellation' in notification.message.lower()):
-            try:
-                # Try to find the appointment
-                appointment = Appointment.objects.filter(id=notification.appointment_id).first()
-                if appointment:
-                    notification_data['appointment'] = appointment
-                    # Try to find pending cancellation request
-                    cancellation_request = CancellationRequest.objects.filter(
-                        appointment_id=notification.appointment_id,
-                        status='pending'
-                    ).first()
-                    if cancellation_request:
-                        notification_data['cancellation_request'] = cancellation_request
-            except Exception:
-                pass
-        
+        if notification.appointment_id and ('cancellation' in (notification.title or '').lower() or 'cancellation' in (notification.message or '').lower()):
+            notification_data['appointment'] = appointments_map.get(notification.appointment_id)
+            notification_data['cancellation_request'] = cancellations_map.get(notification.appointment_id)
         notifications_with_actions.append(notification_data)
     
     # Count unread notifications
