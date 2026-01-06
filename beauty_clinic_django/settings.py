@@ -26,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-t1=a!a_5oj(saq3q=hwj!b&r)7a2y8=(fcv6(lxpttvlc1^68u')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 # Allowed hosts configuration
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,skinnovation-clinic.onrender.com', cast=Csv())
+ALLOWED_HOSTS = ['skinnovation-clinic.onrender.com']
 
 
 # Application definition
