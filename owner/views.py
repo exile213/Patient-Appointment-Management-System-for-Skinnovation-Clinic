@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Count, Sum, Avg, Q
+from django.db.models import Count, Sum, Avg, Q, Max, DecimalField
 from django.db.models.functions import TruncMonth, TruncWeek
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta
@@ -508,31 +508,79 @@ def owner_dashboard(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_patients(request):
     """Owner patients overview"""
-    # Get all patients with analytics
-    patients = User.objects.filter(user_type='patient').prefetch_related('analytics', 'segments')
+    from decimal import Decimal
+    from django.db.models import Case, When, Value, F, OuterRef, Subquery
+    from django.db.models.functions import Coalesce
     
-    # Calculate analytics for each patient
-    patient_analytics_list = []
-    for patient in patients:
-        appointments = Appointment.objects.filter(patient=patient)
-        analytics_data = {
-            'patient': patient,
-            'total_appointments': appointments.count(),
-            'completed_appointments': appointments.filter(status='completed').count(),
-            'cancelled_appointments': appointments.filter(status='cancelled').count(),
-            'total_spent': sum([app.service.price for app in appointments.filter(status='completed') if app.service]),
-            'last_visit': appointments.filter(status='completed').order_by('-appointment_date').first(),
-            'segment': patient.segments.first().segment if patient.segments.exists() else 'unclassified',
-        }
-        patient_analytics_list.append(analytics_data)
+    # Get all patients with database-side analytics to avoid N+1 queries
+    patients = (
+        User.objects.filter(user_type='patient')
+        .prefetch_related('segments')
+        .annotate(
+            total_appointments=Count('appointments', distinct=True),
+            completed_appointments=Count(
+                'appointments',
+                filter=Q(appointments__status='completed'),
+                distinct=True,
+            ),
+            cancelled_appointments=Count(
+                'appointments',
+                filter=Q(appointments__status='cancelled'),
+                distinct=True,
+            ),
+            # Get service price sum for completed appointments
+            service_spent=Coalesce(
+                Sum(
+                    'appointments__service__price',
+                    filter=Q(appointments__status='completed', appointments__service__isnull=False),
+                    output_field=DecimalField(),
+                ),
+                Value(Decimal('0.00')),
+            ),
+            # Get package price sum
+            package_spent=Coalesce(
+                Sum(
+                    'appointments__package__price',
+                    filter=Q(appointments__status='completed', appointments__package__isnull=False),
+                    output_field=DecimalField(),
+                ),
+                Value(Decimal('0.00')),
+            ),
+            # Get product price sum (price * quantity)
+            product_spent=Coalesce(
+                Sum(
+                    F('appointments__product__price') * F('appointments__quantity'),
+                    filter=Q(appointments__status='completed', appointments__product__isnull=False),
+                    output_field=DecimalField(),
+                ),
+                Value(Decimal('0.00')),
+            ),
+            last_visit=Max(
+                'appointments__appointment_date',
+                filter=Q(appointments__status='completed'),
+            ),
+        )
+        .order_by('-id')
+    )
     
-    # Sort by total spent
-    patient_analytics_list.sort(key=lambda x: x['total_spent'], reverse=True)
-    
-    # Add pagination
-    paginator = Paginator(patient_analytics_list, 20)  # 20 items per page
+    # Add pagination BEFORE converting to list
+    paginator = Paginator(patients, 20)  # 20 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # Build analytics list with computed total_spent
+    patient_analytics_list = [
+        {
+            'patient': patient,
+            'total_appointments': patient.total_appointments,
+            'completed_appointments': patient.completed_appointments,
+            'cancelled_appointments': patient.cancelled_appointments,
+            'total_spent': patient.service_spent + patient.package_spent + patient.product_spent,
+            'last_visit': patient.last_visit,
+            'segment': patient.segments.first().segment if patient.segments.exists() else 'unclassified',
+        }
+        for patient in page_obj
+    ]
     
     # Get notification count
     from appointments.models import Notification
@@ -542,7 +590,7 @@ def owner_patients(request):
     ).count()
     
     context = {
-        'patient_analytics': page_obj,
+        'patient_analytics': patient_analytics_list,
         'page_obj': page_obj,
         'notification_count': notification_count,
     }

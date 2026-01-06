@@ -94,13 +94,20 @@ def attendant_dashboard(request):
 @user_passes_test(is_attendant, login_url='/accounts/login/attendant/')
 def attendant_appointments(request):
     """Attendant appointments management - Only shows appointments assigned to this attendant"""
+    from django.core.paginator import Paginator
+    
     # Get filter parameters
     status_filter = request.GET.get('status', '')
     date_filter = request.GET.get('date', '')
     search_query = request.GET.get('search', '')
     
-    # Start with appointments assigned to this attendant only
-    appointments = Appointment.objects.filter(attendant=request.user).order_by('-created_at', '-appointment_date', '-appointment_time')
+    # Start with appointments assigned to this attendant - use select_related to avoid N+1 queries
+    appointments = (
+        Appointment.objects
+        .filter(attendant=request.user)
+        .select_related('patient', 'service', 'product', 'package', 'room')
+        .order_by('-created_at', '-appointment_date', '-appointment_time')
+    )
     
     # Apply filters
     if status_filter:
@@ -118,8 +125,14 @@ def attendant_appointments(request):
             Q(package__package_name__icontains=search_query)
         )
     
+    # Add pagination to limit query size
+    paginator = Paginator(appointments, 25)  # 25 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     context = {
-        'appointments': appointments,
+        'appointments': page_obj,
+        'page_obj': page_obj,
         'status_filter': status_filter,
         'date_filter': date_filter,
         'search_query': search_query,
