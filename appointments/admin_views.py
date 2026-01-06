@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Count, Max
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from .models import Appointment, Notification, ClosedDay
@@ -702,42 +702,56 @@ def admin_patients(request):
     """Admin patients management page"""
     from accounts.models import User
     
-    # Get all patients (non-admin users)
-    patients = User.objects.filter(user_type='patient').order_by('-id')
-    
-    # Get statistics for each patient
-    patient_stats = []
-    for patient in patients:
-        appointments = Appointment.objects.filter(patient=patient)
-        total_appointments = appointments.count()
-        completed_appointments = appointments.filter(status='completed').count()
-        cancelled_appointments = appointments.filter(status='cancelled').count()
-        
-        # Count packages (you might need to adjust this based on your model)
-        packages_count = appointments.filter(package__isnull=False).count()
-        
-        # Get last visit
-        last_visit = appointments.filter(status='completed').order_by('-appointment_date').first()
-        last_visit_date = last_visit.appointment_date if last_visit else None
-        
-        patient_stats.append({
-            'patient': patient,
-            'total_appointments': total_appointments,
-            'completed_appointments': completed_appointments,
-            'cancelled_appointments': cancelled_appointments,
-            'packages_count': packages_count,
-            'last_visit': last_visit_date,
-        })
-    
+    # Annotate counts in the database to avoid N+1 queries that time out on Render
+    patients = (
+        User.objects.filter(user_type='patient')
+        .annotate(
+            total_appointments=Count('appointments', distinct=True),
+            completed_appointments=Count(
+                'appointments',
+                filter=Q(appointments__status='completed'),
+                distinct=True,
+            ),
+            cancelled_appointments=Count(
+                'appointments',
+                filter=Q(appointments__status='cancelled'),
+                distinct=True,
+            ),
+            packages_count=Count(
+                'appointments',
+                filter=Q(appointments__package__isnull=False),
+                distinct=True,
+            ),
+            last_visit=Max(
+                'appointments__appointment_date',
+                filter=Q(appointments__status='completed'),
+            ),
+        )
+        .order_by('-id')
+    )
+
     # Add pagination
-    paginator = Paginator(patient_stats, 20)  # 20 items per page
+    paginator = Paginator(patients, 20)  # 20 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    # Map annotated patients to the structure expected by the template
+    patient_stats = [
+        {
+            'patient': patient,
+            'total_appointments': patient.total_appointments,
+            'completed_appointments': patient.completed_appointments,
+            'cancelled_appointments': patient.cancelled_appointments,
+            'packages_count': patient.packages_count,
+            'last_visit': patient.last_visit,
+        }
+        for patient in page_obj
+    ]
     
     context = {
-        'patient_stats': page_obj,
+        'patient_stats': patient_stats,
         'page_obj': page_obj,
-        'total_patients': len(patient_stats),
+        'total_patients': patients.count(),
     }
     
     return render(request, 'appointments/admin_patients.html', context)

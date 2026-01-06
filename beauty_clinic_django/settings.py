@@ -26,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-t1=a!a_5oj(saq3q=hwj!b&r)7a2y8=(fcv6(lxpttvlc1^68u')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-# Allowed hosts configuration
-ALLOWED_HOSTS = ['skinnovation-clinic.onrender.com']
+# Allowed hosts configuration - read from environment or use defaults
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,0.0.0.0,skinnovation-clinic.onrender.com', cast=Csv())
 
 
 # Application definition
@@ -100,21 +100,21 @@ WSGI_APPLICATION = 'beauty_clinic_django.wsgi.application'
 
 DATABASE_URL = config('DATABASE_URL', default=None)
 
+# Use DATABASE_URL if available (for Render/production), otherwise use local PostgreSQL
 if DATABASE_URL:
-    # Production database (PostgreSQL on Render)
     DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
-    # Development database (SQLite)
+    # Local development with PostgreSQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'beauty_clinic_db',
+            'USER': 'postgres',
+            'PASSWORD': 'imperial12',
+            'HOST': 'localhost',
+            'PORT': '5432',
         }
     }
 
