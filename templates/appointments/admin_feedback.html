@@ -1,0 +1,142 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Patient Feedback - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="page-title">
+            <i class="fas fa-star"></i>
+            Patient Feedback
+        </h1>
+        <a href="{% url 'appointments:admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+        </a>
+    </div>
+    <p class="text-muted">View feedback for services, packages, and products (Attendant ratings are private)</p>
+</div>
+
+<!-- Feedback List -->
+<div class="content-card">
+    <h3 class="card-title">
+        <i class="fas fa-comments"></i>
+        All Patient Feedback
+    </h3>
+    
+    {% if feedbacks %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Patient</th>
+                        <th>Service/Package/Product</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                    <tr>
+                        <td>{{ feedback.created_at|date:"M d, Y g:i A" }}</td>
+                        <td>{{ feedback.patient.get_full_name }}</td>
+                        <td>{{ feedback.appointment.get_service_name }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= feedback.rating %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-muted"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2">({{ feedback.rating }}/5)</span>
+                            </div>
+                        </td>
+                        <td>{{ feedback.comment|default:"No comment"|truncatechars:100 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination Controls -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;&laquo;</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="text-center mt-2 text-muted">
+                <small>Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} ({{ page_obj.paginator.count }} total feedback entries)</small>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-star fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No feedback received yet</h5>
+            <p class="text-muted">Patient feedback will appear here once submitted.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="alert alert-info mt-4">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Note:</strong> Attendant ratings are kept private and are only visible to the respective attendant. This view shows only service/package/product ratings and comments.
+</div>
+{% endblock %}
+

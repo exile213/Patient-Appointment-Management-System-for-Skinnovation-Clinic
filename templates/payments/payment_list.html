@@ -1,0 +1,91 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Payment Management{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h1 class="page-title">
+        <i class="fas fa-money-bill-wave"></i> Payment Management
+    </h1>
+</div>
+
+<div class="content-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="card-title">Filter Payments</h3>
+        <a href="{% url 'payments:revenue_report_pdf' %}" class="btn btn-primary">
+            <i class="fas fa-file-pdf"></i> Generate Revenue Report (PDF)
+        </a>
+    </div>
+    
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <select name="status" class="form-control">
+                <option value="">All Status</option>
+                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="partial" {% if status_filter == 'partial' %}selected{% endif %}>Partial</option>
+                <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
+                <option value="refunded" {% if status_filter == 'refunded' %}selected{% endif %}>Refunded</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="content-card">
+    <h3 class="card-title">All Payments</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Patient</th>
+                    <th>Service/Product</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Method</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.id }}</td>
+                    <td>{{ payment.payment_date|date:"M d, Y"|default:"N/A" }}</td>
+                    <td>{{ payment.appointment.patient.get_full_name }}</td>
+                    <td>{{ payment.appointment.get_service_name|truncatewords:3 }}</td>
+                    <td>₱{{ payment.amount|floatformat:2 }}</td>
+                    <td>₱{{ payment.amount_paid|floatformat:2 }}</td>
+                    <td>₱{{ payment.balance|floatformat:2 }}</td>
+                    <td>
+                        <span class="badge bg-{% if payment.payment_status == 'paid' %}success{% elif payment.payment_status == 'partial' %}warning{% else %}secondary{% endif %}">
+                            {{ payment.get_payment_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ payment.get_payment_method_display|default:"N/A" }}</td>
+                    <td>
+                        <a href="{% url 'payments:add_payment' payment.appointment.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center py-4">
+                        <i class="fas fa-money-bill-wave fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No payments found</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

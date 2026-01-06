@@ -1,0 +1,675 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Owner - Analytics Dashboard{% endblock %}
+
+{% block page_title %}Analytics Dashboard{% endblock %}
+
+{% block extra_head %}
+<!-- Custom Analytics CSS (updated for better card-based layout like attendant interface) -->
+<style>
+    * { box-sizing: border-box; }
+    .page-container { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: calc(100vh - 80px); padding: 1.5rem 0; }
+    .analytics-header-title { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2); }
+    @keyframes slideDown { from { opacity:0; transform: translateY(-20px);} to { opacity:1; transform: translateY(0);} }
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(20px);} to { opacity:1; transform: translateY(0);} }
+    @keyframes scaleIn { from { opacity:0; transform: scale(0.95);} to { opacity:1; transform: scale(1);} }
+    
+    /* Updated analytics card with proper Bootstrap-like styling */
+    .analytics-card { 
+        background: white; 
+        border-radius: 15px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+        overflow: hidden; 
+        transition: all 0.3s ease; 
+        animation: fadeInUp 0.5s ease-out; 
+        margin-bottom: 1.5rem;
+    }
+    .analytics-card:nth-child(1){animation-delay:0.1s;} 
+    .analytics-card:nth-child(2){animation-delay:0.15s;} 
+    .analytics-card:nth-child(3){animation-delay:0.2s;} 
+    .analytics-card:nth-child(4){animation-delay:0.25s;}
+    .analytics-card:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 10px 30px rgba(102,126,234,0.15);
+    }    
+    .analytics-header { 
+        background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
+        color: white; 
+        padding: 1rem 1.5rem; 
+        font-size: 1rem; 
+        font-weight:600; 
+    }
+    .analytics-body { 
+        padding: 1.5rem; 
+        background: white;
+    }
+    .metric-card { 
+        background: linear-gradient(135deg,#f8f9ff 0%,#e8e3ff 100%); 
+        border-radius:10px; 
+        padding:1.5rem; 
+        text-align:center; 
+        border-left:4px solid #667eea; 
+        height:100%; 
+        display:flex; 
+        flex-direction:column; 
+        justify-content:center; 
+        align-items:center; 
+        transition: all 0.3s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102,126,234,0.15);
+    }
+    .metric-value { 
+        font-size:1.8rem; 
+        font-weight:700; 
+        color:#667eea; 
+        margin-bottom:0.5rem; 
+    }
+    .metric-label { 
+        color:#6c757d; 
+        font-size:0.8rem; 
+        text-transform:uppercase; 
+        font-weight:600; 
+    }
+    .chart-wrapper { 
+        background:white; 
+        border-radius:10px; 
+        padding:1rem; 
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    } 
+    .chart-container { 
+        position:relative; 
+        height:280px; 
+        margin:0; 
+    }
+    .table { 
+        font-size:0.9rem; 
+        margin-bottom:0; 
+    }
+    .table thead th { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        color: white; 
+        border:none; 
+        padding:0.9rem 1rem; 
+        font-size:0.85rem; 
+        text-transform:uppercase; 
+    }
+    .table tbody td { 
+        padding:0.8rem 1rem; 
+        border-bottom:1px solid #f0f0f0; 
+        vertical-align:middle; 
+    }
+    .badge { 
+        padding:0.5rem 0.9rem; 
+        font-size:0.75rem; 
+        border-radius:6px; 
+    }
+    .kpi-grid { 
+        display:grid; 
+        grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); 
+        gap:1.5rem; 
+        margin-bottom:0; 
+    }
+    .two-column { 
+        display:grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap:1.5rem; 
+        margin-bottom:1.5rem; 
+    }
+    .correlation-item { 
+        background: #f8f9fa; 
+        padding: 1rem; 
+        border-radius: 10px; 
+        margin-bottom: 0.8rem; 
+        border-left: 4px solid #667eea; 
+    }
+    .correlation-stat { 
+        font-weight: bold; 
+        color: #667eea; 
+    }
+    @media (max-width:1200px){ 
+        .two-column { grid-template-columns:1fr; } 
+        .chart-container { height:240px; } 
+    }
+    @media (max-width:768px){ 
+        .page-container{ padding:1rem 0; } 
+        .analytics-body{ padding:1.5rem 1rem; } 
+        .kpi-grid{ grid-template-columns: repeat(2,1fr); gap:1rem; } 
+        .chart-container{ height:220px; } 
+        .table{ font-size:0.85rem; } 
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="analytics-header-title">
+            <h1 style="margin:0; font-size:1.6rem;"><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+            <p style="margin:0.4rem 0 0 0; opacity:0.9; font-size:0.9rem;">Real-time business analytics and performance metrics</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="analytics-card" style="margin-bottom: 1rem;">
+            <div class="analytics-header">
+                <i class="fas fa-filter icon-small"></i> Filter Analytics
+            </div>
+            <div class="analytics-body">
+                <form method="get" action="{% url 'owner:analytics' %}" id="filterForm">
+                    <div class="row g-2">
+                        <!-- Date Range -->
+                        <div class="col-md-2">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Date Range</label>
+                            <select name="date_range" class="form-select form-select-sm" onchange="toggleCustomDates(); document.getElementById('filterForm').submit();">
+                                <option value="7" {% if date_range == '7' %}selected{% endif %}>7 Days</option>
+                                <option value="30" {% if date_range == '30' %}selected{% endif %}>30 Days</option>
+                                <option value="90" {% if date_range == '90' %}selected{% endif %}>90 Days</option>
+                                <option value="365" {% if date_range == '365' %}selected{% endif %}>1 Year</option>
+                                <option value="custom" {% if start_date or end_date %}selected{% endif %}>Custom</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Custom Date Range -->
+                        <div class="col-md-2" id="customDateStart" style="{% if not start_date and not end_date %}display: none;{% endif %}">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Start</label>
+                            <input type="date" name="start_date" class="form-control form-control-sm" value="{{ start_date }}">
+                        </div>
+                        
+                        <div class="col-md-2" id="customDateEnd" style="{% if not start_date and not end_date %}display: none;{% endif %}">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">End</label>
+                            <input type="date" name="end_date" class="form-control form-control-sm" value="{{ end_date }}">
+                        </div>
+                        
+                        <!-- Status Filter -->
+                        <div class="col-md-2">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Status</label>
+                            <select name="status" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit();">
+                                <option value="">All</option>
+                                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                                <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Service Type Filter -->
+                        <div class="col-md-2">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Type</label>
+                            <select name="service_type" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit();">
+                                <option value="">All</option>
+                                <option value="service" {% if service_type_filter == 'service' %}selected{% endif %}>Services</option>
+                                <option value="product" {% if service_type_filter == 'product' %}selected{% endif %}>Products</option>
+                                <option value="package" {% if service_type_filter == 'package' %}selected{% endif %}>Packages</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Attendant Filter -->
+                        <div class="col-md-2">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Attendant</label>
+                            <select name="attendant" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit();">
+                                <option value="">All</option>
+                                {% for attendant in attendants %}
+                                <option value="{{ attendant.id }}" {% if attendant_filter == attendant.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ attendant.first_name }} {{ attendant.last_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Patient Search -->
+                        <div class="col-md-3">
+                            <label class="form-label" style="font-size: 0.8rem; font-weight: 600; color: #667eea;">Search Patient</label>
+                            <input type="text" name="patient_search" class="form-control form-control-sm" placeholder="Name or email..." value="{{ patient_search }}">
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="col-md-9 d-flex align-items-end gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i> Apply
+                            </button>
+                            <a href="{% url 'owner:analytics' %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Filter Summary -->
+        {% if status_filter or service_type_filter or attendant_filter or patient_search %}
+        <div class="alert alert-info" style="margin-bottom: 1rem; padding: 0.6rem 0.8rem; font-size: 0.8rem;">
+            <i class="fas fa-info-circle"></i> 
+            <strong>Filters Active:</strong>
+            Showing <strong>{{ total_appointments_filtered }}</strong> appointment{{ total_appointments_filtered|pluralize }} 
+            {% if status_filter %}• Status: <strong>{{ status_filter|title }}</strong>{% endif %}
+            {% if service_type_filter %}• Type: <strong>{{ service_type_filter|title }}</strong>{% endif %}
+            {% if attendant_filter %}• Attendant selected{% endif %}
+            {% if patient_search %}• Patient: "{{ patient_search }}"{% endif %}
+            | Revenue: <strong>₱{{ total_revenue_filtered|floatformat:2 }}</strong>
+        </div>
+        {% endif %}
+
+        <!-- KPI Section -->
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <i class="fas fa-chart-bar icon-small"></i> Key Performance Indicators
+            </div>
+            <div class="analytics-body">
+                <div class="kpi-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">₱{% if status_filter or service_type_filter or attendant_filter or patient_search %}{{ total_revenue_filtered|floatformat:0 }}{% else %}{{ total_revenue|floatformat:0 }}{% endif %}</div>
+                        <div class="metric-label">Total Revenue{% if status_filter or service_type_filter or attendant_filter or patient_search %} (Filtered){% endif %}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{% if status_filter or service_type_filter or attendant_filter or patient_search %}{{ total_appointments_filtered }}{% else %}{{ total_appointments }}{% endif %}</div>
+                        <div class="metric-label">Appointments{% if status_filter or service_type_filter or attendant_filter or patient_search %} (Filtered){% endif %}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ total_patients }}</div>
+                        <div class="metric-label">Total Patients</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{% if patient_stats %}{{ patient_stats.active_patients }}{% else %}0{% endif %}</div>
+                        <div class="metric-label">Active Patients</div>
+                    </div>
+                </div>
+                
+                <!-- Status Breakdown -->
+                {% if status_breakdown %}
+                <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e9ecef;">
+                    <h6 style="font-size: 0.8rem; color: #667eea; margin-bottom: 0.5rem;">Status Breakdown:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for status in status_breakdown %}
+                        <span class="badge {% if status.status == 'completed' %}bg-success{% elif status.status == 'confirmed' %}bg-primary{% elif status.status == 'pending' %}bg-warning{% elif status.status == 'cancelled' %}bg-danger{% else %}bg-secondary{% endif %}" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+                            {{ status.status|title }}: {{ status.count }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <i class="fas fa-chart-line icon-small"></i> Appointment Trends (Real-time)
+            </div>
+            <div class="analytics-body">
+                <div class="chart-wrapper">
+                    <div id="lineChartContainer" style="width: 100%; max-width: 100%; height: 500px; min-height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Services -->
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <i class="fas fa-concierge-bell icon-small"></i> Top Services
+            </div>
+            <div class="analytics-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Bookings</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in popular_services|slice:":10" %}
+                            <tr>
+                                <td><strong>{{ service.service_name|truncatewords:3 }}</strong></td>
+                                <td><span class="badge bg-primary">{{ service.booking_count }}</span></td>
+                                <td>
+                                    {% if service.booking_count > 0 %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">No Bookings</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted" style="font-size: 0.8rem;">No services found with current filters</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Correlations & Recent -->
+        {% if correlations %}
+        <div class="two-column">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <i class="fas fa-project-diagram icon-small"></i> Treatment Correlations
+                </div>
+                <div class="analytics-body">
+                    {% for correlation in correlations|slice:":4" %}
+                    <div class="correlation-item">
+                        <strong>{{ correlation.primary_service.service_name|truncatewords:2 }}</strong> ↔ 
+                        <strong>{{ correlation.secondary_service.service_name|truncatewords:2 }}</strong>
+                        <br>
+                        <small style="color:#999; font-size:0.75rem;">Strength: <span class="correlation-stat">{{ correlation.correlation_strength|floatformat:2 }}</span> | Freq: {{ correlation.frequency }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <i class="fas fa-calendar-check icon-small"></i> Recent Appointments
+                </div>
+                <div class="analytics-body">
+                    {% if recent_appointments %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Service/Product/Package</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                        <th>Attendant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in recent_appointments|slice:":10" %}
+                                    <tr>
+                                        <td><small>{{ appointment.patient.full_name }}</small></td>
+                                        <td><small>{% if appointment.service %}{{ appointment.service.service_name|truncatewords:2 }}{% elif appointment.product %}{{ appointment.product.product_name|truncatewords:2 }}{% elif appointment.package %}{{ appointment.package.package_name|truncatewords:2 }}{% else %}N/A{% endif %}</small></td>
+                                        <td><small>{{ appointment.appointment_date|date:"M d, Y" }}</small></td>
+                                        <td><small>{{ appointment.appointment_time|time:"h:i A" }}</small></td>
+                                        <td>
+                                            <span class="badge {% if appointment.status == 'completed' %}bg-success{% elif appointment.status == 'confirmed' %}bg-primary{% elif appointment.status == 'pending' %}bg-warning{% elif appointment.status == 'cancelled' %}bg-danger{% else %}bg-secondary{% endif %}" style="font-size: 0.7rem;">
+                                                {{ appointment.status|title }}
+                                            </span>
+                                        </td>
+                                        <td><small>{{ appointment.attendant.first_name }} {{ appointment.attendant.last_name }}</small></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted" style="font-size: 0.8rem;">No appointments found with current filters</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted" style="font-size:0.85rem;">No appointment data</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js - Simple and reliable charting library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+// Set API URLs
+const apiUrl = '{% url "analytics:api" %}';
+const dashboardUrl = '{% url "owner:analytics" %}';
+
+let lineChart = null;
+
+// Wait for Chart.js and DOM to be ready
+function waitForChartJS(callback, maxAttempts) {
+    maxAttempts = maxAttempts || 50; // Max 5 seconds
+    
+    function check() {
+        var chartReady = typeof Chart !== 'undefined';
+        var domReady = document.readyState === 'complete' || document.readyState === 'interactive';
+        var containerExists = document.getElementById('lineChartContainer') !== null;
+        
+        if (chartReady && domReady && containerExists) {
+            console.log('Chart.js ready!', 'Chart:', chartReady, 'DOM:', domReady, 'Container:', containerExists);
+            callback();
+        } else if (maxAttempts > 0) {
+            maxAttempts--;
+            setTimeout(check, 100);
+        } else {
+            console.error('Timeout waiting for Chart.js. Chart:', chartReady, 'DOM:', domReady, 'Container:', containerExists);
+            showError('Failed to load chart libraries. Please refresh the page.');
+        }
+    }
+    
+    setTimeout(check, 100);
+}
+
+// Error display function
+function showError(message) {
+    const container = document.getElementById('lineChartContainer');
+    if (container) {
+        container.innerHTML = '<div class="text-center p-4 text-danger"><i class="fas fa-exclamation-triangle"></i> ' + message + '</div>';
+    }
+}
+
+// Start initialization
+waitForChartJS(function() {
+    console.log('Starting chart initialization...');
+    initializeChart();
+});
+
+// Main chart initialization function
+function initializeChart() {
+    console.log('Initializing Chart.js line chart...');
+    
+    // Get the container and create canvas
+    const container = document.getElementById('lineChartContainer');
+    if (!container) {
+        console.error('Container not found');
+        return;
+    }
+    
+    // Clear container and create canvas
+    container.innerHTML = '<canvas id="appointmentLineChart"></canvas>';
+    const canvas = document.getElementById('appointmentLineChart');
+    
+    if (!canvas) {
+        console.error('Canvas not created');
+        return;
+    }
+    
+    // Build API URL with ALL current filter parameters
+    const params = new URLSearchParams();
+    params.append('date_range', '{{ date_range|default:"30" }}');
+    {% if status_filter %}params.append('status', '{{ status_filter }}');{% endif %}
+    {% if service_type_filter %}params.append('service_type', '{{ service_type_filter }}');{% endif %}
+    {% if attendant_filter %}params.append('attendant', '{{ attendant_filter }}');{% endif %}
+    {% if patient_search %}params.append('patient_search', '{{ patient_search }}');{% endif %}
+    {% if start_date %}params.append('start_date', '{{ start_date }}');{% endif %}
+    {% if end_date %}params.append('end_date', '{{ end_date }}');{% endif %}
+    
+    const apiUrlWithParams = apiUrl + '?' + params.toString();
+    console.log('Fetching chart data from:', apiUrlWithParams);
+    
+    // Fetch data from API with all filters
+    fetch(apiUrlWithParams)
+        .then(response => response.json())
+        .then(result => {
+            console.log('Data received:', result);
+            
+            if (!result.data || result.data.length === 0) {
+                showError('No data available for the selected period.');
+                return;
+            }
+            
+            // Prepare data for Chart.js
+            const labels = result.data.map(item => item.name);
+            const appointmentsData = result.data.map(item => item.appointments);
+            const completedData = result.data.map(item => item.completed);
+            const revenueData = result.data.map(item => item.revenue);
+            
+            // Create Chart.js line chart
+            lineChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Appointments',
+                            data: appointmentsData,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Completed',
+                            data: completedData,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Revenue (₱)',
+                            data: revenueData,
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.dataset.yAxisID === 'y1') {
+                                        label += '₱' + context.parsed.y.toLocaleString();
+                                    } else {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Appointments',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue (₱)',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        }
+                    }
+                }
+            });
+            
+            console.log('Chart created successfully!');
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            showError('Error loading chart data: ' + error.message);
+        });
+}
+
+// Toggle custom date inputs based on date range selection
+function toggleCustomDates() {
+    const dateRangeSelect = document.querySelector('select[name="date_range"]');
+    const customDateStart = document.getElementById('customDateStart');
+    const customDateEnd = document.getElementById('customDateEnd');
+    
+    if (dateRangeSelect && customDateStart && customDateEnd) {
+        if (dateRangeSelect.value === 'custom') {
+            customDateStart.style.display = 'block';
+            customDateEnd.style.display = 'block';
+        } else {
+            customDateStart.style.display = 'none';
+            customDateEnd.style.display = 'none';
+        }
+    }
+}
+</script>
+{% endblock %}

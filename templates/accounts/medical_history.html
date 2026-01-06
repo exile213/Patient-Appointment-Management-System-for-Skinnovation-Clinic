@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Medical History - Skinovation Beauty Clinic{% endblock %}
+
+{% block extra_css %}
+<style>
+    .medical-history-container {
+        padding: 2rem 0;
+    }
+    
+    .upload-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .history-list-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+    
+    .document-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .document-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container medical-history-container">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-file-medical me-2"></i>Medical History & Documents
+            </h2>
+            
+            <!-- Upload Form -->
+            <div class="upload-card">
+                <h4 class="mb-3">
+                    <i class="fas fa-upload me-2"></i>Upload Medical Document
+                </h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="document_type" class="form-label">Document Type</label>
+                            <select class="form-select" id="document_type" name="document_type" required>
+                                <option value="">Select type...</option>
+                                <option value="medical_history">Medical History</option>
+                                <option value="prescription">Prescription</option>
+                                <option value="diagnosis">Diagnosis</option>
+                                <option value="lab_result">Lab Result</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="title" class="form-label">Title/Description</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="e.g., Annual Checkup 2024" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="file" class="form-label">Upload File</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                            <small class="form-text text-muted">Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max 10MB)</small>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes about this document..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Upload Document
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Documents List -->
+            <div class="history-list-card">
+                <h4 class="mb-3">
+                    <i class="fas fa-list me-2"></i>Uploaded Documents
+                </h4>
+                
+                {% if medical_history_list %}
+                    {% for history in medical_history_list %}
+                    <div class="document-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5>
+                                    <i class="fas fa-file-{% if history.document_type == 'prescription' %}prescription{% elif history.document_type == 'diagnosis' %}diagnoses{% elif history.document_type == 'lab_result' %}vial{% else %}medical{% endif %} me-2"></i>
+                                    {{ history.title }}
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    <strong>Type:</strong> {{ history.get_document_type_display }}
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <strong>Uploaded:</strong> {{ history.uploaded_at|date:"M d, Y g:i A" }}
+                                </p>
+                                {% if history.notes %}
+                                <p class="mb-2">{{ history.notes }}</p>
+                                {% endif %}
+                                {% if history.file %}
+                                <a href="{{ history.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>View/Download
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <form method="post" action="{% url 'accounts:delete_medical_history' history.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No medical documents uploaded yet</h5>
+                        <p class="text-muted">Upload your medical history, prescriptions, or diagnoses using the form above.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,111 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Manage Service Images - Owner Panel{% endblock %}
+
+{% block content %}
+<!-- Upload Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-upload me-2"></i>
+                Upload New Image
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="service_id" class="form-label">Select Service</label>
+                            <select class="form-select" id="service_id" name="service_id" required>
+                                <option value="">Choose a service...</option>
+                                {% for service in services %}
+                                    <option value="{{ service.id }}">{{ service.service_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image File</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="alt_text" class="form-label">Alt Text (Optional)</label>
+                            <input type="text" class="form-control" id="alt_text" name="alt_text" placeholder="Describe the image">
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="is_primary" name="is_primary">
+                            <label class="form-check-label" for="is_primary">
+                                Set as Primary Image
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>
+                                Upload Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Services with Images -->
+    <div class="row g-3">
+        {% for service in services %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">{{ service.service_name }}</h6>
+                    <span class="badge bg-info">{{ service.images.count }} image{{ service.images.count|pluralize }}</span>
+                </div>
+                <div class="card-body">
+                    {% if service.images.exists %}
+                        <div class="row g-2">
+                            {% for image in service.images.all %}
+                            <div class="col-6">
+                                <div class="position-relative">
+                                    <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.alt_text|default:service.service_name }}" style="height: 100px; object-fit: cover; width: 100%;">
+                                    {% if image.is_primary %}
+                                        <span class="position-absolute top-0 start-0 badge bg-success">Primary</span>
+                                    {% endif %}
+                                    <div class="position-absolute top-0 end-0">
+                                        <div class="btn-group-vertical btn-group-sm">
+                                            {% if not image.is_primary %}
+                                                <a href="{% url 'owner:set_primary_service_image' image.id %}" class="btn btn-outline-success btn-sm" title="Set as Primary">
+                                                    <i class="fas fa-star"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'owner:delete_service_image' image.id %}" class="btn btn-outline-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this image?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-image fa-2x mb-2"></i>
+                            <p class="mb-0">No images uploaded</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

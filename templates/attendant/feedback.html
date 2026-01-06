@@ -1,0 +1,180 @@
+{% extends 'attendant/base.html' %}
+{% load static %}
+
+{% block title %}My Feedback{% endblock %}
+
+{% block page_title %}Patient Feedback for My Services{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>
+        <i class="fas fa-star me-2"></i>Patient Feedback
+    </h3>
+    <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-comments me-2"></i>Feedback from Patients
+        </h5>
+    </div>
+    <div class="card-body">
+        <!-- Filter Form -->
+        <div class="card mb-4" style="background: #f8f9fa;">
+            <div class="card-body">
+                <h6 class="mb-3"><i class="fas fa-filter me-2"></i>Filter Feedback</h6>
+                <form method="get" action="{% url 'attendant:feedback' %}" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <select class="form-select" id="rating" name="rating">
+                            <option value="">All Ratings</option>
+                            <option value="5" {% if rating_filter == '5' %}selected{% endif %}>5 Stars</option>
+                            <option value="4" {% if rating_filter == '4' %}selected{% endif %}>4 Stars</option>
+                            <option value="3" {% if rating_filter == '3' %}selected{% endif %}>3 Stars</option>
+                            <option value="2" {% if rating_filter == '2' %}selected{% endif %}>2 Stars</option>
+                            <option value="1" {% if rating_filter == '1' %}selected{% endif %}>1 Star</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="date_from" class="form-label">Date From</label>
+                        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ date_from }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="date_to" class="form-label">Date To</label>
+                        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ date_to }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Patient, Service, Comment..." value="{{ search_query }}">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Apply Filters
+                        </button>
+                        <a href="{% url 'attendant:feedback' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Clear Filters
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% if feedbacks %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Service/Package</th>
+                            <th>Attendant Rating</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for feedback in feedbacks %}
+                        <tr>
+                            <td>{{ feedback.created_at|date:"M d, Y g:i A" }}</td>
+                            <td>
+                                <strong>{{ feedback.patient.get_full_name }}</strong>
+                            </td>
+                            <td>{{ feedback.appointment.get_service_name }}</td>
+                            <td>
+                                {% if feedback.attendant_rating %}
+                                    <div class="d-flex align-items-center">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= feedback.attendant_rating %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="ms-2">({{ feedback.attendant_rating }}/5)</span>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">No rating</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ feedback.comment|default:"No comment"|truncatechars:100 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;&laquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;&raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="text-center mt-2 text-muted">
+                    <small>Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} ({{ page_obj.paginator.count }} total feedback entries)</small>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No feedback received yet</h5>
+                <p class="text-muted">Patient feedback will appear here once submitted.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

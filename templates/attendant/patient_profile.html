@@ -1,0 +1,73 @@
+{% extends 'attendant/base.html' %}
+{% load static %}
+
+{% block title %}Patient Profile{% endblock %}
+
+{% block page_title %}Patient Profile{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Patient Profile</h3>
+        <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ patient.full_name }}</p>
+                    <p><strong>Email:</strong> {{ patient.email }}</p>
+                    <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                    <p><strong>Gender:</strong> {{ patient.gender|title }}</p>
+                    <p><strong>Address:</strong> {{ patient.address }}</p>
+                    <p><strong>Birthday:</strong> {{ patient.birthday|date:"M d, Y" }}</p>
+                    <p><strong>Occupation:</strong> {{ patient.occupation }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Appointment History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                                    <td>{{ appointment.appointment_time|time:"g:i A" }}</td>
+                                    <td>{{ appointment.get_service_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ appointment.status|yesno:'success,warning,info,danger' }}">
+                                            {{ appointment.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No appointment history.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

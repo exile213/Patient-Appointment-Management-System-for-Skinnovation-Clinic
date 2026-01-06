@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Patient Login - Skinovation Beauty Clinic{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/animations.css' %}">
+<style>
+    :root {
+        --primary-color: #6f42c1;
+        --secondary-color: #8e44ad;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    body {
+        background: var(--gradient-primary);
+        background-attachment: fixed;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+        max-width: 450px;
+        width: 100%;
+        animation: loginCardEnter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    .login-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        background-size: 200% 100%;
+        animation: gradientShift 3s ease infinite;
+    }
+
+    .card-header {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="cy" values="20;80;20" dur="8s" repeatCount="indefinite"/></circle><circle cx="80" cy="40" r="0.8" fill="%23ffffff" opacity="0.08"><animate attributeName="cy" values="40;10;40" dur="6s" repeatCount="indefinite"/></circle></svg>');
+        z-index: 0;
+    }
+
+    .card-header h3 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.8rem;
+        animation: fadeInDown 0.8s ease-out 0.3s both;
+    }
+
+    .card-header .patient-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        animation: bounce 2s infinite;
+    }
+
+    .card-body {
+        padding: 2.5rem;
+        position: relative;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        animation: slideInLeft 0.8s ease-out 0.5s both;
+    }
+
+    .input-group {
+        margin-bottom: 1.5rem;
+        animation: slideInRight 0.8s ease-out 0.6s both;
+    }
+
+    .input-group-text {
+        background: rgba(102, 126, 234, 0.1);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-right: none;
+        color: var(--primary-color);
+        border-radius: 15px 0 0 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control {
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-left: none;
+        border-radius: 0 15px 15px 0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: white;
+        transform: scale(1.02);
+    }
+
+    .form-control:focus + .input-group-text {
+        border-color: var(--primary-color);
+        background: rgba(102, 126, 234, 0.15);
+    }
+
+    .btn-primary {
+        background: var(--gradient-primary);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: scaleIn 0.8s ease-out 0.8s both;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: var(--gradient-primary);
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        animation: fadeInUp 0.8s ease-out 1s both;
+    }
+
+    .register-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .register-link a:hover {
+        color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .forgot-password-link a {
+        color: var(--primary-color);
+        font-weight: 500;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.8s ease-out 0.9s both;
+    }
+
+    .forgot-password-link a:hover {
+        color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .back-link {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .back-link:hover {
+        color: rgba(255, 255, 255, 0.8);
+        transform: translateX(-5px);
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <a href="{% url 'accounts:login_selection' %}" class="back-link">
+        <i class="fas fa-arrow-left me-2"></i>Back to Login Selection
+    </a>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card">
+                    <div class="card-header">
+                        <div class="patient-icon">
+                            <i class="fas fa-user-heart"></i>
+                        </div>
+                        <h3>Patient Login</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username"
+                                        maxlength="50" placeholder="Enter your username" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        maxlength="255" placeholder="Enter your password" required>
+                                    <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
+                                        <i id="toggleIcon" class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login as Patient
+                                </button>
+                            </div>
+
+                            <!-- Social login: Google -->
+                            <div class="text-center my-3">
+                                <a class="btn btn-outline-danger" href="{% provider_login_url 'google' %}">
+                                    <i class="fab fa-google me-2"></i> Sign in with Google
+                                </a>
+                            </div>
+
+                            <div class="forgot-password-link text-center mt-3">
+                                <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">
+                                    <i class="fas fa-key me-1"></i>Forgot Password?
+                                </a>
+                            </div>
+
+                            <div class="register-link">
+                                <p class="mb-0">New to our clinic? <a href="{% url 'accounts:register' %}">
+                                    <i class="fas fa-user-plus me-1"></i>Register here!</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById("password");
+        const toggleIcon = document.getElementById("toggleIcon");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.classList.remove("fas", "fa-eye");
+            toggleIcon.classList.add("fas", "fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            toggleIcon.classList.remove("fas", "fa-eye-slash");
+            toggleIcon.classList.add("fas", "fa-eye");
+        }
+    }
+
+    // Add form validation feedback
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            e.preventDefault();
+            alert('Please fill in all fields');
+            return;
+        }
+    });
+
+    // Add loading state to button
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
+        this.disabled = true;
+    });
+</script>
+{% endblock %}
+

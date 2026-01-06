@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Attendant Unavailable{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Attendant Unavailable
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>Important Notice</h5>
+                        <p class="mb-0">
+                            Your assigned attendant <strong>{{ appointment.attendant.first_name }} {{ appointment.attendant.last_name }}</strong> 
+                            is unavailable for your appointment on <strong>{{ appointment.appointment_date|date:"F d, Y" }}</strong> 
+                            at <strong>{{ appointment.appointment_time|time:"g:i A" }}</strong>.
+                        </p>
+                        {% if unavailability_request.reason %}
+                        <p class="mt-2 mb-0"><strong>Reason:</strong> {{ unavailability_request.reason }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3">Please choose one of the following options:</h5>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-user-friends fa-3x text-primary mb-3"></i>
+                                        <h6 class="card-title">Option 1</h6>
+                                        <p class="card-text small">Choose another available attendant for the same date and time</p>
+                                        <button type="submit" name="choice" value="choose_another" class="btn btn-primary btn-sm">
+                                            Choose Another Attendant
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100 border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-calendar-alt fa-3x text-warning mb-3"></i>
+                                        <h6 class="card-title">Option 2</h6>
+                                        <p class="card-text small">Reschedule your appointment with the same attendant</p>
+                                        <button type="submit" name="choice" value="reschedule_same" class="btn btn-warning btn-sm">
+                                            Reschedule Appointment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100 border-danger">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-times-circle fa-3x text-danger mb-3"></i>
+                                        <h6 class="card-title">Option 3</h6>
+                                        <p class="card-text small">Cancel this appointment</p>
+                                        <button type="submit" name="choice" value="cancel" class="btn btn-danger btn-sm">
+                                            Cancel Appointment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'appointments:my_appointments' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Appointments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

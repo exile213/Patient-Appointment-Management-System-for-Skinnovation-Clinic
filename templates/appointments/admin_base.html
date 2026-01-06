@@ -1,0 +1,1390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Staff Panel - Skinovation Beauty Clinic{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <style>
+        /* Global Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a32a3 0%, #732d91 100%);
+        }
+        
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #6f42c1 #f1f1f1;
+        }
+        
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #8e44ad;
+            --dark-color: #5a2d91;
+            --light-purple: #f8f9ff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(180deg, rgba(111, 66, 193, 0.95) 0%, rgba(90, 45, 145, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .admin-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.03"/><circle cx="10" cy="60" r="0.5" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            filter: blur(8px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .logo-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h4 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .admin-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notification-badge {
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+            animation: pulse 2s infinite;
+            position: relative;
+        }
+        
+        .notification-badge::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            filter: blur(4px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            margin: 0.35rem 0;
+        }
+
+        .nav-link {
+            color: white;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0 25px 25px 0;
+            margin-right: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-link.active::before {
+            opacity: 1;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-link span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Dropdown Styles */
+        .nav-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-arrow {
+            margin-left: auto;
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-dropdown.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 15px 15px 0;
+            margin: 0.25rem 0 0.25rem 1rem;
+        }
+        
+        .nav-dropdown.open .dropdown-menu {
+            max-height: 300px;
+        }
+        
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 0.75rem 1.25rem 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding-left: 2.25rem;
+        }
+        
+        .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 16px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            padding: 0;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            opacity: 0.3;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .main-content::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23ffffff" opacity="0.2"><animate attributeName="cy" values="20;80;20" dur="8s" repeatCount="indefinite"/></circle><circle cx="80" cy="40" r="1.5" fill="%23ffffff" opacity="0.15"><animate attributeName="cy" values="40;10;40" dur="6s" repeatCount="indefinite"/></circle><circle cx="60" cy="70" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="cy" values="70;30;70" dur="10s" repeatCount="indefinite"/></circle></svg>');
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .content-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: visible;
+            z-index: 50; /* keep header (and dropdown) above following rows */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .content-header .page-title {
+            margin: 0;
+            flex: 1;
+        }
+        
+        .content-header .notification-wrapper {
+            margin-left: auto;
+        }
+        
+        .content-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title i {
+            margin-right: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Statistics Cards */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 14px;
+            padding: 0.75rem;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.18s ease;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .stats-card:hover::before {
+            opacity: 1;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-card.purple {
+            background: linear-gradient(135deg, rgba(111, 66, 193, 0.9), rgba(142, 68, 173, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.orange {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.9), rgba(247, 147, 30, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.green {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.blue {
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.9), rgba(111, 66, 193, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.red {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(231, 76, 60, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.cyan {
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.9), rgba(32, 201, 151, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-card.yellow {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9));
+            color: white;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+
+        .stats-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            line-height: 1.2;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .card-title {
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-title i {
+            margin-right: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tables */
+        .table {
+            margin-bottom: 0;
+            background: transparent;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.6rem 0.75rem;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            position: relative;
+            font-size: 0.75rem;
+        }
+        
+        .table thead th::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            z-index: 0;
+        }
+        
+        .table thead th {
+            position: relative;
+            z-index: 1;
+        }
+
+        .table tbody td {
+            padding: 0.5rem 0.6rem;
+            vertical-align: middle;
+            border-top: 1px solid rgba(233, 236, 239, 0.45);
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.18s ease;
+            font-size: 0.8rem;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(248, 249, 250, 0.8);
+            transform: scale(1.01);
+        }
+        
+        .table tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+        
+        .status-badge:hover::before {
+            opacity: 1;
+        }
+        
+        .status-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, #d4edda, #a8e6cf);
+            color: #155724;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #d1ecf1, #74b9ff);
+            color: #0c5460;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #f8d7da, #fd79a8);
+            color: #721c24;
+        }
+
+        .status-ordered {
+            background: linear-gradient(135deg, #e2e3e5, #ddd6fe);
+            color: #383d41;
+        }
+
+        /* Type Badges */
+        .type-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .type-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+        
+        .type-badge:hover::before {
+            opacity: 1;
+        }
+        
+        .type-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .type-regular {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .type-package {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+        }
+
+        .type-product {
+            background: linear-gradient(135deg, var(--info-color), #74b9ff);
+            color: white;
+        }
+
+        /* Buttons */
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+        
+        .btn-action:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-confirm:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-complete {
+            background: linear-gradient(135deg, var(--info-color), #74b9ff);
+            color: white;
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+        }
+
+        .btn-complete:hover {
+            background: linear-gradient(135deg, #138496, #0f6674);
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, var(--danger-color), #e74c3c);
+            color: white;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-view:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        /* Background Bubbles */
+        .bubble-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s ease-in-out infinite;
+            backdrop-filter: blur(2px);
+        }
+
+        .bubble:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+        }
+
+        .bubble:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            left: 20%;
+            animation-delay: 2s;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.05));
+        }
+
+        .bubble:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            left: 35%;
+            animation-delay: 4s;
+            background: radial-gradient(circle, rgba(118, 75, 162, 0.2), rgba(118, 75, 162, 0.05));
+        }
+
+        .bubble:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            left: 50%;
+            animation-delay: 1s;
+            background: radial-gradient(circle, rgba(240, 147, 251, 0.2), rgba(240, 147, 251, 0.05));
+        }
+
+        .bubble:nth-child(5) {
+            width: 90px;
+            height: 90px;
+            left: 70%;
+            animation-delay: 3s;
+            background: radial-gradient(circle, rgba(245, 87, 108, 0.2), rgba(245, 87, 108, 0.05));
+        }
+
+        .bubble:nth-child(6) {
+            width: 70px;
+            height: 70px;
+            left: 85%;
+            animation-delay: 5s;
+            background: radial-gradient(circle, rgba(120, 219, 255, 0.2), rgba(120, 219, 255, 0.05));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-15px) rotate(270deg);
+            }
+        }
+
+        /* Staff UI compactness & contrast tweaks */
+        /* Reduce base font size so staff can see more content without zooming */
+        body {
+            font-size: 13px;
+        }
+        .main-content {
+            font-size: 0.9rem;
+        }
+        .table tbody td {
+            font-size: 0.86rem;
+            padding: 0.5rem 0.6rem;
+        }
+        /* Price badge: ensure high contrast on staff tables (light background, dark text) */
+        .price-badge {
+            background: rgba(255,255,255,0.95);
+            color: var(--dark-color);
+            padding: 0.18rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            display: inline-block;
+        }
+        /* Ensure table header and other large texts scale down reasonably */
+        .page-title { font-size: 1.45rem; }
+        .content-header { padding: 1rem; }
+        .card-header h5 { font-size: 0.95rem; }
+
+        /* Modal Fixes - Ensure modals appear above sidebar and are clickable */
+        .modal {
+            z-index: 1055 !important;
+        }
+        
+        .modal-backdrop {
+            z-index: 1050 !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            pointer-events: auto !important;
+        }
+        
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+        
+        .modal-dialog {
+            z-index: 1056 !important;
+            position: relative;
+            pointer-events: auto !important;
+        }
+        
+        .modal-content {
+            position: relative;
+            z-index: 1057 !important;
+            background-color: white !important;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            pointer-events: auto !important;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+            cursor: pointer;
+            pointer-events: auto !important;
+        }
+        
+        .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+        
+        .modal-title {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            pointer-events: auto !important;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+            pointer-events: auto !important;
+        }
+        
+        .modal-footer .btn {
+            cursor: pointer;
+            pointer-events: auto !important;
+        }
+        
+        /* Ensure modal is not blocking interactions */
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        /* Fix for modal backdrop click to close */
+        .modal-backdrop.fade.show {
+            opacity: 0.5;
+        }
+        
+        /* Django Admin Warning Modal Styles */
+        #djangoAdminWarningModal .modal-dialog {
+            max-width: 600px;
+        }
+        
+        #djangoAdminWarningModal .alert {
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        #djangoAdminWarningModal .alert-warning {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+        
+        #djangoAdminWarningModal .alert-danger {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(231, 76, 60, 0.1));
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        #djangoAdminWarningModal .alert-info {
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(32, 201, 151, 0.1));
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+        
+        #djangoAdminWarningModal .alert ul {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        #djangoAdminWarningModal .alert ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        #djangoAdminWarningModal .modal-footer .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #e74c3c);
+            border: none;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #djangoAdminWarningModal .modal-footer .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        #djangoAdminWarningModal .modal-footer .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #djangoAdminWarningModal .modal-footer .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Background Bubbles -->
+    <div class="bubble-bg">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="{% static 'img/ISCAP1-303-Skinovation-Clinic-COLORED-Logo.png' %}" alt="SKINOVATION Logo">
+                </div>
+                <div class="logo-text">
+                    <h4>SKINOVATION</h4>
+                    <p>Beauty Clinic</p>
+                </div>
+            </div>
+            <div class="admin-title">
+                Staff Panel
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_maintenance' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_maintenance' %}active{% endif %}">
+                    <i class="fas fa-wrench"></i>
+                    <span>Maintenance</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_appointments' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_appointments' %}active{% endif %}">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_cancellation_requests' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_cancellation_requests' %}active{% endif %}">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Reschedules and Cancellations</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_history_log' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_history_log' %}active{% endif %}">
+                    <i class="fas fa-history"></i>
+                    <span>History Log</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_patients' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_patients' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
+                    <span>Patients</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_notifications' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_notifications' %}active{% endif %}">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_sms_test' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_sms_test' %}active{% endif %}">
+                    <i class="fas fa-sms"></i>
+                    <span>SMS Testing</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_inventory' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_inventory' %}active{% endif %}">
+                    <i class="fas fa-boxes"></i>
+                    <span>Product Inventory</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_settings' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Attendant Schedules</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'appointments:admin_rooms' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_rooms' %}active{% endif %}">
+                    <i class="fas fa-door-open"></i>
+                    <span>Room Management</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#djangoAdminWarningModal">
+                    <i class="fas fa-tools"></i>
+                    <span>Django Admin</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Django Admin Warning Modal -->
+    <div class="modal fade" id="djangoAdminWarningModal" tabindex="-1" aria-labelledby="djangoAdminWarningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="djangoAdminWarningModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Critical System Access Warning
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
+                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <strong>Warning:</strong> You are about to access the Django Admin Panel.
+                        </div>
+                    </div>
+                    <div class="alert alert-danger d-flex align-items-start mb-3" role="alert">
+                        <i class="fas fa-shield-alt fa-2x me-3 mt-1"></i>
+                        <div>
+                            <strong>Critical System Configuration Area</strong>
+                            <p class="mb-0 mt-2">The Django Admin Panel provides full access to system configuration and data management. Changes made here can affect:</p>
+                            <ul class="mt-2 mb-0">
+                                <li>System-wide settings and configurations</li>
+                                <li>User accounts and permissions</li>
+                                <li>Database records and relationships</li>
+                                <li>Application functionality and behavior</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="alert alert-info d-flex align-items-start" role="alert">
+                        <i class="fas fa-info-circle fa-2x me-3 mt-1"></i>
+                        <div>
+                            <strong>Please Proceed with Caution</strong>
+                            <p class="mb-0 mt-2">Only authorized personnel should access this area. Ensure you understand the implications of any changes before proceeding.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <a href="/admin/" target="_blank" class="btn btn-danger">
+                        <i class="fas fa-external-link-alt me-2"></i>Proceed to Django Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <!-- Enhanced Smooth Scrolling Script -->
+    <script>
+        // Enhanced Smooth Scrolling with Better Control
+        (function() {
+            if (!document.documentElement.style.scrollBehavior) {
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }
+            
+            const originalScrollTo = window.scrollTo;
+            window.scrollTo = function(options) {
+                if (typeof options === 'object' && options.behavior !== 'auto') {
+                    originalScrollTo.call(this, {
+                        ...options,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    originalScrollTo.apply(this, arguments);
+                }
+            };
+            
+            let lastScrollTime = 0;
+            const scrollDelay = 16;
+            
+            window.addEventListener('wheel', function(e) {
+                const now = Date.now();
+                if (now - lastScrollTime < scrollDelay) {
+                    return;
+                }
+                lastScrollTime = now;
+            }, { passive: true });
+        })();
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Dropdown toggle function
+        function toggleDropdown(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const navItem = event.currentTarget.closest('.nav-dropdown');
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(item => {
+                if (item !== navItem) {
+                    item.classList.remove('open');
+                }
+            });
+            
+            // Toggle current dropdown
+            navItem.classList.toggle('open');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(item => {
+                    item.classList.remove('open');
+                });
+            }
+        });
+        
+        // Load notifications in dropdown for admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationDropdown = document.getElementById('adminNotificationDropdown');
+            const notificationsList = document.getElementById('adminNotificationsList');
+            const notificationCount = document.getElementById('adminNotificationCount');
+            
+            if (notificationDropdown && notificationsList) {
+                notificationDropdown.addEventListener('show.bs.dropdown', function() {
+                    notificationsList.innerHTML = '<div class="text-center p-3 text-muted"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                    // For now, show link to notifications page - can be enhanced with API endpoint
+                    setTimeout(() => {
+                        notificationsList.innerHTML = '<div class="text-center p-3"><a href="{% url "appointments:admin_notifications" %}" class="btn btn-sm btn-primary">View All Notifications</a></div>';
+                    }, 500);
+                });
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

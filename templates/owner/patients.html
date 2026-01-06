@@ -1,0 +1,214 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Owner - Patients{% endblock %}
+
+{% block page_title %}Patients{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-users"></i>
+            Patients
+        </h1>
+        <p class="text-muted mb-0" style="margin-top: 0.5rem;">Manage and view all registered patients</p>
+    </div>
+</div>
+
+<!-- Patients Table -->
+<div class="content-card">
+    <h3 class="card-title">
+        <i class="fas fa-list"></i>All Patients
+    </h3>
+        {% if patient_analytics %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user me-2"></i>Name</th>
+                            <th><i class="fas fa-envelope me-2"></i>Email</th>
+                            <th><i class="fas fa-phone me-2"></i>Phone</th>
+                            <th><i class="fas fa-venus-mars me-2"></i>Gender</th>
+                            <th><i class="fas fa-map-marker-alt me-2"></i>Address</th>
+                            <th><i class="fas fa-calendar-plus me-2"></i>Created</th>
+                            <th><i class="fas fa-cog me-2"></i>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patient_analytics %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-3">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <strong>{{ patient.patient.full_name }}</strong>
+                                </div>
+                            </td>
+                            <td>{{ patient.patient.email|default:"Not provided" }}</td>
+                            <td>{{ patient.patient.phone|default:"Not provided" }}</td>
+                            <td>
+                                <span class="badge bg-{% if patient.patient.gender == 'M' %}primary{% else %}info{% endif %}">
+                                    {{ patient.patient.gender|title }}
+                                </span>
+                            </td>
+                            <td>{{ patient.patient.address|truncatechars:30|default:"Not provided" }}</td>
+                            <td>{{ patient.patient.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#patientModal{{ patient.patient.id }}" title="View Patient Details">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="Patients pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;&laquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;&raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div class="text-center mt-2 text-muted small">
+                        <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+                    </div>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No patients found in the system.
+            </div>
+        {% endif %}
+
+<!-- Patient Detail Modals -->
+{% if patient_analytics %}
+{% for patient in patient_analytics %}
+<div class="modal fade" id="patientModal{{ patient.patient.id }}" tabindex="-1" aria-labelledby="patientModalLabel{{ patient.patient.id }}" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientModalLabel{{ patient.patient.id }}">
+                    <i class="fas fa-user me-2"></i>Patient Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Personal Information</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="avatar-circle me-3" style="width: 60px; height: 60px; font-size: 24px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0"><strong>{{ patient.patient.full_name }}</strong></p>
+                                <p class="text-muted mb-0 small">@{{ patient.patient.username }}</p>
+                            </div>
+                        </div>
+                        <p><strong>Email:</strong> {{ patient.patient.email|default:"Not provided" }}</p>
+                        <p><strong>Phone:</strong> {{ patient.patient.phone|default:"Not provided" }}</p>
+                        <p><strong>Gender:</strong> 
+                            <span class="badge bg-{% if patient.patient.gender == 'M' %}primary{% else %}info{% endif %}">
+                                {{ patient.patient.gender|title|default:"Not provided" }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Patient Statistics</h6>
+                        <p><strong>Address:</strong> {{ patient.patient.address|default:"Not provided" }}</p>
+                        <p><strong>Member Since:</strong> {{ patient.patient.created_at|date:"M d, Y" }}</p>
+                        <p><strong>Total Appointments:</strong> {{ patient.total_appointments }}</p>
+                        <p><strong>Completed:</strong> {{ patient.completed_appointments }}</p>
+                        <p><strong>Cancelled:</strong> {{ patient.cancelled_appointments }}</p>
+                        {% if patient.last_visit %}
+                        <p><strong>Last Visit:</strong> {{ patient.last_visit.appointment_date|date:"M d, Y" }}</p>
+                        {% else %}
+                        <p><strong>Last Visit:</strong> <span class="text-muted">Never</span></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{% url 'owner:view_patient' patient.patient.id %}" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt me-2"></i>View Full Details
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+</style>
+{% endblock %}

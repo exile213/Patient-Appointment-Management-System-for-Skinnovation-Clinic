@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Appointment - Skinovation Beauty Clinic{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #f8f5ff;
+    }
+
+    .card {
+        border: 1px solid rgba(111, 66, 193, 0.1);
+        background-color: white;
+    }
+
+    .card-header {
+        background-color: #6f42c1 !important;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+    }
+
+    .btn-primary:hover {
+        background-color: #5a32a3;
+        border-color: #5a32a3;
+    }
+
+    .btn-outline-secondary {
+        color: #6f42c1;
+        border-color: #6f42c1;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: white;
+    }
+
+    .service-details h4 {
+        color: #6f42c1;
+    }
+
+    .service-details .fw-bold {
+        color: #6f42c1;
+    }
+
+    .form-label {
+        color: #6f42c1;
+        font-weight: 500;
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+        border-color: #6f42c1;
+        box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+    }
+
+    .alert-info {
+        background-color: #f0e6ff;
+        border-color: #6f42c1;
+        color: #6f42c1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Book Appointment</h3>
+                </div>
+                <div class="card-body">
+                    {% if service %}
+                        <div class="service-details mb-4">
+                            <h4>{{ service.service_name }}</h4>
+                            <p>{{ service.description }}</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Price: ₱{{ service.price|floatformat:2 }}</span>
+                                <span>Duration: {{ service.duration }} minutes</span>
+                            </div>
+                        </div>
+                    {% elif product %}
+                        <div class="service-details mb-4">
+                            <h4>{{ product.product_name }}</h4>
+                            <p>{{ product.description }}</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Price: ₱{{ product.price|floatformat:2 }}</span>
+                                <span>Stock: {{ product.stock }} units</span>
+                            </div>
+                        </div>
+                    {% elif package %}
+                        <div class="service-details mb-4">
+                            <h4>{{ package.package_name }}</h4>
+                            <p>{{ package.description }}</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Price: ₱{{ package.price|floatformat:2 }}</span>
+                                <span>Sessions: {{ package.sessions }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="attendant_id" class="form-label">Select Attendant</label>
+                            <select class="form-select" id="attendant_id" name="attendant_id" required>
+                                <option value="">Choose an attendant</option>
+                                {% for attendant in attendants %}
+                                    <option value="{{ attendant.id }}">{{ attendant.first_name }} {{ attendant.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointment_date" class="form-label">Select Date</label>
+                            <input type="date" class="form-control" id="appointment_date" name="appointment_date"
+                                min="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointment_time" class="form-label">Select Time</label>
+                            <select class="form-select" id="appointment_time" name="appointment_time" required>
+                                <option value="">Choose a time slot</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Book Appointment</button>
+                            <a href="{% url 'services:list' %}" class="btn btn-outline-secondary">Back to Services</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set max date to 30 days from now
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('appointment_date');
+        const today = new Date();
+        const maxDate = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+        dateInput.max = maxDate.toISOString().split('T')[0];
+    });
+</script>
+{% endblock %}

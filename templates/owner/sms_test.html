@@ -1,0 +1,404 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}SMS Testing{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-2">
+            <i class="fas fa-sms me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+            SMS Testing
+        </h3>
+        <p class="text-muted mb-0">Test SMS notifications using SkySMS API</p>
+    </div>
+    
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-paper-plane me-2"></i>Send Test SMS
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="smsForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">
+                            <i class="fas fa-phone me-2"></i>Phone Number
+                        </label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" 
+                               placeholder="09123456789" maxlength="11" pattern="09[0-9]{9}" required>
+                        <div class="form-text">Enter 11-digit Philippine phone number starting with 09 (e.g., 09123456789)</div>
+                        <div id="phoneError" class="text-danger mt-1" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment me-2"></i>Message
+                        </label>
+                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                  placeholder="Enter your test message here..." required></textarea>
+                        <div class="form-text">Maximum 160 characters per SMS</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Send SMS
+                    </button>
+                </form>
+                
+                <div id="smsResult" class="mt-3" style="display: none;">
+                    <div class="alert" role="alert">
+                        <span id="resultMessage"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SMS API Info moved under Send Test SMS -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>SMS API Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2"><strong>Provider:</strong> SkySMS API</p>
+                <p class="mb-2"><strong>Limit:</strong> 160 characters per SMS</p>
+                <p class="mb-2"><strong>Sender ID:</strong> BEAUTY</p>
+                <p class="mb-0"><strong>Status:</strong> <span id="apiStatus" class="badge bg-success">Active</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Recent Patients
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_patients %}
+                    <div class="p-3 border-bottom">
+                        <p class="text-muted mb-0">Click on a patient to use their phone number:</p>
+                    </div>
+                    <div class="patients-list" style="max-height: 200px; overflow-y: auto;">
+                        {% for patient in recent_patients %}
+                            <div class="patient-item p-3 border-bottom cursor-pointer" 
+                                 onclick="usePatientPhone('{{ patient.phone }}', '{{ patient.full_name }}')"
+                                 style="cursor: pointer; transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center">
+                                    <div class="patient-avatar me-3">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ patient.full_name }}</strong><br>
+                                        <small class="text-muted">{{ patient.phone }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-3">
+                        <p class="text-muted">No patients with phone numbers found.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- SMS History -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>SMS History
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if sms_history %}
+                    <div class="p-3 border-bottom">
+                        <p class="text-muted mb-0">Recent SMS messages sent:</p>
+                    </div>
+                    <div class="sms-history-list" style="max-height: 300px; overflow-y: auto;">
+                        {% for sms in sms_history %}
+                            <div class="sms-history-item p-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="sms-status-icon me-2">
+                                            {% if sms.status == 'sent' %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            {% elif sms.status == 'failed' %}
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            {% else %}
+                                                <i class="fas fa-clock text-warning"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong class="text-dark">{{ sms.phone_number }}</strong>
+                                            <span class="badge badge-status ms-2 {% if sms.status == 'sent' %}bg-success{% elif sms.status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
+                                                {{ sms.status|title }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ sms.time_ago }}</small>
+                                </div>
+                                <div class="sms-message">
+                                    <p class="mb-1 text-dark">{{ sms.message|truncatechars:80 }}</p>
+                                    <small class="text-muted">{{ sms.formatted_sent_at }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-3 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-history text-muted" style="font-size: 2rem; opacity: 0.3;"></i>
+                        </div>
+                        <p class="text-muted">No SMS history found.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.patient-item:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    border-color: var(--primary-color) !important;
+    transform: translateY(-2px);
+}
+
+.patient-avatar {
+    width: 35px;
+    height: 35px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Scrollable patients list styling */
+.patients-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.1);
+}
+
+.patients-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.patients-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.patients-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.patients-list::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Enhanced patient item styling */
+.patient-item {
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.patient-item:hover {
+    border-left-color: var(--primary-color);
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+.patient-item:last-child {
+    border-bottom: none !important;
+}
+
+/* SMS History Styling */
+.sms-history-item {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sms-history-item:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: translateX(5px);
+}
+
+.sms-status-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.sms-message {
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    border-left: 3px solid #e5e7eb;
+}
+
+.sms-history-item:hover .sms-message {
+    background: rgba(102, 126, 234, 0.05);
+    border-left-color: #667eea;
+}
+
+.sms-history-list {
+    scrollbar-width: thin;
+    scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+}
+
+.sms-history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sms-history-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.sms-history-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 3px;
+}
+
+.sms-history-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+</style>
+
+<script>
+// Phone number validation
+function validatePhoneNumber(phone) {
+    const phoneRegex = /^09[0-9]{9}$/;
+    return phoneRegex.test(phone);
+}
+
+// Format phone number input (numbers only)
+document.getElementById('phone_number').addEventListener('input', function(e) {
+    // Remove any non-digit characters
+    let value = e.target.value.replace(/\D/g, '');
+    
+    // Limit to 11 digits
+    if (value.length > 11) {
+        value = value.substring(0, 11);
+    }
+    
+    // Update the input value
+    e.target.value = value;
+    
+    // Validate and show error
+    const phoneError = document.getElementById('phoneError');
+    if (value.length > 0 && !validatePhoneNumber(value)) {
+        phoneError.textContent = 'Please enter a valid 11-digit Philippine phone number starting with 09';
+        phoneError.style.display = 'block';
+        e.target.classList.add('is-invalid');
+    } else {
+        phoneError.style.display = 'none';
+        e.target.classList.remove('is-invalid');
+    }
+});
+
+// Prevent non-numeric input
+document.getElementById('phone_number').addEventListener('keypress', function(e) {
+    // Allow backspace, delete, tab, escape, enter
+    if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+        // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        (e.keyCode === 65 && e.ctrlKey === true) ||
+        (e.keyCode === 67 && e.ctrlKey === true) ||
+        (e.keyCode === 86 && e.ctrlKey === true) ||
+        (e.keyCode === 88 && e.ctrlKey === true)) {
+        return;
+    }
+    // Ensure that it is a number and stop the keypress
+    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+        e.preventDefault();
+    }
+});
+
+document.getElementById('smsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const phoneNumber = document.getElementById('phone_number').value;
+    const message = document.getElementById('message').value;
+    const resultDiv = document.getElementById('smsResult');
+    const resultMessage = document.getElementById('resultMessage');
+    
+    // Validate phone number
+    if (!validatePhoneNumber(phoneNumber)) {
+        const phoneError = document.getElementById('phoneError');
+        phoneError.textContent = 'Please enter a valid 11-digit Philippine phone number starting with 09';
+        phoneError.style.display = 'block';
+        document.getElementById('phone_number').classList.add('is-invalid');
+        return;
+    }
+    
+    // Show loading state
+    resultDiv.style.display = 'block';
+    resultDiv.querySelector('.alert').className = 'alert alert-info';
+    resultMessage.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending SMS...';
+    
+    // Send AJAX request
+    fetch('{% url "owner:send_test_sms" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: `phone_number=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resultDiv.querySelector('.alert').className = 'alert alert-success';
+            resultMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>' + data.message;
+        } else {
+            resultDiv.querySelector('.alert').className = 'alert alert-danger';
+            resultMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + data.message;
+        }
+    })
+    .catch(error => {
+        resultDiv.querySelector('.alert').className = 'alert alert-danger';
+        resultMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Error: ' + error.message;
+    });
+});
+
+function usePatientPhone(phoneNumber, patientName) {
+    // Format the phone number to 11 digits if needed
+    let formattedPhone = phoneNumber.replace(/\D/g, '');
+    if (formattedPhone.length === 10 && formattedPhone.startsWith('9')) {
+        formattedPhone = '0' + formattedPhone;
+    }
+    
+    document.getElementById('phone_number').value = formattedPhone;
+    document.getElementById('message').value = `Hi ${patientName}! This is a test message from Beauty Clinic.`;
+    
+    // Trigger validation
+    document.getElementById('phone_number').dispatchEvent(new Event('input'));
+}
+</script>
+{% endblock %}

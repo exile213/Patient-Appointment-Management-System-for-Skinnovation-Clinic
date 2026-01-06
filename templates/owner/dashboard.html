@@ -1,0 +1,1374 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Owner Dashboard - Analytics{% endblock %}
+
+{% block page_title %}Owner Dashboard{% endblock %}
+
+{% block extra_css %}
+<!-- Custom Analytics CSS (updated for better card-based layout like attendant interface) -->
+<style>
+    * { box-sizing: border-box; }
+    .page-container { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 1.5rem 0; }
+    .analytics-header-title { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 2.25rem; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2); }
+    @keyframes slideDown { from { opacity:0; transform: translateY(-20px);} to { opacity:1; transform: translateY(0);} }
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(20px);} to { opacity:1; transform: translateY(0);} }
+    @keyframes scaleIn { from { opacity:0; transform: scale(0.95);} to { opacity:1; transform: scale(1);} }
+    
+    /* Updated analytics card with proper Bootstrap-like styling */
+    .analytics-card { 
+        background: white; 
+        border-radius: 15px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+        overflow: hidden; 
+        transition: all 0.3s ease; 
+        animation: fadeInUp 0.5s ease-out; 
+        margin-bottom: 1.5rem;
+    }
+    .analytics-card:nth-child(1){animation-delay:0.1s;} 
+    .analytics-card:nth-child(2){animation-delay:0.15s;} 
+    .analytics-card:nth-child(3){animation-delay:0.2s;} 
+    .analytics-card:nth-child(4){animation-delay:0.25s;}
+    .analytics-card:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 10px 30px rgba(102,126,234,0.15);
+    }    
+    .analytics-header { 
+        background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
+        color: white; 
+        padding: 1rem 1.5rem; 
+        font-size: 1rem; 
+        font-weight:600; 
+    }
+    .analytics-body { 
+        padding: 1.5rem; 
+        background: white;
+    }
+    .metric-card { 
+        background: linear-gradient(135deg,#f8f9ff 0%,#e8e3ff 100%); 
+        border-radius:10px; 
+        padding:1.25rem 1.5rem; 
+        text-align:center; 
+        border-left:4px solid #667eea; 
+        height:100%; 
+        min-height:130px;
+        display:flex; 
+        flex-direction:column; 
+        justify-content:center; 
+        align-items:center; 
+        transition: all 0.3s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102,126,234,0.15);
+    }
+    .metric-value { 
+        font-size:clamp(1.6rem, 2.2vw, 2.4rem); 
+        font-weight:700; 
+        color:#667eea; 
+        margin-bottom:0.5rem; 
+    }
+    .metric-label { 
+        color:#6c757d; 
+        font-size:0.9rem; 
+        text-transform:uppercase; 
+        font-weight:600; 
+        letter-spacing:0.3px;
+    }
+    .chart-wrapper { 
+        background:white; 
+        border-radius:10px; 
+        padding:1rem; 
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    } 
+    .chart-container { 
+        position:relative; 
+        height:280px; 
+        margin:0; 
+    }
+    .table { 
+        font-size:0.9rem; 
+        margin-bottom:0; 
+    }
+    .table thead th { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        color: white; 
+        border:none; 
+        padding:0.9rem 1rem; 
+        font-size:0.85rem; 
+        text-transform:uppercase; 
+    }
+    .table tbody td { 
+        padding:0.8rem 1rem; 
+        border-bottom:1px solid #f0f0f0; 
+        vertical-align:middle; 
+    }
+    .badge { 
+        padding:0.5rem 0.9rem; 
+        font-size:0.75rem; 
+        border-radius:6px; 
+    }
+    .kpi-grid { 
+        display:grid; 
+        grid-template-columns: repeat(4, minmax(160px,1fr)); 
+        gap:1.25rem; 
+        margin-bottom:0; 
+    }
+    .status-card{
+        background: linear-gradient(135deg,#f8f9ff 0%,#eef2ff 100%);
+        border: 1px solid #e9ecef;
+        border-radius:12px;
+        padding:1rem;
+        height:100%;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .status-title{
+        color:#667eea; 
+        font-weight:700; 
+        font-size:0.95rem; 
+        margin:0 0 .75rem 0; 
+        display:flex; 
+        align-items:center; 
+        gap:.5rem;
+    }
+    .status-grid{ display:grid; grid-template-columns:1fr; gap:.5rem; }
+    .status-row{ background:#ffffff; border-radius:10px; padding:.5rem .75rem; display:flex; align-items:center; justify-content:space-between; border:1px solid #f1f3f5; }
+    .status-left{ display:flex; align-items:center; gap:.5rem; color:#6c757d; font-weight:600; }
+    .status-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .status-count{ font-weight:700; }
+    .two-column { 
+        display:grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap:1.5rem; 
+        margin-bottom:1.5rem; 
+    }
+    @media (max-width:1200px){ 
+        .two-column { grid-template-columns:1fr; } 
+        .chart-container { height:240px; } 
+        .kpi-grid{ grid-template-columns: repeat(2, minmax(160px,1fr)); }
+    }
+    @media (max-width:768px){ 
+        .page-container{ padding:1rem 0; } 
+        .analytics-body{ padding:1.5rem 1rem; } 
+        .kpi-grid{ grid-template-columns: repeat(2,1fr); gap:1rem; } 
+        .chart-container{ height:220px; } 
+        .table{ font-size:0.85rem; } 
+    }
+    
+    /* Tab Styling */
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    .nav-tabs .nav-link:hover {
+        color: #667eea;
+        border-color: transparent;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    .nav-tabs .nav-link.active {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        border-bottom: 3px solid #667eea;
+        font-weight: 700;
+    }
+    .tab-content {
+        animation: fadeIn 0.4s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="container-fluid">
+        <!-- Page Header -->
+            <div class="content-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-line"></i>
+                        Analytics Dashboard
+                    </h1>
+                    <p class="text-muted mb-0" style="margin-top: 0.5rem;">Real-time business analytics and performance metrics</p>
+                </div>
+            </div>
+
+
+
+        <!-- Tabbed Analytics Interface -->
+        <div class="analytics-card">
+            <!-- Business Analytics Header with Integrated Filters -->
+            <div class="analytics-header" style="padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div style="padding: 1rem 1.5rem;">
+                    <div class="row align-items-center" style="margin: 0;">
+                        <div class="col-md-4" style="padding: 0;">
+                            <h5 style="color: white; margin: 0; font-weight: 700; font-size: 1.1rem;">
+                                <i class="fas fa-chart-bar"></i> Business Analytics Dashboard
+                            </h5>
+                        </div>
+                        <div class="col-md-8" style="padding: 0; text-align: right;">
+                            <!-- Quick Preset Period Filter -->
+                            <div class="d-inline-block me-2">
+                                <label style="color: white; font-weight: 600; margin-right: 6px; font-size: 0.85rem;">📅 Period:</label>
+                                <form method="get" action="{% url 'owner:dashboard' %}" class="d-inline" id="timePeriodForm">
+                                    <select name="time_period" class="form-select form-select-sm d-inline-block" 
+                                            style="width: 140px; background-color: white; border: 2px solid #ffc107; font-size: 0.85rem;" 
+                                            onchange="document.getElementById('timePeriodForm').submit();">
+                                        <option value="this_month" {% if time_period == 'this_month' %}selected{% endif %}>This Month</option>
+                                        <option value="last_month" {% if time_period == 'last_month' %}selected{% endif %}>Last Month</option>
+                                        <option value="last_3_months" {% if time_period == 'last_3_months' %}selected{% endif %}>Last 3 Months</option>
+                                        <option value="last_6_months" {% if time_period == 'last_6_months' %}selected{% endif %}>Last 6 Months</option>
+                                        <option value="last_12_months" {% if time_period == 'last_12_months' %}selected{% endif %}>Last 12 Months</option>
+                                        <option value="year_to_date" {% if time_period == 'year_to_date' %}selected{% endif %}>Year-to-Date</option>
+                                        <option value="custom" {% if time_period == 'custom' %}selected{% endif %}>Custom Range</option>
+                                    </select>
+                                </form>
+                            </div>
+                            
+                            <!-- Custom Range Toggle Button -->
+                            <button class="btn btn-sm" id="toggleCustomRange" 
+                                    style="border: 2px solid white; color: white; font-weight: 600; background: rgba(255,255,255,0.2); font-size: 0.85rem;">
+                                <i class="fas fa-calendar-alt"></i> Custom
+                            </button>
+                            
+                            <!-- Clear Filter Button -->
+                            <a href="{% url 'owner:dashboard' %}" class="btn btn-sm" 
+                               style="border: 2px solid white; color: white; font-weight: 600; background: rgba(255,255,255,0.15); font-size: 0.85rem; margin-left: 0.25rem;">
+                                <i class="fas fa-undo"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Custom Date Range (Hidden by Default) -->
+                    <div id="customRangePanel" style="display: {% if time_period == 'custom' %}block{% else %}none{% endif %}; margin-top: 12px; padding-top: 12px; border-top: 2px solid rgba(255,255,255,0.3);">
+                        <form method="get" action="{% url 'owner:dashboard' %}" id="customDateForm">
+                            <input type="hidden" name="time_period" value="custom">
+                            <div class="row g-2 align-items-end" style="margin: 0;">
+                                <!-- From Label -->
+                                <div class="col-auto" style="display: flex; align-items: center; padding-top: 1.65rem;">
+                                    <span style="color: white; font-weight: 700; font-size: 0.85rem; margin-right: 0.5rem;">From:</span>
+                                </div>
+                                
+                                <!-- From Month -->
+                                <div class="col-auto">
+                                    <label style="color: white; font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;">Month</label>
+                                    <select name="from_month" class="form-select form-select-sm" 
+                                            style="width: 140px; background-color: white; font-size: 0.85rem;">
+                                        <option value="1" {% if from_month == 1 %}selected{% endif %}>January</option>
+                                        <option value="2" {% if from_month == 2 %}selected{% endif %}>February</option>
+                                        <option value="3" {% if from_month == 3 %}selected{% endif %}>March</option>
+                                        <option value="4" {% if from_month == 4 %}selected{% endif %}>April</option>
+                                        <option value="5" {% if from_month == 5 %}selected{% endif %}>May</option>
+                                        <option value="6" {% if from_month == 6 %}selected{% endif %}>June</option>
+                                        <option value="7" {% if from_month == 7 %}selected{% endif %}>July</option>
+                                        <option value="8" {% if from_month == 8 %}selected{% endif %}>August</option>
+                                        <option value="9" {% if from_month == 9 %}selected{% endif %}>September</option>
+                                        <option value="10" {% if from_month == 10 %}selected{% endif %}>October</option>
+                                        <option value="11" {% if from_month == 11 %}selected{% endif %}>November</option>
+                                        <option value="12" {% if from_month == 12 %}selected{% endif %}>December</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- From Year -->
+                                <div class="col-auto">
+                                    <label style="color: white; font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;">Year</label>
+                                    <select name="from_year" class="form-select form-select-sm" 
+                                            style="width: 100px; background-color: white; font-size: 0.85rem;">
+                                        <option value="2020" {% if from_year == 2020 %}selected{% endif %}>2020</option>
+                                        <option value="2021" {% if from_year == 2021 %}selected{% endif %}>2021</option>
+                                        <option value="2022" {% if from_year == 2022 %}selected{% endif %}>2022</option>
+                                        <option value="2023" {% if from_year == 2023 %}selected{% endif %}>2023</option>
+                                        <option value="2024" {% if from_year == 2024 %}selected{% endif %}>2024</option>
+                                        <option value="2025" {% if from_year == 2025 %}selected{% endif %}>2025</option>
+                                        <option value="2026" {% if from_year == 2026 %}selected{% endif %}>2026</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- To Label -->
+                                <div class="col-auto" style="display: flex; align-items: center; padding-top: 1.65rem; margin-left: 0.5rem;">
+                                    <span style="color: white; font-weight: 700; font-size: 0.85rem; margin-right: 0.5rem;">To:</span>
+                                </div>
+                                
+                                <!-- To Month -->
+                                <div class="col-auto">
+                                    <label style="color: white; font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;">Month</label>
+                                    <select name="to_month" class="form-select form-select-sm" 
+                                            style="width: 140px; background-color: white; font-size: 0.85rem;">
+                                        <option value="1" {% if to_month == 1 %}selected{% endif %}>January</option>
+                                        <option value="2" {% if to_month == 2 %}selected{% endif %}>February</option>
+                                        <option value="3" {% if to_month == 3 %}selected{% endif %}>March</option>
+                                        <option value="4" {% if to_month == 4 %}selected{% endif %}>April</option>
+                                        <option value="5" {% if to_month == 5 %}selected{% endif %}>May</option>
+                                        <option value="6" {% if to_month == 6 %}selected{% endif %}>June</option>
+                                        <option value="7" {% if to_month == 7 %}selected{% endif %}>July</option>
+                                        <option value="8" {% if to_month == 8 %}selected{% endif %}>August</option>
+                                        <option value="9" {% if to_month == 9 %}selected{% endif %}>September</option>
+                                        <option value="10" {% if to_month == 10 %}selected{% endif %}>October</option>
+                                        <option value="11" {% if to_month == 11 %}selected{% endif %}>November</option>
+                                        <option value="12" {% if to_month == 12 %}selected{% endif %}>December</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- To Year -->
+                                <div class="col-auto">
+                                    <label style="color: white; font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;">Year</label>
+                                    <select name="to_year" class="form-select form-select-sm" 
+                                            style="width: 100px; background-color: white; font-size: 0.85rem;">
+                                        <option value="2020" {% if to_year == 2020 %}selected{% endif %}>2020</option>
+                                        <option value="2021" {% if to_year == 2021 %}selected{% endif %}>2021</option>
+                                        <option value="2022" {% if to_year == 2022 %}selected{% endif %}>2022</option>
+                                        <option value="2023" {% if to_year == 2023 %}selected{% endif %}>2023</option>
+                                        <option value="2024" {% if to_year == 2024 %}selected{% endif %}>2024</option>
+                                        <option value="2025" {% if to_year == 2025 %}selected{% endif %}>2025</option>
+                                        <option value="2026" {% if to_year == 2026 %}selected{% endif %}>2026</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Apply Button -->
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-light btn-sm" style="font-weight: 600; font-size: 0.85rem;">
+                                        <i class="fas fa-check"></i> Apply
+                                    </button>
+                                </div>
+                                
+                                <!-- Clear Button -->
+                                <div class="col-auto">
+                                    <a href="{% url 'owner:dashboard' %}" class="btn btn-outline-light btn-sm" style="font-weight: 600; font-size: 0.85rem;">
+                                        <i class="fas fa-times"></i> Clear
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="analytics-body" style="padding: 0;">
+                <!-- Bootstrap Tabs Navigation -->
+                <ul class="nav nav-tabs" id="analyticsTab" role="tablist" style="padding: 1rem 1.5rem 0; border-bottom: 2px solid #e9ecef;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="descriptive-tab" data-bs-toggle="tab" data-bs-target="#descriptive" type="button" role="tab" aria-controls="descriptive" aria-selected="true" style="font-weight: 600; color: #667eea; border-color: #667eea;">
+                            <i class="fas fa-chart-line"></i> Descriptive Analytics
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="diagnostic-tab" data-bs-toggle="tab" data-bs-target="#diagnostic" type="button" role="tab" aria-controls="diagnostic" aria-selected="false" style="font-weight: 600;">
+                            <i class="fas fa-stethoscope"></i> Diagnostic Analytics
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="analyticsTabContent" style="padding: 1.5rem;">
+                    
+                    <!-- DESCRIPTIVE ANALYTICS TAB -->
+                    <div class="tab-pane fade show active" id="descriptive" role="tabpanel" aria-labelledby="descriptive-tab">
+                        
+                        <!-- Analytics Section 1: Appointment Trends -->
+                        <div class="mb-4">
+                            <h5 style="color: #667eea; margin-bottom: 0.3rem; font-weight: 700;">
+                                <i class="fas fa-chart-line"></i> Appointment Trends Over Time
+                            </h5>
+                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">Monthly breakdown of appointments, completions, and revenue</p>
+                            
+                            <!-- Graph -->
+                            <div class="chart-wrapper">
+                                <div id="lineChartContainer" style="width: 100%; max-width: 100%; height: 400px; min-height: 350px;"></div>
+                            </div>
+                            
+                            <!-- Related Table -->
+                            <div class="table-responsive mt-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Performance Metric</th>
+                                            <th>Value</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Total Appointments</strong></td>
+                                            <td><strong>{{ total_appointments_filtered|default:"0" }}</strong></td>
+                                            <td>
+                                                {% if total_appointments_filtered > 30 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif total_appointments_filtered > 10 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge" style="background-color: #fd7e14;">Low</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Completed Appointments</strong></td>
+                                            <td><strong>{{ completed_count|default:"0" }}</strong></td>
+                                            <td>
+                                                {% if analytics_insights.completion_rate >= 80 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif analytics_insights.completion_rate >= 60 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Poor</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Completion Rate</strong></td>
+                                            <td><strong>{{ analytics_insights.completion_rate|default:"0" }}%</strong></td>
+                                            <td>
+                                                {% if analytics_insights.completion_rate >= 80 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif analytics_insights.completion_rate >= 60 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Poor</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Revenue</strong></td>
+                                            <td><strong>₱{{ total_revenue_filtered|default:"0"|floatformat:0 }}</strong></td>
+                                            <td>
+                                                {% if analytics_insights.revenue_trend == 'high' %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif analytics_insights.revenue_trend == 'moderate' %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge" style="background-color: #fd7e14;">Low</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Avg Revenue/Appointment</strong></td>
+                                            <td><strong>₱{{ analytics_insights.avg_revenue_per_appointment|default:"0"|floatformat:2 }}</strong></td>
+                                            <td>
+                                                {% if analytics_insights.avg_revenue_per_appointment >= 1500 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif analytics_insights.avg_revenue_per_appointment >= 800 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge" style="background-color: #fd7e14;">Low</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Dynamic Insight Card -->
+                            <div class="alert {% if analytics_insights.performance_status == 'excellent' %}alert-success{% elif analytics_insights.performance_status == 'good' %}alert-info{% else %}alert-danger{% endif %}" style="background: {% if analytics_insights.performance_status == 'excellent' %}#e7f9f0{% elif analytics_insights.performance_status == 'good' %}#e7f3ff{% else %}#ffe7e7{% endif %}; border-left: 4px solid {% if analytics_insights.performance_status == 'excellent' %}#28a745{% elif analytics_insights.performance_status == 'good' %}#0d6efd{% else %}#dc3545{% endif %}; margin-top: 1rem;">
+                                <h6 style="color: {% if analytics_insights.performance_status == 'excellent' %}#28a745{% elif analytics_insights.performance_status == 'good' %}#0d6efd{% else %}#dc3545{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-{% if analytics_insights.performance_status == 'excellent' %}check-circle{% elif analytics_insights.performance_status == 'good' %}info-circle{% else %}exclamation-triangle{% endif %}"></i> Performance Analysis
+                                </h6>
+                                <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                                    <li><strong>{{ analytics_insights.performance_message }}</strong> - {{ analytics_insights.completion_rate }}% of appointments completed successfully</li>
+                                    <li><strong>{{ analytics_insights.revenue_message }}</strong> - averaging ₱{{ analytics_insights.avg_revenue_per_appointment|floatformat:2 }} per appointment</li>
+                                    <li>{% if analytics_insights.completion_rate >= 80 %}Excellent service delivery indicates strong team performance and customer satisfaction{% elif analytics_insights.completion_rate >= 60 %}Good performance but focus on reducing incomplete appointments{% else %}Low completion rate suggests operational or communication issues - investigate{% endif %}</li>
+                                    <li>{% if total_appointments_filtered > 50 %}Strong appointment volume shows healthy business demand and market fit{% elif total_appointments_filtered > 20 %}Moderate booking volume - consider increased marketing efforts{% else %}Low appointment count - review pricing and promotion strategy{% endif %}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr style="margin: 2rem 0; border-color: #e9ecef;">
+
+                        <!-- Analytics Section 2: Service Performance -->
+                        <div class="mb-4">
+                            <h5 style="color: #667eea; margin-bottom: 1rem; font-weight: 700;">
+                                <i class="fas fa-concierge-bell"></i> Top Performing Services
+                            </h5>
+                            
+                            <!-- Graph Placeholder (Bar Chart) -->
+                            <div class="chart-wrapper">
+                                <canvas id="serviceBarChart" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                            
+                            <!-- Related Table -->
+                            <div class="table-responsive mt-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Service Name</th>
+                                            <th>Total Bookings</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for service in popular_services|slice:":10" %}
+                                        <tr>
+                                            <td><span class="badge bg-primary">#{{ forloop.counter }}</span></td>
+                                            <td><strong>{{ service.service_name }}</strong></td>
+                                            <td>{{ service.booking_count }}</td>
+                                            <td>
+                                                {% if service.booking_count > 10 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif service.booking_count > 5 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge" style="background-color: #fd7e14;">Low</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No service data available</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Dynamic Service Insight Card -->
+                            <div class="alert {% if analytics_insights.service_diversity == 'high' %}alert-success{% elif analytics_insights.service_diversity == 'moderate' %}alert-warning{% else %}alert-danger{% endif %}" style="background: {% if analytics_insights.service_diversity == 'high' %}#e7f9f0{% elif analytics_insights.service_diversity == 'moderate' %}#fff3cd{% else %}#ffe7e7{% endif %}; border-left: 4px solid {% if analytics_insights.service_diversity == 'high' %}#28a745{% elif analytics_insights.service_diversity == 'moderate' %}#ffc107{% else %}#dc3545{% endif %}; margin-top: 1rem;">
+                                <h6 style="color: {% if analytics_insights.service_diversity == 'high' %}#28a745{% elif analytics_insights.service_diversity == 'moderate' %}#856404{% else %}#dc3545{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-chart-bar"></i> Service Portfolio Analysis
+                                </h6>
+                                <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                                    <li><strong>{{ analytics_insights.service_diversity_message }}</strong> {% if analytics_insights.service_concentration > 0 %}(Top service: {{ analytics_insights.service_concentration }}% of bookings){% endif %}</li>
+                                    <li>{% if popular_services %}Your top service is "{{ popular_services.0.service_name }}" with {{ popular_services.0.booking_count }} bookings{% else %}No service data available for analysis{% endif %}</li>
+                                    <li>{% if analytics_insights.service_concentration >= 40 %}Consider promoting other services to reduce dependency on one offering{% elif analytics_insights.service_concentration >= 25 %}Good balance - maintain diverse service promotion{% else %}Excellent service diversity spreads business risk effectively{% endif %}</li>
+                                    <li>{% if popular_services.count >= 5 %}Strong service variety gives customers multiple options{% else %}Limited service range - consider expanding offerings{% endif %}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- DIAGNOSTIC ANALYTICS TAB -->
+                    <div class="tab-pane fade" id="diagnostic" role="tabpanel" aria-labelledby="diagnostic-tab">
+                        
+                        <!-- Analytics Section 1: Service Quality Impact on Retention -->
+                        <div class="mb-4">
+                            <h5 style="color: #dc3545; margin-bottom: 0.3rem; font-weight: 700;">
+                                <i class="fas fa-star-half-alt"></i> Service Quality Impact on Retention
+                            </h5>
+                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">WHY do some services retain customers better than others?</p>
+                            
+                            <!-- Scatter Plot -->
+                            <div style="width: 100%; height: 280px; max-width: 500px; margin: 0 auto 2rem auto; display: block; overflow: hidden;">
+                                <canvas id="serviceQualityScatter"></canvas>
+                            </div>
+                            
+                            <!-- Service Quality Table -->
+                            <div class="table-responsive mt-3">
+                                <table class="table" id="serviceQualityTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Avg Rating</th>
+                                            <th>Retention Rate</th>
+                                            <th>Bookings</th>
+                                            <th>Insight</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceQualityTableBody">
+                                        {% if service_quality_data %}
+                                            {% for service in service_quality_data %}
+                                            <tr class="service-quality-row">
+                                                <td><strong>{{ service.service_name }}</strong></td>
+                                                <td>
+                                                    <span class="badge {% if service.avg_rating >= 4.5 %}bg-success{% elif service.avg_rating >= 4.0 %}bg-primary{% elif service.avg_rating >= 3.5 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                        {{ service.avg_rating }}/5 ⭐
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {% if service.retention_rate >= 60 %}bg-success{% elif service.retention_rate >= 40 %}bg-primary{% elif service.retention_rate >= 30 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                        {{ service.retention_rate }}%
+                                                    </span>
+                                                </td>
+                                                <td>{{ service.total_bookings }}</td>
+                                                <td>
+                                                    {% if 'Excellent' in service.insight %}
+                                                        <span style="color: #28a745;">{{ service.insight }}</span>
+                                                    {% elif 'Good' in service.insight %}
+                                                        <span style="color: #0dcaf0;">{{ service.insight }}</span>
+                                                    {% elif 'Critical' in service.insight %}
+                                                        <span style="color: #dc3545;">{{ service.insight }}</span>
+                                                    {% elif 'Warning' in service.insight %}
+                                                        <span style="color: #fd7e14;">{{ service.insight }}</span>
+                                                    {% else %}
+                                                        <span style="color: #6c757d;">{{ service.insight }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">Insufficient data - need at least 5 completed appointments with feedback per service</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Pagination Controls -->
+                                {% if service_quality_data %}
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Showing <span id="serviceQualityCurrentRange">1-5</span> of <span id="serviceQualityTotal">{{ service_quality_data|length }}</span></small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" id="serviceQualityPrevBtn" disabled>
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </button>
+                                        <span class="mx-2 text-muted">Page <span id="serviceQualityCurrentPage">1</span></span>
+                                        <button class="btn btn-sm btn-outline-secondary" id="serviceQualityNextBtn">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Dynamic Service Quality Insight Card -->
+                            <div class="alert {% if analytics_insights.service_quality_severity == 'critical' %}alert-danger{% elif analytics_insights.service_quality_severity == 'warning' %}alert-warning{% elif analytics_insights.service_quality_severity == 'good' %}alert-success{% else %}alert-info{% endif %}" style="background: {% if analytics_insights.service_quality_severity == 'critical' %}#ffe7e7{% elif analytics_insights.service_quality_severity == 'warning' %}#fff3cd{% elif analytics_insights.service_quality_severity == 'good' %}#e7f9f0{% else %}#e7f3ff{% endif %}; border-left: 4px solid {% if analytics_insights.service_quality_severity == 'critical' %}#dc3545{% elif analytics_insights.service_quality_severity == 'warning' %}#ffc107{% elif analytics_insights.service_quality_severity == 'good' %}#28a745{% else %}#0dcaf0{% endif %}; margin-top: 1rem;">
+                                <h6 style="color: {% if analytics_insights.service_quality_severity == 'critical' %}#dc3545{% elif analytics_insights.service_quality_severity == 'warning' %}#856404{% elif analytics_insights.service_quality_severity == 'good' %}#28a745{% else %}#0dcaf0{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-{% if analytics_insights.service_quality_severity == 'critical' %}exclamation-circle{% elif analytics_insights.service_quality_severity == 'warning' %}exclamation-triangle{% elif analytics_insights.service_quality_severity == 'good' %}check-circle{% else %}info-circle{% endif %}"></i> Service Quality Diagnosis
+                                </h6>
+                                <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                                    <li><strong>{{ analytics_insights.service_quality_message }}</strong></li>
+                                    <li><strong style="color: {% if analytics_insights.service_quality_severity == 'critical' %}#dc3545{% elif analytics_insights.service_quality_severity == 'warning' %}#856404{% elif analytics_insights.service_quality_severity == 'good' %}#28a745{% else %}#0dcaf0{% endif %};">Recommendation:</strong> {{ analytics_insights.service_quality_action }}</li>
+                                    <li>Services with high ratings (4.5+) and high retention (60%+) drive customer loyalty</li>
+                                    <li>Services with low ratings (<3.5) and low retention (<30%) indicate quality issues causing churn</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr style="margin: 2rem 0; border-color: #e9ecef;">
+
+                        <!-- Analytics Section 2: Patient Churn Pattern Analysis -->
+                        <div class="mb-4">
+                            <h5 style="color: #fd7e14; margin-bottom: 0.3rem; font-weight: 700;">
+                                <i class="fas fa-user-minus"></i> Patient Churn Pattern Analysis
+                            </h5>
+                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">When and why do customers stop returning?</p>
+                            
+                            <!-- Graph (Doughnut Chart) -->
+                            <div style="width: 100%; height: 280px; max-width: 500px; margin: 0 auto 2rem auto; display: block; overflow: hidden;">
+                                <canvas id="patientDoughnutChart"></canvas>
+                            </div>
+                            
+                            <!-- Related Table -->
+                            <div class="table-responsive mt-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Churn Pattern</th>
+                                            <th>Count</th>
+                                            <th>Likely Reason</th>
+                                            <th>Recommended Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="background: #ffe7e7;">
+                                            <td><strong>One-Time Customers</strong></td>
+                                            <td><span class="badge bg-danger">{% if churn_patterns %}{{ churn_patterns.one_time_customers }}{% else %}0{% endif %}</span></td>
+                                            <td>Poor first experience</td>
+                                            <td><span class="badge" style="background-color: #dc3545;">High Priority</span></td>
+                                        </tr>
+                                        <tr style="background: #fff3cd;">
+                                            <td><strong>Early Dropoff</strong></td>
+                                            <td><span class="badge" style="background-color: #fd7e14; color: #000;">{% if churn_patterns %}{{ churn_patterns.early_dropoff }}{% else %}0{% endif %}</span></td>
+                                            <td>Pricing or quality issue</td>
+                                            <td><span class="badge" style="background-color: #fd7e14;">Medium Priority</span></td>
+                                        </tr>
+                                        <tr style="background: #fff9e5;">
+                                            <td><strong>Lost Regulars</strong></td>
+                                            <td><span class="badge" style="background-color: #ffc107; color: #000;">{% if churn_patterns %}{{ churn_patterns.lost_regulars }}{% else %}0{% endif %}</span></td>
+                                            <td>Competition or life change</td>
+                                            <td><span class="badge" style="background-color: #ffc107; color: #000;">Re-engagement</span></td>
+                                        </tr>
+                                        <tr style="background: #e7f9f0;">
+                                            <td><strong>Active Regulars</strong></td>
+                                            <td><span class="badge bg-success">{% if churn_patterns %}{{ churn_patterns.active_regulars }}{% else %}0{% endif %}</span></td>
+                                            <td>High satisfaction</td>
+                                            <td><span class="badge bg-success">Maintain</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Dynamic Churn Insight Card -->
+                            <div class="alert {% if analytics_insights.churn_primary_segment == 'active_regulars' %}alert-success{% elif analytics_insights.churn_primary_segment == 'lost_regulars' %}alert-warning{% else %}alert-danger{% endif %}" style="background: {% if analytics_insights.churn_primary_segment == 'active_regulars' %}#e7f9f0{% elif analytics_insights.churn_primary_segment == 'lost_regulars' %}#fff3cd{% else %}#ffe7e7{% endif %}; border-left: 4px solid {% if analytics_insights.churn_primary_segment == 'active_regulars' %}#28a745{% elif analytics_insights.churn_primary_segment == 'lost_regulars' %}#ffc107{% else %}#dc3545{% endif %}; margin-top: 1rem;">
+                                <h6 style="color: {% if analytics_insights.churn_primary_segment == 'active_regulars' %}#28a745{% elif analytics_insights.churn_primary_segment == 'lost_regulars' %}#856404{% else %}#dc3545{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-{% if analytics_insights.churn_primary_segment == 'active_regulars' %}check-circle{% elif analytics_insights.churn_primary_segment == 'lost_regulars' %}exclamation-triangle{% else %}times-circle{% endif %}"></i> Churn Pattern Diagnosis
+                                </h6>
+                                <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                                    <li><strong>{{ analytics_insights.churn_message }}</strong></li>
+                                    <li>{{ analytics_insights.churn_action }}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js - Simple and reliable charting library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+// Set API URLs
+const apiUrl = '{% url "analytics:api" %}';
+const dashboardUrl = '{% url "owner:dashboard" %}';
+
+let lineChart = null;
+let serviceBarChart = null;
+let serviceQualityScatter = null;
+let patientDoughnutChart = null;
+
+// Wait for Chart.js and DOM to be ready
+function waitForChartJS(callback, maxAttempts) {
+    maxAttempts = maxAttempts || 50; // Max 5 seconds
+    
+    function check() {
+        var chartReady = typeof Chart !== 'undefined';
+        var domReady = document.readyState === 'complete' || document.readyState === 'interactive';
+        var containerExists = document.getElementById('lineChartContainer') !== null;
+        
+        if (chartReady && domReady && containerExists) {
+            console.log('Chart.js ready!', 'Chart:', chartReady, 'DOM:', domReady, 'Container:', containerExists);
+            callback();
+        } else if (maxAttempts > 0) {
+            maxAttempts--;
+            setTimeout(check, 100);
+        } else {
+            console.error('Timeout waiting for Chart.js. Chart:', chartReady, 'DOM:', domReady, 'Container:', containerExists);
+            showError('Failed to load chart libraries. Please refresh the page.');
+        }
+    }
+    
+    setTimeout(check, 100);
+}
+
+// Error display function
+function showError(message) {
+    const container = document.getElementById('lineChartContainer');
+    if (container) {
+        container.innerHTML = '<div class="text-center p-4 text-danger"><i class="fas fa-exclamation-triangle"></i> ' + message + '</div>';
+    }
+}
+
+// Start initialization
+waitForChartJS(function() {
+    console.log('Starting chart initialization...');
+    initializeChart();
+    initializeServiceBarChart();
+    initializeServiceQualityScatter();
+    initializePatientDoughnutChart();
+    
+    // Add tab switching event listeners to redraw charts when tabs become visible
+    const descriptiveTab = document.getElementById('descriptive-tab');
+    const diagnosticTab = document.getElementById('diagnostic-tab');
+    
+    if (descriptiveTab) {
+        descriptiveTab.addEventListener('shown.bs.tab', function() {
+            console.log('Descriptive tab shown');
+            if (lineChart) lineChart.resize();
+            if (serviceBarChart) serviceBarChart.resize();
+        });
+    }
+    
+    if (diagnosticTab) {
+        diagnosticTab.addEventListener('shown.bs.tab', function() {
+            console.log('Diagnostic tab shown');
+            if (serviceQualityScatter) serviceQualityScatter.resize();
+            if (patientDoughnutChart) patientDoughnutChart.resize();
+        });
+    }
+});
+
+// Main chart initialization function
+function initializeChart() {
+    console.log('Initializing Chart.js line chart...');
+    
+    // Get the container and create canvas
+    const container = document.getElementById('lineChartContainer');
+    if (!container) {
+        console.error('Container not found');
+        return;
+    }
+    
+    // Clear container and create canvas
+    container.innerHTML = '<canvas id="appointmentLineChart"></canvas>';
+    const canvas = document.getElementById('appointmentLineChart');
+    
+    if (!canvas) {
+        console.error('Canvas not created');
+        return;
+    }
+    
+    // Build API URL with ALL current filter parameters (time_period based)
+    const params = new URLSearchParams();
+    params.append('time_period', '{{ time_period|default:"last_3_months" }}');
+    {% if time_period == 'custom' %}
+    params.append('from_month', '{{ from_month }}');
+    params.append('to_month', '{{ to_month }}');
+    params.append('from_year', '{{ from_year }}');
+    params.append('to_year', '{{ to_year }}');
+    {% endif %}
+    {% if status_filter %}params.append('status', '{{ status_filter }}');{% endif %}
+    {% if service_type_filter %}params.append('service_type', '{{ service_type_filter }}');{% endif %}
+    {% if start_date %}params.append('start_date', '{{ start_date }}');{% endif %}
+    {% if end_date %}params.append('end_date', '{{ end_date }}');{% endif %}
+    
+    const apiUrlWithParams = apiUrl + '?' + params.toString();
+    console.log('Fetching chart data from:', apiUrlWithParams);
+    
+    // Fetch data from API with all filters
+    fetch(apiUrlWithParams)
+        .then(response => response.json())
+        .then(result => {
+            console.log('Data received:', result);
+            
+            if (!result.data || result.data.length === 0) {
+                showError('No data available for the selected period.');
+                return;
+            }
+            
+            // Prepare data for Chart.js
+            const labels = result.data.map(item => item.name);
+            const appointmentsData = result.data.map(item => item.appointments);
+            const completedData = result.data.map(item => item.completed);
+            const revenueData = result.data.map(item => item.revenue);
+            
+            // Create Chart.js line chart
+            lineChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Appointments',
+                            data: appointmentsData,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Completed',
+                            data: completedData,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Revenue (₱)',
+                            data: revenueData,
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.dataset.yAxisID === 'y1') {
+                                        label += '₱' + context.parsed.y.toLocaleString();
+                                    } else {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Appointments',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue (₱)',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Month',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            console.log('Chart created successfully!');
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            showError('Error loading chart data: ' + error.message);
+        });
+}
+
+// Service Bar Chart (Descriptive Analytics)
+function initializeServiceBarChart() {
+    const canvas = document.getElementById('serviceBarChart');
+    if (!canvas) {
+        console.error('Service bar chart canvas not found');
+        return;
+    }
+
+    // Get service data from template
+    const serviceData = [
+        {% for service in popular_services|slice:":10" %}
+        { name: '{{ service.service_name|truncatewords:3 }}', bookings: {{ service.booking_count }} }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    if (serviceData.length === 0) {
+        canvas.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No service data available</div>';
+        return;
+    }
+
+    const labels = serviceData.map(s => s.name);
+    const data = serviceData.map(s => s.bookings);
+
+    serviceBarChart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Bookings',
+                data: data,
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: '#667eea',
+                borderWidth: 2,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Bookings: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Bookings'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Service Quality Scatter Plot (Diagnostic Analytics)
+function initializeServiceQualityScatter() {
+    console.log('Initializing Service Quality Scatter Plot...');
+    const canvas = document.getElementById('serviceQualityScatter');
+    if (!canvas) {
+        console.error('Service quality scatter canvas not found');
+        return;
+    }
+    
+    console.log('Canvas found:', canvas);
+
+    // Get service quality data from backend
+    const servicesData = [
+        {% for service in service_quality_data %}
+        {
+            service_name: '{{ service.service_name }}',
+            avg_rating: {{ service.avg_rating }},
+            retention_rate: {{ service.retention_rate }},
+            total_bookings: {{ service.total_bookings }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    console.log('Service quality data:', servicesData);
+
+    if (servicesData.length === 0) {
+        console.warn('No service quality data available');
+        canvas.parentElement.innerHTML = '<div class="text-center p-4 text-muted">Insufficient data - need at least 5 completed appointments with feedback per service</div>';
+        return;
+    }
+
+    // Prepare scatter plot data (X: rating, Y: retention rate, bubble size: bookings)
+    const scatterData = servicesData.map(s => ({
+        x: s.avg_rating,
+        y: s.retention_rate,
+        r: Math.sqrt(s.total_bookings) * 2,  // Bubble radius based on booking count
+        service_name: s.service_name,
+        total_bookings: s.total_bookings
+    }));
+
+    // Color coding based on performance quadrants
+    const colors = scatterData.map(point => {
+        if (point.x >= 4.5 && point.y >= 60) return '#28a745';  // Green: High rating, high retention
+        else if (point.x >= 4.0 && point.y >= 40) return '#0dcaf0';  // Blue: Good performance
+        else if (point.x < 3.5 && point.y < 30) return '#dc3545';  // Red: Poor rating, low retention
+        else if (point.x < 4.0 || point.y < 40) return '#ffc107';  // Yellow: Warning
+        else return '#6c757d';  // Gray: Monitor
+    });
+
+    serviceQualityScatter = new Chart(canvas, {
+        type: 'bubble',
+        data: {
+            datasets: [{
+                label: 'Service Quality',
+                data: scatterData,
+                backgroundColor: colors,
+                borderColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].raw.service_name;
+                        },
+                        label: function(context) {
+                            const point = context.raw;
+                            return [
+                                'Rating: ' + point.x.toFixed(2) + '/5',
+                                'Retention: ' + point.y.toFixed(1) + '%',
+                                'Bookings: ' + point.total_bookings
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: false,
+                    min: 0,
+                    max: 5,
+                    title: {
+                        display: true,
+                        text: 'Average Rating (1-5 stars)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Retention Rate (%)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+    console.log('Service Quality Scatter Plot created successfully!');
+}
+
+// Patient Doughnut Chart (Diagnostic Analytics)
+function initializePatientDoughnutChart() {
+    console.log('Initializing Patient Churn Pattern Chart...');
+    const canvas = document.getElementById('patientDoughnutChart');
+    if (!canvas) {
+        console.error('Patient doughnut chart canvas not found');
+        return;
+    }
+    
+    console.log('Canvas found:', canvas);
+
+    const oneTimeCustomers = {% if churn_patterns %}{{ churn_patterns.one_time_customers }}{% else %}0{% endif %};
+    const earlyDropoff = {% if churn_patterns %}{{ churn_patterns.early_dropoff }}{% else %}0{% endif %};
+    const lostRegulars = {% if churn_patterns %}{{ churn_patterns.lost_regulars }}{% else %}0{% endif %};
+    const activeRegulars = {% if churn_patterns %}{{ churn_patterns.active_regulars }}{% else %}0{% endif %};
+    
+    console.log('Churn pattern data:', { oneTimeCustomers, earlyDropoff, lostRegulars, activeRegulars });
+
+    const data = [oneTimeCustomers, earlyDropoff, lostRegulars, activeRegulars];
+    const labels = ['One-Time Customers', 'Early Dropoff (2-3 visits)', 'Lost Regulars (4+ visits)', 'Active Regulars'];
+    const colors = ['#dc3545', '#fd7e14', '#ffc107', '#28a745'];  // Red (Poor), Orange (Low), Yellow (Moderate), Green (High)
+
+    patientDoughnutChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
+                borderColor: '#fff',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return label + ': ' + value + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            },
+            cutout: '60%'
+        }
+    });
+    console.log('Patient Doughnut Chart created successfully!');
+}
+
+// Toggle Custom Date Range Panel
+const toggleBtn = document.getElementById('toggleCustomRange');
+const customPanel = document.getElementById('customRangePanel');
+if (toggleBtn && customPanel) {
+    toggleBtn.addEventListener('click', function() {
+        if (customPanel.style.display === 'none') {
+            customPanel.style.display = 'block';
+            toggleBtn.style.background = 'rgba(255,255,255,0.4)';
+            toggleBtn.innerHTML = '<i class="fas fa-calendar-alt"></i> Hide Custom';
+        } else {
+            customPanel.style.display = 'none';
+            toggleBtn.style.background = 'rgba(255,255,255,0.2)';
+            toggleBtn.innerHTML = '<i class="fas fa-calendar-alt"></i> Custom';
+        }
+    });
+}
+
+// Toggle custom date inputs based on date range selection
+function toggleCustomDates() {
+    const dateRangeSelect = document.querySelector('select[name="date_range"]');
+    const customDateStart = document.getElementById('customDateStart');
+    const customDateEnd = document.getElementById('customDateEnd');
+    
+    if (dateRangeSelect && customDateStart && customDateEnd) {
+        if (dateRangeSelect.value === 'custom') {
+            customDateStart.style.display = 'block';
+            customDateEnd.style.display = 'block';
+        } else {
+            customDateStart.style.display = 'none';
+            customDateEnd.style.display = 'none';
+        }
+    }
+}
+
+// Service Quality Table Pagination
+(function() {
+    const itemsPerPage = 5;
+    let currentPage = 1;
+    let totalPages = 1;
+    
+    function initServiceQualityPagination() {
+        const rows = document.querySelectorAll('.service-quality-row');
+        const totalItems = rows.length;
+        
+        if (totalItems === 0) return;
+        
+        totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        const prevBtn = document.getElementById('serviceQualityPrevBtn');
+        const nextBtn = document.getElementById('serviceQualityNextBtn');
+        
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateServiceQualityTable();
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateServiceQualityTable();
+                }
+            });
+        }
+        
+        updateServiceQualityTable();
+    }
+    
+    function updateServiceQualityTable() {
+        const rows = document.querySelectorAll('.service-quality-row');
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        
+        rows.forEach((row, index) => {
+            if (index >= startIndex && index < endIndex) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update pagination controls
+        const currentPageSpan = document.getElementById('serviceQualityCurrentPage');
+        const currentRangeSpan = document.getElementById('serviceQualityCurrentRange');
+        const prevBtn = document.getElementById('serviceQualityPrevBtn');
+        const nextBtn = document.getElementById('serviceQualityNextBtn');
+        
+        if (currentPageSpan) {
+            currentPageSpan.textContent = currentPage;
+        }
+        
+        if (currentRangeSpan) {
+            const start = startIndex + 1;
+            const end = Math.min(endIndex, rows.length);
+            currentRangeSpan.textContent = `${start}-${end}`;
+        }
+        
+        if (prevBtn) {
+            prevBtn.disabled = currentPage === 1;
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = currentPage === totalPages;
+        }
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initServiceQualityPagination);
+    } else {
+        initServiceQualityPagination();
+    }
+})();
+
+</script>
+{% endblock %}

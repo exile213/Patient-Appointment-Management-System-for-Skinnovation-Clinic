@@ -1,0 +1,148 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Activity Logs - Skinovation Beauty Clinic{% endblock %}
+
+{% block page_title %}Activity Logs{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>User Activity Logs</h5>
+        </div>
+        <div class="card-body">
+            <!-- Filters -->
+            <form method="get" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="user" class="form-label">Filter by User</label>
+                        <select name="user" id="user" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Users</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}" {% if user_filter == user.id|stringformat:"s" %}selected{% endif %}>
+                                {{ user.get_full_name }} ({{ user.user_type|title }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="action" class="form-label">Filter by Action</label>
+                        <select name="action" id="action" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Actions</option>
+                            <option value="create" {% if action_filter == 'create' %}selected{% endif %}>Create</option>
+                            <option value="update" {% if action_filter == 'update' %}selected{% endif %}>Update</option>
+                            <option value="delete" {% if action_filter == 'delete' %}selected{% endif %}>Delete</option>
+                            <option value="login" {% if action_filter == 'login' %}selected{% endif %}>Login</option>
+                            <option value="logout" {% if action_filter == 'logout' %}selected{% endif %}>Logout</option>
+                            <option value="other" {% if action_filter == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <a href="{% url 'payments:activity_log_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-redo me-1"></i>Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Activity Logs Table -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Description</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>
+                                <small>{{ log.timestamp|date:"M d, Y" }}</small><br>
+                                <small class="text-muted">{{ log.timestamp|time:"h:i A" }}</small>
+                            </td>
+                            <td>
+                                {% if log.user %}
+                                    {{ log.user.get_full_name }}
+                                {% else %}
+                                    <span class="text-muted">System</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.user %}
+                                    <span class="badge bg-info">{{ log.user.user_type|title }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.action == 'create' %}
+                                    <span class="badge bg-success"><i class="fas fa-plus-circle me-1"></i>Create</span>
+                                {% elif log.action == 'update' %}
+                                    <span class="badge bg-warning"><i class="fas fa-edit me-1"></i>Update</span>
+                                {% elif log.action == 'delete' %}
+                                    <span class="badge bg-danger"><i class="fas fa-trash me-1"></i>Delete</span>
+                                {% elif log.action == 'login' %}
+                                    <span class="badge bg-primary"><i class="fas fa-sign-in-alt me-1"></i>Login</span>
+                                {% elif log.action == 'logout' %}
+                                    <span class="badge bg-secondary"><i class="fas fa-sign-out-alt me-1"></i>Logout</span>
+                                {% else %}
+                                    <span class="badge bg-info"><i class="fas fa-info-circle me-1"></i>{{ log.action|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.description|truncatewords:15 }}</td>
+                            <td>
+                                {% if log.ip_address %}
+                                    <small class="text-muted">{{ log.ip_address }}</small>
+                                {% else %}
+                                    <small class="text-muted">-</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No activity logs found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if logs %}
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Showing the most recent 200 activity logs. Older logs are archived for security.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9ff;
+    cursor: pointer;
+}
+
+.card {
+    border-radius: 15px;
+    border: none;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+</style>
+{% endblock %}

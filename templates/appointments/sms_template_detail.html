@@ -1,0 +1,284 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Template: {{ template.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-sms"></i> {{ template.name }}
+                        <span class="badge bg-{% if template.is_active %}success{% else %}secondary{% endif %} ms-2">
+                            {% if template.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </h3>
+                    <div>
+                        <a href="{% url 'appointments:template_edit' template.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'appointments:template_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Template Information -->
+                            <div class="mb-4">
+                                <h5>Template Information</h5>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Type:</strong></td>
+                                        <td><span class="badge bg-info">{{ template.get_template_type_display }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td>
+                                            <span class="badge bg-{% if template.is_active %}success{% else %}secondary{% endif %}">
+                                                {% if template.is_active %}Active{% else %}Inactive{% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% if template.subject %}
+                                    <tr>
+                                        <td><strong>Subject:</strong></td>
+                                        <td>{{ template.subject }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td><strong>Created by:</strong></td>
+                                        <td>{{ template.created_by.get_full_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Created:</strong></td>
+                                        <td>{{ template.created_at|date:"F d, Y g:i A" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Last updated:</strong></td>
+                                        <td>{{ template.updated_at|date:"F d, Y g:i A" }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <!-- Message Template -->
+                            <div class="mb-4">
+                                <h5>Message Template</h5>
+                                <div class="border rounded p-3 bg-light">
+                                    <pre style="white-space: pre-wrap; font-family: inherit;">{{ template.message }}</pre>
+                                </div>
+                            </div>
+                            
+                            <!-- Available Variables -->
+                            <div class="mb-4">
+                                <h5>Available Variables for {{ template.get_template_type_display }}</h5>
+                                <div class="row">
+                                    {% for variable in available_variables %}
+                                    <div class="col-md-3 mb-2">
+                                        <code class="bg-light p-1 rounded">{{ variable }}</code>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <!-- Preview -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="border rounded p-3 bg-light">
+                                        <pre style="white-space: pre-wrap; font-family: inherit;">{{ preview_message }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Test Send -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-paper-plane"></i> Test Send
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="testSendForm">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="testPhone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="testPhone" 
+                                                   placeholder="09123456789" required>
+                                        </div>
+                                        
+                                        <!-- Custom context variables -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Custom Variables (Optional)</label>
+                                            {% for key, value in sample_context.items %}
+                                            <div class="mb-2">
+                                                <label for="context_{{ key }}" class="form-label small">{{ key }}</label>
+                                                <input type="text" class="form-control form-control-sm" 
+                                                       id="context_{{ key }}" name="context_{{ key }}" 
+                                                       value="{{ value }}">
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                            <i class="fas fa-paper-plane"></i> Send Test SMS
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-cogs"></i> Actions
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button type="button" 
+                                                class="btn btn-{% if template.is_active %}outline-secondary{% else %}outline-success{% endif %}"
+                                                onclick="toggleTemplate({{ template.id }}, {{ template.is_active|yesno:'false,true' }})">
+                                            <i class="fas fa-{% if template.is_active %}pause{% else %}play{% endif %}"></i>
+                                            {% if template.is_active %}Deactivate{% else %}Activate{% endif %}
+                                        </button>
+                                        
+                                        <a href="{% url 'appointments:template_edit' template.id %}" 
+                                           class="btn btn-outline-warning">
+                                            <i class="fas fa-edit"></i> Edit Template
+                                        </a>
+                                        
+                                        <button type="button" 
+                                                class="btn btn-outline-danger"
+                                                onclick="deleteTemplate({{ template.id }}, '{{ template.name }}')">
+                                            <i class="fas fa-trash"></i> Delete Template
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the template "<span id="templateName"></span>"?</p>
+                <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Test send form
+document.getElementById('testSendForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const phone = document.getElementById('testPhone').value;
+    if (!phone) {
+        alert('Please enter a phone number');
+        return;
+    }
+    
+    const formData = new FormData(this);
+    formData.append('phone', phone);
+    
+    fetch(`/appointments/admin/sms-templates/{{ template.id }}/test-send/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Test SMS sent successfully!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while sending the test SMS.');
+    });
+});
+
+function toggleTemplate(templateId, isActive) {
+    fetch(`/appointments/admin/sms-templates/${templateId}/toggle-active/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the template.');
+    });
+}
+
+function deleteTemplate(templateId, templateName) {
+    document.getElementById('templateName').textContent = templateName;
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+    
+    document.getElementById('confirmDelete').onclick = function() {
+        fetch(`/appointments/admin/sms-templates/${templateId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/appointments/admin/sms-templates/';
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the template.');
+        });
+        
+        modal.hide();
+    };
+}
+</script>
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Reschedules and Cancellations - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <h1 class="page-title">
+        <i class="fas fa-exchange-alt"></i>
+        Reschedules and Cancellations
+    </h1>
+    {% include 'appointments/includes/admin_notification_icon.html' %}
+</div>
+
+<div class="row">
+    <!-- Reschedule Requests Card -->
+    <div class="col-md-6 mb-4">
+        <div class="content-card h-100">
+            <h3 class="card-title">
+                <i class="fas fa-calendar-alt"></i>
+                Reschedule Requests
+            </h3>
+            
+            {% if reschedule_requests %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Appointment ID</th>
+                                <th>New Date</th>
+                                <th>New Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in reschedule_requests %}
+                            <tr>
+                                <td><strong>{{ request.patient.full_name }}</strong></td>
+                                <td>{{ request.appointment_id }}</td>
+                                <td>{{ request.new_appointment_date|date:"M d, Y" }}</td>
+                                <td>{{ request.new_appointment_time|time:"g:i A" }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ request.status }}">
+                                        {{ request.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#rescheduleModal{{ request.id }}">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if reschedule_page_obj.has_other_pages %}
+                <div class="card-footer">
+                    <nav aria-label="Reschedule pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if reschedule_page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page_reschedule=1">«</a></li>
+                                <li class="page-item"><a class="page-link" href="?page_reschedule={{ reschedule_page_obj.previous_page_number }}">‹</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">«</span></li>
+                                <li class="page-item disabled"><span class="page-link">‹</span></li>
+                            {% endif %}
+
+                            {% for num in reschedule_page_obj.paginator.page_range %}
+                                {% if reschedule_page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > reschedule_page_obj.number|add:'-3' and num < reschedule_page_obj.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page_reschedule={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if reschedule_page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page_reschedule={{ reschedule_page_obj.next_page_number }}">›</a></li>
+                                <li class="page-item"><a class="page-link" href="?page_reschedule={{ reschedule_page_obj.paginator.num_pages }}">»</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">›</span></li>
+                                <li class="page-item disabled"><span class="page-link">»</span></li>
+                            {% endif %}
+                        </ul>
+                        <div class="text-center mt-2 text-muted small"><p>Page {{ reschedule_page_obj.number }} of {{ reschedule_page_obj.paginator.num_pages }}</p></div>
+                    </nav>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-check fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No reschedule requests</h5>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cancellation Requests Card -->
+    <div class="col-md-6 mb-4">
+        <div class="content-card h-100">
+            <h3 class="card-title">
+                <i class="fas fa-times-circle"></i>
+                Cancellation Requests
+            </h3>
+            
+            {% if cancellation_requests %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Appointment Type</th>
+                                <th>Appointment ID</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in cancellation_requests %}
+                            <tr>
+                                <td><strong>{{ request.patient.full_name }}</strong></td>
+                                <td>
+                                    <span class="type-badge type-{{ request.appointment_type }}">
+                                        {{ request.appointment_type|title }}
+                                    </span>
+                                </td>
+                                <td>{{ request.appointment_id }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ request.status }}">
+                                        {{ request.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#cancellationModal{{ request.id }}">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if cancellation_page_obj.has_other_pages %}
+                <div class="card-footer">
+                    <nav aria-label="Cancellation pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if cancellation_page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page_cancel=1">«</a></li>
+                                <li class="page-item"><a class="page-link" href="?page_cancel={{ cancellation_page_obj.previous_page_number }}">‹</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">«</span></li>
+                                <li class="page-item disabled"><span class="page-link">‹</span></li>
+                            {% endif %}
+
+                            {% for num in cancellation_page_obj.paginator.page_range %}
+                                {% if cancellation_page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > cancellation_page_obj.number|add:'-3' and num < cancellation_page_obj.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page_cancel={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if cancellation_page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page_cancel={{ cancellation_page_obj.next_page_number }}">›</a></li>
+                                <li class="page-item"><a class="page-link" href="?page_cancel={{ cancellation_page_obj.paginator.num_pages }}">»</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">›</span></li>
+                                <li class="page-item disabled"><span class="page-link">»</span></li>
+                            {% endif %}
+                        </ul>
+                        <div class="text-center mt-2 text-muted small"><p>Page {{ cancellation_page_obj.number }} of {{ cancellation_page_obj.paginator.num_pages }}</p></div>
+                    </nav>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No cancellation requests</h5>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Reschedule Request Modals -->
+{% for request, appointment in reschedule_requests_with_appointments %}
+<div class="modal fade" id="rescheduleModal{{ request.id }}" tabindex="-1" aria-labelledby="rescheduleModalLabel{{ request.id }}" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescheduleModalLabel{{ request.id }}">Reschedule Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Patient:</strong> {{ request.patient.full_name }}</p>
+                <p><strong>Appointment ID:</strong> {{ request.appointment_id }}</p>
+                {% if appointment %}
+                <p><strong>Service/Product/Package:</strong> 
+                    {% if appointment.service %}
+                        <i class="fas fa-spa"></i> {{ appointment.service.service_name }}
+                    {% elif appointment.product %}
+                        <i class="fas fa-shopping-bag"></i> {{ appointment.product.product_name }}
+                    {% elif appointment.package %}
+                        <i class="fas fa-gift"></i> {{ appointment.package.package_name }}
+                    {% endif %}
+                </p>
+                <p><strong>Current Date & Time:</strong> {{ appointment.appointment_date|date:"F d, Y" }} at {{ appointment.appointment_time|time:"g:i A" }}</p>
+                {% endif %}
+                <hr>
+                <p><strong>Requested New Date:</strong> {{ request.new_appointment_date|date:"F d, Y" }}</p>
+                <p><strong>Requested New Time:</strong> {{ request.new_appointment_time|time:"g:i A" }}</p>
+                <p><strong>Status:</strong> <span class="status-badge status-{{ request.status }}">{{ request.status|title }}</span></p>
+                {% if request.reason %}
+                <hr>
+                <p><strong>Reason:</strong></p>
+                <p>{{ request.reason }}</p>
+                {% endif %}
+                <p class="text-muted small mb-0">Requested on {{ request.created_at|date:"F d, Y g:i A" }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if request.status == 'pending' %}
+                <a href="{% url 'appointments:admin_reject_reschedule' request.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this reschedule request?')">
+                    <i class="fas fa-times me-2"></i>Reject
+                </a>
+                <a href="{% url 'appointments:admin_approve_reschedule' request.id %}" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this reschedule request? The appointment will be updated to the new date and time.')">
+                    <i class="fas fa-check me-2"></i>Approve
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Cancellation Request Modals -->
+{% for request in cancellation_requests %}
+<div class="modal fade" id="cancellationModal{{ request.id }}" tabindex="-1" aria-labelledby="cancellationModalLabel{{ request.id }}" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancellationModalLabel{{ request.id }}">Cancellation Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Patient:</strong> {{ request.patient.full_name }}</p>
+                <p><strong>Appointment Type:</strong> 
+                    <span class="type-badge type-{{ request.appointment_type }}">{{ request.appointment_type|title }}</span>
+                </p>
+                <p><strong>Appointment ID:</strong> {{ request.appointment_id }}</p>
+                <p><strong>Status:</strong> <span class="status-badge status-{{ request.status }}">{{ request.status|title }}</span></p>
+                {% if request.reason %}
+                <hr>
+                <p><strong>Reason:</strong></p>
+                <p>{{ request.reason }}</p>
+                {% else %}
+                <p class="text-muted">No reason provided</p>
+                {% endif %}
+                <p class="text-muted small mb-0">Requested on {{ request.created_at|date:"F d, Y g:i A" }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if request.status == 'pending' %}
+                <a href="{% url 'appointments:admin_reject_cancellation' request.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this cancellation request?')">
+                    <i class="fas fa-times me-2"></i>Reject
+                </a>
+                <a href="{% url 'appointments:admin_approve_cancellation' request.id %}" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this cancellation request? The appointment will be cancelled.')">
+                    <i class="fas fa-check me-2"></i>Approve
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% block extra_head %}
+<style>
+    /* Ensure no backdrop appears */
+    .modal-backdrop {
+        display: none !important;
+        opacity: 0 !important;
+    }
+    
+    /* Ensure modals have shadow for visibility without backdrop */
+    .modal-content {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+    }
+</style>
+{% endblock %}
+
+<script>
+// Ensure modals are properly initialized and can be closed
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all modal elements
+    const modals = document.querySelectorAll('.modal');
+    
+    modals.forEach(function(modal) {
+        // Ensure modal can be closed by clicking backdrop
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        });
+        
+        // Ensure close buttons work
+        const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            });
+        });
+        
+        // Clean up when modal is hidden
+        modal.addEventListener('hidden.bs.modal', function() {
+            // Remove any lingering backdrop
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function(backdrop) {
+                backdrop.remove();
+            });
+            // Remove modal-open class from body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        });
+        
+        // Ensure modal shows properly - prevent backdrop creation
+        modal.addEventListener('show.bs.modal', function(event) {
+            // Remove any existing backdrops first
+            const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+            existingBackdrops.forEach(function(backdrop) {
+                backdrop.remove();
+            });
+            // Don't add modal-open class if no backdrop
+            if (modal.dataset.bsBackdrop === 'false') {
+                document.body.classList.remove('modal-open');
+            }
+        });
+        
+        // After modal is shown, remove any backdrop that was created
+        modal.addEventListener('shown.bs.modal', function() {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(function(backdrop) {
+                backdrop.remove();
+            });
+            document.body.classList.remove('modal-open');
+        });
+    });
+});
+</script>
+{% endblock %}
+

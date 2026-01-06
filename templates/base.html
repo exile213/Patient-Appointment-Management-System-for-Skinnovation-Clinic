@@ -1,0 +1,762 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#6f42c1">
+    <meta name="description" content="Skinovation Beauty Clinic - Your trusted partner for beauty and skincare treatments">
+    <title>{% block title %}Skinovation Beauty Clinic{% endblock %}</title>
+    
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <link rel="icon" type="image/png" href="{% static 'img/ISCAP1-303-Skinovation-Clinic-COLORED-Logo.png' %}">
+    
+    <!-- Critical CSS - Load first -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Deferred CSS - Load after initial render -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" media="print" onload="this.media='all'">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for browsers that don't support onload -->
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </noscript>
+    <style>
+        /* Global Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Custom scrollbar styling for smoother experience */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a32a3 0%, #732d91 100%);
+        }
+        
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #6f42c1 #f1f1f1;
+        }
+        
+        /* What we offer dropdown hover styles */
+        #whatWeOfferDropdown {
+            position: relative;
+        }
+        
+        #whatWeOfferDropdown .dropdown-menu {
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.2s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #whatWeOfferDropdown .dropdown-item {
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        #whatWeOfferDropdown .dropdown-item:hover {
+            background-color: #f8f9fa;
+            padding-left: 1.25rem;
+        }
+        
+        #whatWeOfferDropdown .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        #whatWeOfferButton {
+            border: none !important;
+            color: black !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+        
+        #whatWeOfferButton:hover,
+        #whatWeOfferButton:focus,
+        #whatWeOfferButton:active {
+            border: none !important;
+            color: black !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            /* Tablet styles */
+            .container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            
+            .navbar-brand img {
+                height: 50px !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile landscape and small tablets */
+            .navbar-brand .brand-text {
+                font-size: 0.9rem;
+            }
+
+            .navbar-brand img {
+                height: 40px !important;
+            }
+
+            #whatWeOfferDropdown {
+                margin-right: 0.5rem !important;
+            }
+
+            #whatWeOfferButton {
+                font-size: 0.875rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .navbar-nav .btn {
+                margin: 0.25rem 0;
+                width: 100%;
+            }
+
+            .footer .row {
+                text-align: center;
+            }
+
+            .footer .col-md-3 {
+                margin-bottom: 2rem;
+            }
+            
+            /* Adjust messages container for mobile */
+            .messages-container {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .custom-alert {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            /* Mobile portrait */
+            .navbar-brand .brand-text {
+                display: none;
+            }
+
+            .navbar-brand img {
+                height: 35px !important;
+            }
+
+            #whatWeOfferButton {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            #whatWeOfferButton i {
+                margin-right: 0.3rem;
+            }
+            
+            .messages-container {
+                top: 60px;
+            }
+            
+            .navbar-nav {
+                padding-top: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.75rem 0;
+            }
+        }
+        
+        @media (max-width: 390px) {
+            /* Extra small phones */
+            .navbar-brand img {
+                height: 30px !important;
+            }
+            
+            .custom-alert {
+                font-size: 0.85rem;
+            }
+            
+            .alert-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Footer background for all logged-in users */
+        .footer.authenticated-footer {
+            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 50%, #9b59b6 100%) !important;
+            background-color: #6f42c1 !important;
+        }
+        
+        .footer.authenticated-footer,
+        .footer.authenticated-footer h5,
+        .footer.authenticated-footer p,
+        .footer.authenticated-footer li,
+        .footer.authenticated-footer .text-white,
+        .footer.authenticated-footer a {
+            color: #ffffff !important;
+        }
+        
+        .footer.authenticated-footer a:hover {
+            color: #f0f0f0 !important;
+            text-decoration: underline !important;
+        }
+        
+        .footer.authenticated-footer hr {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+        
+        .footer.authenticated-footer .bi {
+            color: #ffffff !important;
+        }
+        
+        /* Enhanced Messages Notification Bar */
+        .messages-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 450px;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .custom-alert {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: none;
+            overflow: hidden;
+            position: relative;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .custom-alert.alert-success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .custom-alert.alert-error,
+        .custom-alert.alert-danger {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .custom-alert.alert-warning {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .custom-alert.alert-info {
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .alert-content-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            gap: 1rem;
+        }
+        
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .custom-alert.alert-success .alert-icon {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .custom-alert.alert-error .alert-icon,
+        .custom-alert.alert-danger .alert-icon {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+        
+        .custom-alert.alert-warning .alert-icon {
+            color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+        
+        .custom-alert.alert-info .alert-icon {
+            color: #17a2b8;
+            background: rgba(23, 162, 184, 0.1);
+        }
+        
+        .alert-message {
+            flex-grow: 1;
+            color: #495057;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        .btn-close-custom {
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            padding: 0;
+        }
+        
+        .btn-close-custom:hover {
+            background: rgba(0, 0, 0, 0.08);
+            color: #495057;
+            transform: rotate(90deg);
+        }
+        
+        .alert-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+            animation: progressBar 5s linear forwards;
+        }
+        
+        .custom-alert.alert-success .alert-progress-bar {
+            background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+        }
+        
+        .custom-alert.alert-error .alert-progress-bar,
+        .custom-alert.alert-danger .alert-progress-bar {
+            background: linear-gradient(90deg, #dc3545, #c82333, #dc3545);
+        }
+        
+        .custom-alert.alert-warning .alert-progress-bar {
+            background: linear-gradient(90deg, #ffc107, #ff9800, #ffc107);
+        }
+        
+        .custom-alert.alert-info .alert-progress-bar {
+            background: linear-gradient(90deg, #17a2b8, #138496, #17a2b8);
+        }
+        
+        @keyframes progressBar {
+            0% {
+                width: 100%;
+            }
+            100% {
+                width: 0%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .messages-container {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                    <img src="{% static 'img/ISCAP1-303-Skinovation-Clinic-COLORED-Logo.png' %}" alt="Skinovation Clinic Logo" height="55" class="me-2">
+                </a>
+                {% if not user.is_authenticated %}
+                <div class="dropdown me-3" id="whatWeOfferDropdown">
+                    <button class="btn dropdown-toggle" type="button" id="whatWeOfferButton" data-bs-toggle="dropdown" aria-expanded="false" style="border: none; color: black; background: transparent;">
+                        <i class="fas fa-list"></i> What we offer
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="whatWeOfferButton">
+                        <li><a class="dropdown-item" href="{% url 'services:list' %}">
+                            <i class="fas fa-concierge-bell me-2"></i>Services
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'packages:list' %}">
+                            <i class="fas fa-box me-2"></i>Packages
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'products:list' %}">
+                            <i class="fas fa-shopping-bag me-2"></i>Products
+                        </a></li>
+                    </ul>
+                </div>
+                {% endif %}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        {% if user.is_authenticated %}
+                            {% if user.user_type != 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">
+                                    <i class="fas fa-home"></i> Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'services:list' %}">
+                                    <i class="fas fa-concierge-bell"></i> Services
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'packages:list' %}">
+                                    <i class="fas fa-box"></i> Packages
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'products:list' %}">
+                                    <i class="fas fa-shopping-bag"></i> Products
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'appointments:my_appointments' %}">
+                                    <i class="fas fa-calendar-check"></i> My Appointments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'packages:my_packages' %}">
+                                    <i class="fas fa-box"></i> My Packages
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'accounts:profile' %}">
+                                    <i class="fas fa-user"></i> My Profile
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown me-3">
+                                <a class="nav-link position-relative dropdown-toggle" href="{% url 'appointments:notifications' %}" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell fa-lg"></i>
+                                    {% if notification_count > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count">
+                                        {{ notification_count }}
+                                    </span>
+                                    {% endif %}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationDropdown" style="width: 350px; max-height: 500px; overflow-y: auto;">
+                                    <div class="p-2 border-bottom d-flex justify-content-between align-items-center bg-light">
+                                        <h6 class="mb-0 fw-bold">Notifications</h6>
+                                        <a href="{% url 'appointments:notifications' %}" class="btn btn-sm btn-primary text-decoration-none" onclick="event.stopPropagation();">View All</a>
+                                    </div>
+                                    <div class="notifications-list">
+                                        <!-- Notifications will be loaded here -->
+                                    </div>
+                                </div>
+                            </li>
+                            {% if user.user_type == 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'appointments:admin_dashboard' %}">
+                                    <i class="fas fa-user-shield"></i> Staff Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'admin:index' %}">
+                                    <i class="fas fa-cog"></i> Django Admin
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="btn btn-primary me-2" href="{% url 'accounts:patient_login' %}">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-success" href="{% url 'accounts:register' %}">
+                                    <i class="fas fa-user-plus"></i> Register
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3 messages-container">
+            {% for message in messages %}
+                <div class="custom-alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <div class="alert-content-wrapper">
+                        <div class="alert-icon">
+                            {% if message.tags == 'error' or message.tags == 'danger' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% elif message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                        </div>
+                        <div class="alert-message">{{ message }}</div>
+                        <button type="button" class="btn-close-custom" onclick="this.closest('.custom-alert').remove()" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="alert-progress-bar"></div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer py-5 mt-5 {% if user.is_authenticated %}authenticated-footer{% endif %}">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <img src="{% static 'img/ISCAP1-303-Skinovation-Clinic-WHITE-Logo.png' %}" alt="Skinovation Clinic Logo" height="60" class="me-2 image-fluid mb-3" loading="lazy">
+                    <br>
+                    <h5 class="mb-3">Skinovation Beauty Clinic</h5>
+                    <p class="mb-3">Your trusted partner for beauty and skincare treatments. We provide professional
+                        services with certified Cosmetic Nurses.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-white text-decoration-none"><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li class="mb-2"><a href="{% url 'services:list' %}" class="text-white text-decoration-none"><i class="fas fa-concierge-bell me-2"></i>Services</a></li>
+                        <li class="mb-2"><a href="{% url 'packages:list' %}" class="text-white text-decoration-none"><i class="fas fa-box me-2"></i>Packages</a></li>
+                        <li class="mb-2"><a href="{% url 'products:list' %}" class="text-white text-decoration-none"><i class="fas fa-shopping-bag me-2"></i>Products</a></li>
+                        {% if user.is_authenticated and user.user_type != 'admin' %}
+                        <li class="mb-2"><a href="{% url 'packages:my_packages' %}" class="text-white text-decoration-none"><i class="fas fa-box me-2"></i>My Packages</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i> Pacita Arcade La Salle Avenue Brgy.
+                            Villamonte, Bacolod City, Philippines</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i> 0933 232 5122</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i> skinovationbeautyclinic@gmail.com</li>
+                        <li><i class="bi bi-clock me-2"></i> Mon-Sat: 10:00 AM - 6:00 PM</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">Find Us</h5>
+                    <div class="map-container" style="height: 200px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <iframe 
+                            src="https://www.google.com/maps?q=Pacita+Arcade,+La+Salle+Avenue,+Villamonte,+Bacolod+City,+Negros+Occidental,+Philippines&output=embed" 
+                            width="100%" 
+                            height="200" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Skinovation Beauty Clinic Location - Pacita Arcade, La Salle Avenue, Villamonte, Bacolod City">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0 text-white">&copy; {% now "Y" %} Skinovation Beauty Clinic. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Performance optimized scripts -->
+    <script>
+        // Enhanced Smooth Scrolling with Better Control
+        (function() {
+            // Apply smooth scrolling CSS behavior
+            if (!document.documentElement.style.scrollBehavior) {
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }
+            
+            // Override scrollTo for programmatic scrolls
+            const originalScrollTo = window.scrollTo;
+            window.scrollTo = function(options) {
+                if (typeof options === 'object' && options.behavior !== 'auto') {
+                    originalScrollTo.call(this, {
+                        ...options,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    originalScrollTo.apply(this, arguments);
+                }
+            };
+            
+            // Improve scroll wheel behavior with throttling
+            let lastScrollTime = 0;
+            const scrollDelay = 16; // ~60fps
+            
+            window.addEventListener('wheel', function(e) {
+                const now = Date.now();
+                if (now - lastScrollTime < scrollDelay) {
+                    // Throttle scroll events for smoother experience
+                    return;
+                }
+                lastScrollTime = now;
+            }, { passive: true });
+        })();
+    </script>
+    
+    <!-- Load Bootstrap JS asynchronously -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" async></script>
+    
+    <!-- Bootstrap initialization script -->
+    <script>
+        // Ensure alert close buttons work
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to all close buttons in alerts
+            document.querySelectorAll('.btn-close-custom').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const alert = this.closest('.custom-alert');
+                    if (alert) {
+                        // Add fade out animation
+                        alert.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                        alert.style.opacity = '0';
+                        alert.style.transform = 'translateX(100%)';
+                        // Remove after animation
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // Initialize Bootstrap dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                // Skip the "What we offer" dropdown as it will use hover
+                if (dropdownToggleEl.id !== 'whatWeOfferButton') {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                }
+            });
+            
+            // Enable hover for "What we offer" dropdown with delay to prevent quick disappearing
+            const whatWeOfferDropdown = document.getElementById('whatWeOfferDropdown');
+            if (whatWeOfferDropdown) {
+                const dropdownButton = document.getElementById('whatWeOfferButton');
+                const dropdownMenu = whatWeOfferDropdown.querySelector('.dropdown-menu');
+                let dropdownInstance = null;
+                let hideTimeout = null;
+                
+                // Initialize dropdown instance with manual trigger
+                dropdownInstance = new bootstrap.Dropdown(dropdownButton, {
+                    trigger: 'manual'
+                });
+                
+                // Function to show dropdown
+                function showDropdown() {
+                    if (hideTimeout) {
+                        clearTimeout(hideTimeout);
+                        hideTimeout = null;
+                    }
+                    dropdownInstance.show();
+                }
+                
+                // Function to hide dropdown with delay
+                function hideDropdown() {
+                    hideTimeout = setTimeout(function() {
+                        dropdownInstance.hide();
+                        hideTimeout = null;
+                    }, 200); // 200ms delay before hiding
+                }
+                
+                // Show on hover for button
+                dropdownButton.addEventListener('mouseenter', showDropdown);
+                
+                // Show on hover for dropdown menu
+                if (dropdownMenu) {
+                    dropdownMenu.addEventListener('mouseenter', showDropdown);
+                    dropdownMenu.addEventListener('mouseleave', hideDropdown);
+                }
+                
+                // Hide when mouse leaves the entire dropdown container
+                whatWeOfferDropdown.addEventListener('mouseleave', hideDropdown);
+            }
+        });
+    </script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,441 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Maintenance - Owner Panel{% endblock %}
+
+{% block page_title %}Maintenance{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Content Header */
+    .content-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        position: relative;
+        overflow: visible;
+    }
+    
+    .content-header .page-title {
+        margin: 0;
+        color: #6f42c1;
+        font-size: 2.5rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+    }
+    
+    .content-header .page-title i {
+        margin-right: 1rem;
+        background: linear-gradient(135deg, #6f42c1, #8e44ad);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Content Cards */
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border: none;
+        position: relative;
+        overflow: visible;
+        transition: all 0.3s ease;
+    }
+    
+    .content-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title {
+        color: #6f42c1;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-title i {
+        margin-right: 0.75rem;
+    }
+    
+    /* Statistics Cards */
+    .stats-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        border-radius: 14px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+    
+    .stats-card:hover::before {
+        opacity: 1;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-card.purple {
+        background: linear-gradient(135deg, rgba(111, 66, 193, 0.9), rgba(142, 68, 173, 0.9));
+        color: white;
+        backdrop-filter: blur(20px);
+    }
+    
+    .stats-card.green {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.9));
+        color: white;
+        backdrop-filter: blur(20px);
+    }
+    
+    .stats-card.blue {
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.9), rgba(111, 66, 193, 0.9));
+        color: white;
+        backdrop-filter: blur(20px);
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+        line-height: 1.2;
+        font-weight: 600;
+    }
+    
+    /* Type Badge */
+    .type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .type-badge.type-service {
+        background: linear-gradient(135deg, rgba(111, 66, 193, 0.2), rgba(142, 68, 173, 0.2));
+        color: #6f42c1;
+    }
+    
+    .type-badge.type-product {
+        background: linear-gradient(135deg, rgba(67, 233, 123, 0.2), rgba(56, 249, 215, 0.2));
+        color: #28a745;
+    }
+    
+    .type-badge.type-package {
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2));
+        color: #17a2b8;
+    }
+    
+    /* Table Styles */
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+    }
+    
+    .table tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    /* Page Container */
+    .page-container {
+        padding: 2rem;
+        padding-top: 100px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="content-header">
+        <h1 class="page-title">
+            <i class="fas fa-wrench"></i>
+            Maintenance
+        </h1>
+    </div>
+
+    <!-- Management Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="content-card">
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-spa fa-3x" style="color: #6f42c1;"></i>
+                    </div>
+                    <h4>Manage Services</h4>
+                    <p class="text-muted">Add, edit, or remove services offered by the clinic.</p>
+                    <a href="{% url 'owner:manage_services' %}" class="btn btn-primary">
+                        <i class="fas fa-check me-1"></i>Manage Services
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="content-card">
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-gift fa-3x" style="color: #28a745;"></i>
+                    </div>
+                    <h4>Manage Packages</h4>
+                    <p class="text-muted">Create and manage service packages and promotions.</p>
+                    <a href="{% url 'owner:manage_packages' %}" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>Manage Packages
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="content-card">
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-shopping-bag fa-3x" style="color: #17a2b8;"></i>
+                    </div>
+                    <h4>Manage Products</h4>
+                    <p class="text-muted">Manage clinic products.</p>
+                    <a href="{% url 'owner:manage_products' %}" class="btn btn-info">
+                        <i class="fas fa-check me-1"></i>Manage Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Management Section -->
+    <div class="content-card mb-4">
+        <h3 class="card-title">
+            <i class="fas fa-images"></i>
+            Image Management
+        </h3>
+        <p class="text-muted mb-4">Manage images for services, packages, and products</p>
+        
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="content-card" style="border: 2px solid #6f42c1;">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-images fa-3x" style="color: #6f42c1;"></i>
+                        </div>
+                        <h5>Service Images</h5>
+                        <p class="text-muted small">Upload and manage service images</p>
+                        <a href="{% url 'owner:manage_service_images' %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit me-1"></i>Edit Service Images
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="content-card" style="border: 2px solid #ffc107;">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-box fa-3x" style="color: #ffc107;"></i>
+                        </div>
+                        <h5>Package Images</h5>
+                        <p class="text-muted small">Upload and manage package images</p>
+                        <a href="{% url 'owner:manage_packages' %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit me-1"></i>Edit Package Images
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="content-card" style="border: 2px solid #17a2b8;">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-image fa-3x" style="color: #17a2b8;"></i>
+                        </div>
+                        <h5>Product Images</h5>
+                        <p class="text-muted small">Upload and manage product images</p>
+                        <a href="{% url 'owner:manage_product_images' %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-edit me-1"></i>Edit Product Images
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="stats-card purple">
+                <div class="stats-number">{{ services_count }}</div>
+                <div class="stats-label">Total Services</div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="stats-card green">
+                <div class="stats-number">{{ packages_count }}</div>
+                <div class="stats-label">Total Packages</div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="stats-card blue">
+                <div class="stats-number">{{ products_count }}</div>
+                <div class="stats-label">Total Products</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatment & Product History Log -->
+    <div class="content-card" id="history-log">
+        <h3 class="card-title">
+            <i class="fas fa-history"></i>
+            Treatment & Product History Log
+        </h3>
+        
+        <!-- Filter Form -->
+        <div class="mb-4" style="background: rgba(248, 249, 250, 0.8); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+            <h5 class="mb-3" style="color: #6f42c1;">
+                <i class="fas fa-filter"></i> Filter History Log
+            </h5>
+            <form method="get" action="{% url 'owner:maintenance' %}" class="row g-3">
+                <div class="col-md-3">
+                    <label for="patient" class="form-label">Patient</label>
+                    <input type="text" class="form-control" id="patient" name="patient" placeholder="Patient name..." value="{{ patient_filter }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="treatment" class="form-label">Treatment/Service</label>
+                    <input type="text" class="form-control" id="treatment" name="treatment" placeholder="Treatment name..." value="{{ treatment_filter }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="attendant" class="form-label">Attendant</label>
+                    <input type="text" class="form-control" id="attendant" name="attendant" placeholder="Attendant name..." value="{{ attendant_filter }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="year" class="form-label">Year</label>
+                    <select class="form-select" id="year" name="year">
+                        <option value="">All Years</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if year_filter == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="type" class="form-label">Type</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">All Types</option>
+                        <option value="Service" {% if type_filter == 'Service' %}selected{% endif %}>Service</option>
+                        <option value="Product" {% if type_filter == 'Product' %}selected{% endif %}>Product</option>
+                        <option value="Package" {% if type_filter == 'Package' %}selected{% endif %}>Package</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                    <a href="{% url 'owner:maintenance' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>DATE/TIME</th>
+                        <th>TYPE</th>
+                        <th>NAME</th>
+                        <th>ACTION</th>
+                        <th>PERFORMED BY</th>
+                        <th>DETAILS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in history_logs %}
+                    <tr>
+                        <td>{{ log.datetime|date:"Y-m-d g:i:s A" }}</td>
+                        <td>
+                            <span class="type-badge type-{{ log.type|lower }}">
+                                {% if log.type == 'Service' %}
+                                    Service
+                                {% elif log.type == 'Product' %}
+                                    Product
+                                {% elif log.type == 'Package' %}
+                                    Package
+                                {% else %}
+                                    {{ log.type }}
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>{{ log.name }}</td>
+                        <td>{{ log.action }}</td>
+                        <td>{{ log.performed_by }}</td>
+                        <td>{{ log.details|truncatechars:50|default:"No details available" }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not history_logs %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-history fa-2x mb-2"></i>
+                            <p>No history logs found</p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

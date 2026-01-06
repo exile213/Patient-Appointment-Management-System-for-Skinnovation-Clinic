@@ -1,0 +1,11 @@
+⚠️ IMPORTANT: Update Your Environment Variable
+
+Before testing, update your .env file:
+
+OLD:
+IPROG_SMS_API_KEY=43e61b75f8972bcf1ce0ee541a38d593fa6e4f61
+
+NEW:
+SKYSMS_API_KEY=your_skysms_api_key_here
+
+Then restart your Django server.

@@ -1,0 +1,381 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Activity Log{% endblock %}
+
+{% block extra_css %}
+<style>
+    .compact-table {
+        font-size: 0.85rem;
+    }
+    
+    .compact-table th,
+    .compact-table td {
+        padding: 0.5rem 0.75rem;
+        border: none;
+    }
+    
+    .compact-table thead th {
+        background: #f8f9fa;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .compact-table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .compact-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-2">
+            <i class="fas fa-history me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+            Activity Log
+        </h3>
+        <p class="text-muted mb-0">Track all system activities and changes</p>
+    </div>
+    
+</div>
+
+<!-- Filter Form -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-filter me-2"></i>Filter Activity Log
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'owner:history_log' %}" class="row g-3">
+            <div class="col-md-3">
+                <label for="patient" class="form-label">Patient</label>
+                <input type="text" class="form-control" id="patient" name="patient" placeholder="Patient name..." value="{{ patient_filter }}">
+            </div>
+            <div class="col-md-3">
+                <label for="treatment" class="form-label">Treatment/Service</label>
+                <input type="text" class="form-control" id="treatment" name="treatment" placeholder="Treatment name..." value="{{ treatment_filter }}">
+            </div>
+            <div class="col-md-2">
+                <label for="attendant" class="form-label">Attendant</label>
+                <input type="text" class="form-control" id="attendant" name="attendant" placeholder="Attendant name..." value="{{ attendant_filter }}">
+            </div>
+            <div class="col-md-2">
+                <label for="year" class="form-label">Year</label>
+                <select class="form-select" id="year" name="year">
+                    <option value="">All Years</option>
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year_filter == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="type" class="form-label">Type</label>
+                <select class="form-select" id="type" name="type">
+                    <option value="">All Types</option>
+                    <option value="Service" {% if type_filter == 'Service' %}selected{% endif %}>Service</option>
+                    <option value="Product" {% if type_filter == 'Product' %}selected{% endif %}>Product</option>
+                    <option value="Package" {% if type_filter == 'Package' %}selected{% endif %}>Package</option>
+                    <option value="Clinic Hours" {% if type_filter == 'Clinic Hours' %}selected{% endif %}>Clinic Hours</option>
+                    <option value="Closed Day" {% if type_filter == 'Closed Day' %}selected{% endif %}>Closed Day</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Apply Filters
+                </button>
+                <a href="{% url 'owner:history_log' %}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Clear Filters
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+    
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-list-alt me-2"></i>System Activity Log
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if history_logs %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-clock me-2"></i>Date & Time</th>
+                            <th><i class="fas fa-tag me-2"></i>Type</th>
+                            <th><i class="fas fa-file-alt me-2"></i>Name</th>
+                            <th><i class="fas fa-cogs me-2"></i>Action</th>
+                            <th><i class="fas fa-user me-2"></i>Performed By</th>
+                            <th><i class="fas fa-info-circle me-2"></i>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in history_logs %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="log-icon me-3">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ log.datetime|date:"M d, Y" }}</strong><br>
+                                        <small class="text-muted">{{ log.datetime|date:"g:i A" }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="type-badge {% if log.type == 'Service' %}type-service{% elif log.type == 'Product' %}type-product{% elif log.type == 'Package' %}type-package{% elif log.type == 'Clinic Hours' %}type-clinic-hours{% elif log.type == 'Closed Day' %}type-closed-day{% else %}type-{{ log.type|lower }}{% endif %}">
+                                    <i class="fas fa-{% if log.type == 'Service' %}spa{% elif log.type == 'Product' %}shopping-bag{% elif log.type == 'Package' %}box{% elif log.type == 'Clinic Hours' %}clock{% elif log.type == 'Closed Day' %}calendar-times{% else %}info-circle{% endif %} me-1"></i>
+                                    {{ log.type }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="item-icon me-2">
+                                        <i class="fas fa-{% if log.type == 'Service' %}spa{% elif log.type == 'Product' %}shopping-bag{% elif log.type == 'Package' %}box{% elif log.type == 'Clinic Hours' %}clock{% elif log.type == 'Closed Day' %}calendar-times{% else %}file{% endif %}"></i>
+                                    </div>
+                                    <strong>{{ log.name }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="action-badge action-{{ log.action|lower }}">
+                                    <i class="fas fa-{% if log.action == 'Added' %}plus{% elif log.action == 'Edited' %}edit{% elif log.action == 'Deleted' %}trash{% else %}info{% endif %} me-1"></i>
+                                    {{ log.action }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-2">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <strong>{{ log.performed_by }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="details-text">
+                                    {{ log.details|truncatechars:50|default:"No details available" }}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="History log pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;&laquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;&raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div class="text-center mt-2 text-muted small">
+                        <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+                    </div>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No activity logs found. Try adjusting your filters.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.log-icon {
+    width: 35px;
+    height: 35px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.item-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--gradient-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+
+.type-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.type-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.type-service {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.type-product {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    color: white;
+}
+
+.type-package {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+}
+
+.type-appointment {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+}
+
+.type-clinic-hours {
+    background: linear-gradient(135deg, #fa709a, #fee140);
+    color: white;
+}
+
+.type-closed-day {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+}
+
+.action-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.action-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-added {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.action-edited {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.action-deleted {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.action-viewed {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+}
+
+.details-text {
+    max-width: 200px;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    background: var(--gradient-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends 'attendant/base.html' %}
+{% load static %}
+
+{% block title %}Manage Profile{% endblock %}
+
+{% block page_title %}Manage Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control.invalid {
+        border-color: #dc3545;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .profile-picture-preview {
+        transition: all 0.3s ease;
+    }
+    .profile-picture-preview:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>
+        <i class="fas fa-user-edit me-2"></i>Edit Your Profile
+    </h3>
+    <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-user me-2"></i>Profile Information
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'attendant:manage_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Profile Picture Section -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-image me-2"></i>Profile Picture
+                    </label>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="profile-picture-preview">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                                     class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #dee2e6;">
+                            {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
+                                     style="width: 100px; height: 100px; border: 3px solid #dee2e6;">
+                                    <i class="fas fa-user fa-3x text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" 
+                                   accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                            <small class="form-text text-muted">
+                                Upload a new profile picture (JPEG, PNG, GIF, or WebP). Maximum size: 5MB.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <!-- Personal Information Section -->
+            <h5 class="mb-3"><i class="fas fa-user me-2"></i>Personal Information</h5>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="first_name" class="form-label fw-bold">
+                        <i class="fas fa-user me-2"></i>First Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                           value="{{ user.first_name }}" required pattern="[A-Za-z\s]+" 
+                           title="Only letters and spaces are allowed">
+                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
+                </div>
+                <div class="col-md-4">
+                    <label for="middle_name" class="form-label fw-bold">
+                        <i class="fas fa-user me-2"></i>Middle Name <small class="text-muted">(Optional)</small>
+                    </label>
+                    <input type="text" class="form-control" id="middle_name" name="middle_name" 
+                           value="{{ user.middle_name|default:'' }}" pattern="[A-Za-z\s]*" 
+                           title="Only letters and spaces are allowed">
+                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
+                </div>
+                <div class="col-md-4">
+                    <label for="last_name" class="form-label fw-bold">
+                        <i class="fas fa-user me-2"></i>Last Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                           value="{{ user.last_name }}" required pattern="[A-Za-z\s]+" 
+                           title="Only letters and spaces are allowed">
+                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="username" class="form-label fw-bold">
+                        <i class="fas fa-at me-2"></i>Username <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="username" name="username" 
+                           value="{{ user.username }}" required>
+                    <small class="form-text text-muted">This is your login username.</small>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <!-- Password Change Section -->
+            <h5 class="mb-3"><i class="fas fa-lock me-2"></i>Change Password</h5>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Note:</strong> Leave password fields blank if you don't want to change your password.
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="current_password" class="form-label fw-bold">
+                        <i class="fas fa-key me-2"></i>Current Password
+                    </label>
+                    <input type="password" class="form-control" id="current_password" name="current_password" 
+                           placeholder="Enter your current password">
+                    <small class="form-text text-muted">Required only if you want to change your password.</small>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="new_password" class="form-label fw-bold">
+                        <i class="fas fa-lock me-2"></i>New Password
+                    </label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" 
+                           placeholder="Enter new password (min. 8 characters)" minlength="8">
+                    <small class="form-text text-muted">Minimum 8 characters.</small>
+                </div>
+                <div class="col-md-6">
+                    <label for="confirm_password" class="form-label fw-bold">
+                        <i class="fas fa-lock me-2"></i>Confirm New Password
+                    </label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                           placeholder="Confirm new password" minlength="8">
+                    <small class="form-text text-muted">Re-enter your new password.</small>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Real-time validation for name fields
+document.addEventListener('DOMContentLoaded', function() {
+    const nameFields = ['first_name', 'middle_name', 'last_name'];
+    
+    nameFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function(e) {
+                const value = e.target.value;
+                // Remove any numbers or symbols as user types
+                const cleaned = value.replace(/[^A-Za-z\s]/g, '');
+                
+                if (value !== cleaned) {
+                    e.target.value = cleaned;
+                    // Optional: Show brief warning
+                    e.target.classList.add('invalid');
+                    setTimeout(() => {
+                        e.target.classList.remove('invalid');
+                    }, 500);
+                }
+            });
+            
+            // Capitalize first letter
+            field.addEventListener('blur', function(e) {
+                if (e.target.value) {
+                    const words = e.target.value.split(' ');
+                    const capitalized = words.map(word => {
+                        if (word.length > 0) {
+                            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                        }
+                        return word;
+                    }).join(' ');
+                    e.target.value = capitalized;
+                }
+            });
+        }
+    });
+    
+    // Form validation before submit
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let hasError = false;
+            
+            nameFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value) {
+                    // Check if contains any numbers or symbols
+                    if (/[^A-Za-z\s]/.test(field.value)) {
+                        e.preventDefault();
+                        field.classList.add('invalid');
+                        alert('Name fields can only contain letters and spaces.');
+                        hasError = true;
+                    }
+                }
+            });
+            
+            // Validate password change
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (newPassword || confirmPassword || currentPassword) {
+                // If any password field is filled, all must be filled
+                if (!currentPassword) {
+                    e.preventDefault();
+                    alert('Please enter your current password to change it.');
+                    document.getElementById('current_password').focus();
+                    hasError = true;
+                    return;
+                }
+                
+                if (!newPassword) {
+                    e.preventDefault();
+                    alert('Please enter a new password.');
+                    document.getElementById('new_password').focus();
+                    hasError = true;
+                    return;
+                }
+                
+                if (newPassword.length < 8) {
+                    e.preventDefault();
+                    alert('New password must be at least 8 characters long.');
+                    document.getElementById('new_password').focus();
+                    hasError = true;
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    e.preventDefault();
+                    alert('New password and confirmation do not match.');
+                    document.getElementById('confirm_password').focus();
+                    hasError = true;
+                    return;
+                }
+            }
+            
+            // Validate profile picture file size
+            const profilePicture = document.getElementById('profile_picture');
+            if (profilePicture.files.length > 0) {
+                const file = profilePicture.files[0];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert('Image file is too large. Maximum size is 5MB.');
+                    hasError = true;
+                    return;
+                }
+                
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    e.preventDefault();
+                    alert('Invalid file type. Please upload a JPEG, PNG, GIF, or WebP image.');
+                    hasError = true;
+                    return;
+                }
+            }
+        });
+    }
+    
+    // Preview profile picture before upload
+    const profilePictureInput = document.getElementById('profile_picture');
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewContainer = document.querySelector('.profile-picture-preview');
+                    if (previewContainer) {
+                        const existingImg = previewContainer.querySelector('img');
+                        if (existingImg) {
+                            existingImg.src = e.target.result;
+                        } else {
+                            // Replace placeholder div with image
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'rounded-circle';
+                            img.style.cssText = 'width: 100px; height: 100px; object-fit: cover; border: 3px solid #dee2e6;';
+                            img.alt = 'Profile Picture Preview';
+                            previewContainer.innerHTML = '';
+                            previewContainer.appendChild(img);
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

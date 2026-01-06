@@ -1,0 +1,156 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Patients - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div>
+        <h1 class="page-title" style="margin:0;">
+            <i class="fas fa-users"></i>
+            Manage Patients
+        </h1>
+        <p class="text-muted mb-0" style="font-size: 0.9rem; margin-top: 0.25rem;">
+            Total Patients: <strong>{{ total_patients }}</strong>
+        </p>
+    </div>
+</div>
+
+<!-- Patients Table -->
+<div class="content-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>CONTACT</th>
+                    <th>APPOINTMENTS</th>
+                    <th>PACKAGES</th>
+                    <th>LAST VISIT</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in patient_stats %}
+                <tr>
+                    <td>{{ stat.patient.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle fa-2x me-2" style="color: var(--primary-color);"></i>
+                            <div>
+                                <strong>{{ stat.patient.full_name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ stat.patient.username }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <i class="fas fa-phone me-1"></i>{{ stat.patient.phone|default:"N/A" }}
+                    </td>
+                    <td>
+                        <div class="bg-light p-2 rounded">
+                            <div><strong>Total:</strong> {{ stat.total_appointments }}</div>
+                            <div><strong>Completed:</strong> {{ stat.completed_appointments }}</div>
+                            <div><strong>Cancelled:</strong> {{ stat.cancelled_appointments }}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-danger rounded-pill">{{ stat.packages_count }}</span>
+                    </td>
+                    <td>
+                        {% if stat.last_visit %}
+                            {{ stat.last_visit|date:"M d, Y" }}
+                        {% else %}
+                            <span class="text-muted">Never</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'appointments:admin_view_patient' stat.patient.id %}" class="btn btn-sm btn-primary" title="View Patient (Data Privacy - View Only)">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'appointments:admin_delete_patient' stat.patient.id %}" class="btn btn-sm btn-danger" title="Delete Patient" onclick="return confirm('Are you sure you want to delete this patient?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No patients found</h5>
+                        <p class="text-muted">Patients will appear here once they register.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination Controls -->
+    {% if page_obj.has_other_pages %}
+    <div class="card-footer">
+        <nav aria-label="Patients pagination">
+            <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;&laquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;&raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+            <div class="text-center mt-2 text-muted small">
+                <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+{% endblock %}

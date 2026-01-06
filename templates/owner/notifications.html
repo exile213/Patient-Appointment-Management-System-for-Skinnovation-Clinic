@@ -1,0 +1,501 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Notifications - Owner Dashboard{% endblock %}
+
+{% block page_title %}Manage Notifications{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-area {
+        padding-top: 0 !important;
+    }
+    
+    .content-header {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 0;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        position: relative;
+        overflow: visible;
+    }
+    
+    .page-title {
+        color: #667eea;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .page-title i {
+        margin-right: 0.75rem;
+        font-size: 1.5rem;
+    }
+    
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border: none;
+        position: relative;
+        overflow: visible;
+    }
+    
+    .notification-item {
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+        border-left: 4px solid #667eea;
+        background: #ffffff;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    .notification-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        background: #f8f9ff;
+        border-left-color: #764ba2;
+    }
+    
+    .notification-item.cancellation-request {
+        border-left-color: #ff9800;
+        background: #fff8f0;
+    }
+    
+    .notification-item.cancellation-request:hover {
+        background: #fff5e6;
+        border-left-color: #ff6f00;
+    }
+    
+    .notification-item h6 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .notification-item p {
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+    
+    .notification-item small {
+        color: #718096;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    
+    .notification-item small i {
+        color: #a0aec0;
+    }
+    
+    .notification-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-end;
+        min-width: 120px;
+        justify-content: flex-start;
+    }
+    
+    .cancellation-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        color: white;
+        padding: 0.4rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        white-space: nowrap;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        border: none;
+        color: white;
+        padding: 0.4rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        white-space: nowrap;
+    }
+    
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        color: white;
+    }
+    
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+        padding-right: 0;
+    }
+    
+    .notification-item .d-flex {
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+    
+    .notification-item .d-flex > div:first-child {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .notification-item .d-flex > div:last-child {
+        flex-shrink: 0;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border: none;
+        color: white;
+        padding: 0.4rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        white-space: nowrap;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+    
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        border: none;
+        color: white;
+        padding: 0.4rem 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+        white-space: nowrap;
+    }
+    
+    .btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+        color: white;
+    }
+    
+    .notification-item.read {
+        opacity: 0.7;
+        background: #f8f9fa;
+    }
+    
+    .notification-item.read:hover {
+        opacity: 0.9;
+        background: #e9ecef;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #c3cfe2;
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+    }
+    
+    .empty-state h5 {
+        color: #4a5568;
+        margin-bottom: 0.75rem;
+        font-weight: 700;
+    }
+    
+    .empty-state p {
+        color: #718096;
+    }
+    
+    @media (max-width: 1200px) {
+        .content-header {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.4rem;
+        }
+        
+        .page-title i {
+            font-size: 1.3rem;
+        }
+        
+        .content-card {
+            padding: 1.5rem;
+        }
+        
+        .notification-item {
+            padding: 0.875rem;
+        }
+        
+        .notification-item h6 {
+            font-size: 0.95rem;
+        }
+        
+        .notification-item p {
+            font-size: 0.85rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .content-header {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+        }
+        
+        .page-title {
+            font-size: 1.2rem;
+        }
+        
+        .page-title i {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
+        
+        .content-card {
+            padding: 1.5rem;
+        }
+        
+        .notification-item {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .notification-item h6 {
+            font-size: 0.9rem;
+        }
+        
+        .notification-item p {
+            font-size: 0.8rem;
+        }
+        
+        .notification-actions {
+            flex-direction: row;
+            flex-wrap: wrap;
+            min-width: auto;
+        }
+        
+        .btn-danger,
+        .btn-success,
+        .btn-warning {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+        }
+        
+        .notification-content {
+            padding-right: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-area">
+    <!-- Page Header -->
+    <div class="content-header">
+        <h1 class="page-title">
+            <i class="fas fa-bell"></i>
+            Manage Notifications
+        </h1>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="content-card">
+        {% if notifications_with_actions %}
+            {% for item in notifications_with_actions %}
+            {% with notification=item.notification cancellation_request=item.cancellation_request appointment=item.appointment %}
+            <div class="notification-item {% if cancellation_request and cancellation_request.status == 'pending' %}cancellation-request{% endif %} {% if notification.is_read %}read{% endif %}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="notification-content">
+                        <h6>
+                            {% if 'cancellation' in notification.title.lower %}
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            {% elif 'appointment' in notification.title.lower or 'booked' in notification.title.lower %}
+                                <i class="fas fa-calendar-check text-success me-2"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                            {% endif %}
+                            {{ notification.title }}
+                        </h6>
+                        <p class="mb-2">{{ notification.message }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ notification.created_at|date:"M d, Y g:i A" }}
+                        </small>
+                    </div>
+                    <div class="notification-actions">
+                        {% if cancellation_request and cancellation_request.status == 'pending' %}
+                        <div class="cancellation-buttons">
+                            <a href="{% url 'owner:approve_cancellation' cancellation_request.id %}" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this cancellation request? This will cancel the appointment.')">
+                                <i class="fas fa-check"></i> Approve
+                            </a>
+                            <a href="{% url 'owner:reject_cancellation' cancellation_request.id %}" class="btn btn-warning" onclick="return confirm('Are you sure you want to reject this cancellation request? The appointment will remain active.')">
+                                <i class="fas fa-times"></i> Reject
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if not notification.is_read %}
+                        <a href="{% url 'owner:mark_notification_read' notification.id %}" class="btn btn-info">
+                            <i class="fas fa-check-circle"></i> Mark As Read
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'owner:delete_notification' notification.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this notification?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        {% elif notifications %}
+            {% for notification in notifications %}
+            <div class="notification-item {% if notification.is_read %}read{% endif %}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="notification-content">
+                        <h6>
+                            {% if 'cancellation' in notification.title.lower %}
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            {% elif 'appointment' in notification.title.lower or 'booked' in notification.title.lower %}
+                                <i class="fas fa-calendar-check text-success me-2"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                            {% endif %}
+                            {{ notification.title }}
+                        </h6>
+                        <p class="mb-2">{{ notification.message }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ notification.created_at|date:"M d, Y g:i A" }}
+                        </small>
+                    </div>
+                    <div class="notification-actions">
+                        {% if not notification.is_read %}
+                        <a href="{% url 'owner:mark_notification_read' notification.id %}" class="btn btn-info">
+                            <i class="fas fa-check-circle"></i> Mark As Read
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'owner:delete_notification' notification.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this notification?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Pagination Controls -->
+            {% if page_obj.has_other_pages %}
+            <div class="mt-4">
+                <nav aria-label="Notifications pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;&laquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;&raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div class="text-center mt-2 text-muted small">
+                        <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+                    </div>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h5>No notifications</h5>
+                <p>Notifications will appear here when there are important updates.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

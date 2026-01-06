@@ -1,0 +1,6445 @@
+[
+  {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "last_login": "2025-12-27T02:12:26.734554+00:00",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "admin@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-09T09:48:18.096305+00:00",
+      "user_type": "admin",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:18.551736+00:00",
+      "updated_at": "2025-12-09T09:48:18.551750+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "last_login": "2025-12-31T10:17:43.551770+00:00",
+      "is_superuser": false,
+      "username": "owner",
+      "first_name": "Clinic",
+      "last_name": "Owner",
+      "email": "owner@beautyclinic.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-09T09:48:26.261561+00:00",
+      "user_type": "owner",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:26.261852+00:00",
+      "updated_at": "2025-12-09T09:48:26.731971+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "last_login": "2025-12-22T14:06:13.293944+00:00",
+      "is_superuser": false,
+      "username": "Kikay",
+      "first_name": "Kranchy",
+      "last_name": "Reyes",
+      "email": "attendant@beautyclinic.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-09T09:48:26.756415+00:00",
+      "user_type": "attendant",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "profile_pictures/face.jpeg",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:26.756589+00:00",
+      "updated_at": "2025-12-14T03:21:14.094314+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 15,
+    "fields": {
+      "last_login": "2025-12-11T06:18:13.339455+00:00",
+      "is_superuser": false,
+      "username": "kenai.reyes",
+      "first_name": "kenai",
+      "last_name": "reyes",
+      "email": "kenai.reyes@chmsc.edu.ph",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-09T10:45:49.454592+00:00",
+      "user_type": "patient",
+      "phone": "09925663102",
+      "middle_name": null,
+      "address": "",
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-09T10:45:49.457784+00:00",
+      "updated_at": "2025-12-09T10:47:30.173668+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 16,
+    "fields": {
+      "last_login": "2025-12-22T14:06:00.693171+00:00",
+      "is_superuser": false,
+      "username": "Kurtzyy",
+      "first_name": "Kurt12",
+      "last_name": "Baylosis",
+      "email": "kurtbaylosis9@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-09T11:15:38.255471+00:00",
+      "user_type": "patient",
+      "phone": "09929329411",
+      "middle_name": null,
+      "address": "",
+      "gender": "male",
+      "civil_status": "single",
+      "birthday": "2003-05-15",
+      "age": null,
+      "occupation": "Student",
+      "profile_picture": "profile_pictures/virusbg.png",
+      "archived": false,
+      "created_at": "2025-12-09T11:15:38.780224+00:00",
+      "updated_at": "2025-12-14T15:38:28.139804+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 17,
+    "fields": {
+      "last_login": "2025-12-26T15:03:05.306515+00:00",
+      "is_superuser": false,
+      "username": "Mel",
+      "first_name": "Melanie",
+      "last_name": "Cosas",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-11T03:36:54.904792+00:00",
+      "user_type": "attendant",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "profile_pictures/radio.jpg",
+      "archived": false,
+      "created_at": "2025-12-11T03:36:54.905073+00:00",
+      "updated_at": "2025-12-26T15:02:00.942511+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 18,
+    "fields": {
+      "last_login": "2025-12-11T04:58:16.501121+00:00",
+      "is_superuser": false,
+      "username": "Kim",
+      "first_name": "Kim",
+      "last_name": "Reyes",
+      "email": "kim@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-11T04:52:32.334404+00:00",
+      "user_type": "patient",
+      "phone": "09075938904",
+      "middle_name": "",
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-11T04:52:33.003229+00:00",
+      "updated_at": "2025-12-11T04:52:33.003242+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 20,
+    "fields": {
+      "last_login": "2025-12-22T13:47:06.135230+00:00",
+      "is_superuser": false,
+      "username": "ksreyes.chmsu",
+      "first_name": "Kenai",
+      "last_name": "Reyes",
+      "email": "ksreyes.chmsu@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-22T13:16:33.951507+00:00",
+      "user_type": "patient",
+      "phone": "",
+      "middle_name": null,
+      "address": "",
+      "gender": "male",
+      "civil_status": "single",
+      "birthday": "2004-06-28",
+      "age": 21,
+      "occupation": "Student",
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-22T13:16:33.954828+00:00",
+      "updated_at": "2025-12-22T13:25:12.296100+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 21,
+    "fields": {
+      "last_login": "2025-12-26T15:00:44.695143+00:00",
+      "is_superuser": false,
+      "username": "jeanurbano1803",
+      "first_name": "Jean",
+      "last_name": "Urbano",
+      "email": "jeanurbano1803@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-26T14:54:20.001096+00:00",
+      "user_type": "patient",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T14:54:20.104868+00:00",
+      "updated_at": "2025-12-26T14:54:20.104868+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 22,
+    "fields": {
+      "last_login": null,
+      "is_superuser": false,
+      "username": "maria.santos",
+      "first_name": "Maria",
+      "last_name": "Santos",
+      "email": "maria.santos@test.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-26T16:29:06.678843+00:00",
+      "user_type": "patient",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T16:29:06.680378+00:00",
+      "updated_at": "2025-12-26T16:29:07.992170+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 23,
+    "fields": {
+      "last_login": null,
+      "is_superuser": true,
+      "username": "admin.staff",
+      "first_name": "Admin",
+      "last_name": "Staff",
+      "email": "admin.staff@test.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-26T16:29:09.373424+00:00",
+      "user_type": "admin",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T16:29:09.374424+00:00",
+      "updated_at": "2025-12-26T16:29:10.751254+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 24,
+    "fields": {
+      "last_login": "2025-12-26T16:37:16.161234+00:00",
+      "is_superuser": false,
+      "username": "clinic.owner",
+      "first_name": "Clinic",
+      "last_name": "Owner",
+      "email": "clinic.owner@test.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-26T16:29:12.012942+00:00",
+      "user_type": "owner",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T16:29:12.014062+00:00",
+      "updated_at": "2025-12-26T16:29:13.396727+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 25,
+    "fields": {
+      "last_login": null,
+      "is_superuser": false,
+      "username": "attendant.01",
+      "first_name": "Attendant",
+      "last_name": "One",
+      "email": "attendant.01@test.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-26T16:29:14.696521+00:00",
+      "user_type": "attendant",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T16:29:14.697527+00:00",
+      "updated_at": "2025-12-27T02:30:59.421794+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 26,
+    "fields": {
+      "last_login": null,
+      "is_superuser": false,
+      "username": "patperez",
+      "first_name": "Patty",
+      "last_name": "Perez",
+      "email": "pat.perez@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-12-26T16:29:55.054143+00:00",
+      "user_type": "attendant",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-26T16:29:55.054143+00:00",
+      "updated_at": "2025-12-27T02:19:21.898554+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 27,
+    "fields": {
+      "last_login": "2025-12-27T02:22:51.620701+00:00",
+      "is_superuser": false,
+      "username": "jrmurbano.chmsu",
+      "first_name": "Jean Roshan M.",
+      "last_name": "Urbano",
+      "email": "jrmurbano.chmsu@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-27T02:17:19.273232+00:00",
+      "user_type": "patient",
+      "phone": "",
+      "middle_name": null,
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-27T02:17:19.345285+00:00",
+      "updated_at": "2025-12-27T02:17:19.345285+00:00"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 28,
+    "fields": {
+      "last_login": "2025-12-27T02:23:22.984577+00:00",
+      "is_superuser": false,
+      "username": "nilomarquez",
+      "first_name": "Nilo",
+      "last_name": "Marquez",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-12-27T02:22:06.214949+00:00",
+      "user_type": "attendant",
+      "phone": "",
+      "middle_name": "",
+      "address": null,
+      "gender": null,
+      "civil_status": null,
+      "birthday": null,
+      "age": null,
+      "occupation": null,
+      "profile_picture": "",
+      "archived": false,
+      "created_at": "2025-12-27T02:22:06.215950+00:00",
+      "updated_at": "2025-12-27T02:23:40.180150+00:00"
+    }
+  },
+  {
+    "model": "accounts.attendantprofile",
+    "pk": 1,
+    "fields": {
+      "user_id": 3,
+      "work_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "start_time": "10:00:00",
+      "end_time": "17:00:00",
+      "phone": null,
+      "created_at": "2025-12-09T10:46:34.212866+00:00",
+      "updated_at": "2025-12-14T03:21:14.109118+00:00"
+    }
+  },
+  {
+    "model": "accounts.attendantprofile",
+    "pk": 2,
+    "fields": {
+      "user_id": 17,
+      "work_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "start_time": "10:00:00",
+      "end_time": "17:00:00",
+      "phone": null,
+      "created_at": "2025-12-11T03:43:28.622736+00:00",
+      "updated_at": "2025-12-14T03:21:33.616793+00:00"
+    }
+  },
+  {
+    "model": "accounts.attendantprofile",
+    "pk": 3,
+    "fields": {
+      "user_id": 28,
+      "work_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "start_time": "10:00:00",
+      "end_time": "17:00:00",
+      "phone": null,
+      "created_at": "2025-12-27T02:22:38.281957+00:00",
+      "updated_at": "2025-12-27T02:22:38.291936+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 1,
+    "fields": {
+      "day_of_week": "Monday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.074438+00:00",
+      "updated_at": "2025-12-09T09:48:33.074453+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 2,
+    "fields": {
+      "day_of_week": "Tuesday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.088193+00:00",
+      "updated_at": "2025-12-09T09:48:33.088209+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 3,
+    "fields": {
+      "day_of_week": "Wednesday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.107086+00:00",
+      "updated_at": "2025-12-09T09:48:33.107104+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 4,
+    "fields": {
+      "day_of_week": "Thursday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.119926+00:00",
+      "updated_at": "2025-12-09T09:48:33.119953+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 5,
+    "fields": {
+      "day_of_week": "Friday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.132632+00:00",
+      "updated_at": "2025-12-09T09:48:33.132648+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 6,
+    "fields": {
+      "day_of_week": "Saturday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": false,
+      "created_at": "2025-12-09T09:48:33.144885+00:00",
+      "updated_at": "2025-12-09T09:48:33.144903+00:00"
+    }
+  },
+  {
+    "model": "accounts.storehours",
+    "pk": 7,
+    "fields": {
+      "day_of_week": "Sunday",
+      "open_time": "09:00:00",
+      "close_time": "17:00:00",
+      "is_closed": true,
+      "created_at": "2025-12-09T09:48:33.157401+00:00",
+      "updated_at": "2025-12-09T09:48:33.157417+00:00"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 1,
+    "fields": {
+      "name": "Facials"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 2,
+    "fields": {
+      "name": "Anti-Aging & Face Lift"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 3,
+    "fields": {
+      "name": "Pico Laser"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 4,
+    "fields": {
+      "name": "Lightening Treatments"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 5,
+    "fields": {
+      "name": "Pimple Treatments"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 6,
+    "fields": {
+      "name": "Body Slimming with Cavitation"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 7,
+    "fields": {
+      "name": "Intense Pulsed Light (IPL) Hair Removal"
+    }
+  },
+  {
+    "model": "services.servicecategory",
+    "pk": 8,
+    "fields": {
+      "name": "Other Services"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 24,
+    "fields": {
+      "service_name": "Anti-Acne Treatment",
+      "description": "Specialized treatment for acne-prone skin",
+      "price": 699.0,
+      "duration": 60,
+      "category_id": 5,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.114211+00:00",
+      "updated_at": "2025-12-09T09:51:32.114230+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 25,
+    "fields": {
+      "service_name": "Arms Cavitation",
+      "description": "Non-invasive body contouring for arms",
+      "price": 899.0,
+      "duration": 60,
+      "category_id": 6,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.127900+00:00",
+      "updated_at": "2025-12-09T09:51:32.127920+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 18,
+    "fields": {
+      "service_name": "Back Whitening",
+      "description": "Skin lightening treatment for back area",
+      "price": 799.0,
+      "duration": 60,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.024904+00:00",
+      "updated_at": "2025-12-09T09:51:32.024924+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 19,
+    "fields": {
+      "service_name": "Butt Whitening",
+      "description": "Skin lightening treatment for buttocks area",
+      "price": 899.0,
+      "duration": 60,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.038845+00:00",
+      "updated_at": "2025-12-09T09:51:32.038865+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 34,
+    "fields": {
+      "service_name": "Carbon Doll Laser",
+      "description": "Carbon laser treatment for deep pore cleansing",
+      "price": 799.0,
+      "duration": 45,
+      "category_id": 8,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.265872+00:00",
+      "updated_at": "2025-12-09T09:51:32.265893+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 9,
+    "fields": {
+      "service_name": "Casmara",
+      "description": "Premium facial mask treatment",
+      "price": 799.0,
+      "duration": 90,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.887893+00:00",
+      "updated_at": "2025-12-09T09:51:31.887914+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 7,
+    "fields": {
+      "service_name": "Charcoal",
+      "description": "A facial that includes a Diamond Peel and a Charcoal mask for deep cleansing and purification",
+      "price": 699.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.855497+00:00",
+      "updated_at": "2025-12-09T09:51:31.855519+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 20,
+    "fields": {
+      "service_name": "Chest Whitening",
+      "description": "Skin lightening treatment for chest area",
+      "price": 699.0,
+      "duration": 60,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.053141+00:00",
+      "updated_at": "2025-12-09T09:51:32.053160+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 5,
+    "fields": {
+      "service_name": "Chest/Back",
+      "description": "A facial treatment specifically for the chest or back area",
+      "price": 649.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.829449+00:00",
+      "updated_at": "2025-12-09T09:51:31.829475+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 10,
+    "fields": {
+      "service_name": "Collagen",
+      "description": "Anti-aging facial treatment with collagen infusion",
+      "price": 799.0,
+      "duration": 90,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.902253+00:00",
+      "updated_at": "2025-12-09T09:51:31.902274+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 2,
+    "fields": {
+      "service_name": "Diamond Peel",
+      "description": "An exfoliating treatment to remove dead skin cells",
+      "price": 499.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.927224+00:00",
+      "updated_at": "2025-12-09T09:48:32.927248+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 27,
+    "fields": {
+      "service_name": "Face Cavitation",
+      "description": "Non-invasive facial contouring treatment",
+      "price": 799.0,
+      "duration": 45,
+      "category_id": 6,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.157022+00:00",
+      "updated_at": "2025-12-09T09:51:32.157045+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 12,
+    "fields": {
+      "service_name": "Galvanic Therapy",
+      "description": "Deep cleansing and anti-aging treatment using galvanic current",
+      "price": 699.0,
+      "duration": 60,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.930973+00:00",
+      "updated_at": "2025-12-09T09:51:31.931003+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 13,
+    "fields": {
+      "service_name": "Geneo Infusion",
+      "description": "Advanced facial treatment with infusion technology",
+      "price": 999.0,
+      "duration": 90,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.943733+00:00",
+      "updated_at": "2025-12-09T09:51:31.943756+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 37,
+    "fields": {
+      "service_name": "IPL Arm",
+      "description": "IPL treatment for arm hair removal",
+      "price": 899.0,
+      "duration": 45,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:58.058496+00:00",
+      "updated_at": "2025-12-09T09:51:58.058516+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 30,
+    "fields": {
+      "service_name": "IPL Back",
+      "description": "IPL treatment for back hair removal",
+      "price": 1199.0,
+      "duration": 60,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.201799+00:00",
+      "updated_at": "2025-12-09T09:51:32.201820+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 31,
+    "fields": {
+      "service_name": "IPL Bikini",
+      "description": "IPL treatment for bikini area hair removal",
+      "price": 999.0,
+      "duration": 45,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.220169+00:00",
+      "updated_at": "2025-12-09T09:51:32.220191+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 32,
+    "fields": {
+      "service_name": "IPL Brazilian",
+      "description": "IPL treatment for Brazilian area hair removal",
+      "price": 1299.0,
+      "duration": 45,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.234291+00:00",
+      "updated_at": "2025-12-09T09:51:32.234313+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 40,
+    "fields": {
+      "service_name": "IPL Chest",
+      "description": "IPL treatment for chest hair removal",
+      "price": 999.0,
+      "duration": 45,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:52:06.485454+00:00",
+      "updated_at": "2025-12-09T09:52:06.485481+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 3,
+    "fields": {
+      "service_name": "IPL Face",
+      "description": "Intense Pulsed Light treatment for hair removal on the face",
+      "price": 499.0,
+      "duration": 15,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.943244+00:00",
+      "updated_at": "2025-12-09T09:48:32.943264+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 29,
+    "fields": {
+      "service_name": "IPL Legs",
+      "description": "IPL treatment for leg hair removal",
+      "price": 1299.0,
+      "duration": 60,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.186136+00:00",
+      "updated_at": "2025-12-09T09:51:32.186156+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 36,
+    "fields": {
+      "service_name": "IPL Neck",
+      "description": "IPL treatment for neck hair removal",
+      "price": 499.0,
+      "duration": 30,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:58.043599+00:00",
+      "updated_at": "2025-12-09T09:51:58.043625+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 28,
+    "fields": {
+      "service_name": "IPL Underarms",
+      "description": "IPL treatment for underarm hair removal",
+      "price": 499.0,
+      "duration": 30,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.171271+00:00",
+      "updated_at": "2025-12-09T09:51:32.171290+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 33,
+    "fields": {
+      "service_name": "IPL Upperlip",
+      "description": "IPL treatment for upper lip hair removal",
+      "price": 399.0,
+      "duration": 15,
+      "category_id": 7,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.250080+00:00",
+      "updated_at": "2025-12-09T09:51:32.250100+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 41,
+    "fields": {
+      "service_name": "Korean Lash Lift with Tint",
+      "description": "Korean-style lash lift and tint treatment",
+      "price": 899.0,
+      "duration": 60,
+      "category_id": 8,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:52:06.504679+00:00",
+      "updated_at": "2025-12-09T09:52:06.504698+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 42,
+    "fields": {
+      "service_name": "Korean Lash Lift without Tint",
+      "description": "Korean-style lash lift treatment without tint",
+      "price": 799.0,
+      "duration": 60,
+      "category_id": 8,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:52:17.611315+00:00",
+      "updated_at": "2025-12-09T09:52:17.611343+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 6,
+    "fields": {
+      "service_name": "Neck",
+      "description": "A facial treatment targeting the neck area",
+      "price": 449.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.842343+00:00",
+      "updated_at": "2025-12-09T09:51:31.842369+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 21,
+    "fields": {
+      "service_name": "Neck Whitening",
+      "description": "Skin lightening treatment for neck area",
+      "price": 599.0,
+      "duration": 45,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.071976+00:00",
+      "updated_at": "2025-12-09T09:51:32.072010+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 44,
+    "fields": {
+      "service_name": "Nigga Whitening (Emil Exclusive)",
+      "description": "Whitening Treatment for Niggas like Emil.",
+      "price": 7000.0,
+      "duration": 60,
+      "category_id": 4,
+      "image": "",
+      "archived": true,
+      "created_at": "2025-12-26T14:27:07.479127+00:00",
+      "updated_at": "2025-12-26T14:29:09.765566+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 11,
+    "fields": {
+      "service_name": "Oxygeneo",
+      "description": "3-in-1 facial treatment that exfoliates, infuses, and oxygenates",
+      "price": 899.0,
+      "duration": 90,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.916597+00:00",
+      "updated_at": "2025-12-09T09:51:31.916618+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 16,
+    "fields": {
+      "service_name": "Pico Glow",
+      "description": "Pico laser treatment for skin brightening",
+      "price": 1999.0,
+      "duration": 60,
+      "category_id": 3,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.998664+00:00",
+      "updated_at": "2025-12-09T09:51:31.998685+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 38,
+    "fields": {
+      "service_name": "Pimple Injection",
+      "description": "Direct injection treatment for pimples",
+      "price": 299.0,
+      "duration": 15,
+      "category_id": 5,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:58.071002+00:00",
+      "updated_at": "2025-12-09T09:51:58.071023+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 14,
+    "fields": {
+      "service_name": "Platelet-Rich Plasma (PRP) therapy",
+      "description": "Regenerative therapy using your own platelets",
+      "price": 2999.0,
+      "duration": 120,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.965693+00:00",
+      "updated_at": "2025-12-09T09:51:31.965714+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 1,
+    "fields": {
+      "service_name": "Primary Facial (Face)",
+      "description": "Basic facial treatment for the face",
+      "price": 499.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.911111+00:00",
+      "updated_at": "2025-12-09T09:48:32.911170+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 15,
+    "fields": {
+      "service_name": "Radio Frequency",
+      "description": "Non-invasive skin tightening treatment",
+      "price": 1299.0,
+      "duration": 60,
+      "category_id": 2,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.980186+00:00",
+      "updated_at": "2025-12-09T09:51:31.980206+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 22,
+    "fields": {
+      "service_name": "Skin Rejuvenation",
+      "description": "Comprehensive skin rejuvenation treatment",
+      "price": 1299.0,
+      "duration": 90,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.085711+00:00",
+      "updated_at": "2025-12-09T09:51:32.085737+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 8,
+    "fields": {
+      "service_name": "Snow White",
+      "description": "Brightening facial treatment",
+      "price": 699.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:31.874265+00:00",
+      "updated_at": "2025-12-09T09:51:31.874284+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 17,
+    "fields": {
+      "service_name": "Tattoo Removal",
+      "description": "Pico laser tattoo removal treatment",
+      "price": 2499.0,
+      "duration": 45,
+      "category_id": 3,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.011289+00:00",
+      "updated_at": "2025-12-09T09:51:32.011309+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 39,
+    "fields": {
+      "service_name": "Thighs Cavitation",
+      "description": "Non-invasive body contouring for thighs",
+      "price": 1099.0,
+      "duration": 60,
+      "category_id": 6,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:58.087977+00:00",
+      "updated_at": "2025-12-09T09:51:58.088003+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 4,
+    "fields": {
+      "service_name": "Underarm Whitening",
+      "description": "A treatment to lighten the skin in the underarm area",
+      "price": 549.0,
+      "duration": 15,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.958956+00:00",
+      "updated_at": "2025-12-09T09:48:32.958976+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 23,
+    "fields": {
+      "service_name": "Vitamin C Infusion",
+      "description": "Brightening treatment with Vitamin C",
+      "price": 899.0,
+      "duration": 60,
+      "category_id": 4,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.098412+00:00",
+      "updated_at": "2025-12-09T09:51:32.098436+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 26,
+    "fields": {
+      "service_name": "Waist Cavitation",
+      "description": "Non-invasive body contouring for waist area",
+      "price": 999.0,
+      "duration": 60,
+      "category_id": 6,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.143242+00:00",
+      "updated_at": "2025-12-09T09:51:32.143263+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 35,
+    "fields": {
+      "service_name": "Warts Removal",
+      "description": "Laser treatment for wart removal",
+      "price": 599.0,
+      "duration": 30,
+      "category_id": 8,
+      "image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.281137+00:00",
+      "updated_at": "2025-12-09T09:51:32.281157+00:00"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 43,
+    "fields": {
+      "service_name": "aa",
+      "description": "",
+      "price": 100.0,
+      "duration": 60,
+      "category_id": 1,
+      "image": "",
+      "archived": true,
+      "created_at": "2025-12-22T12:54:06.231444+00:00",
+      "updated_at": "2025-12-22T12:55:42.544720+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 42,
+    "fields": {
+      "service_id": 35,
+      "image": "services/images/wards.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:53:29.541781+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 41,
+    "fields": {
+      "service_id": 26,
+      "image": "services/images/wasist.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:53:23.708844+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 40,
+    "fields": {
+      "service_id": 23,
+      "image": "services/images/vit_c.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:53:14.922369+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 39,
+    "fields": {
+      "service_id": 4,
+      "image": "services/images/undearm.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:53:10.100155+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 38,
+    "fields": {
+      "service_id": 39,
+      "image": "services/images/thigh.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:53:02.695985+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 37,
+    "fields": {
+      "service_id": 17,
+      "image": "services/images/tattoo.jpeg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:54.822523+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 36,
+    "fields": {
+      "service_id": 8,
+      "image": "services/images/snow.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:49.587665+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 35,
+    "fields": {
+      "service_id": 22,
+      "image": "services/images/skin_rejuv.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:43.483471+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 34,
+    "fields": {
+      "service_id": 15,
+      "image": "services/images/radio.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:35.813444+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 33,
+    "fields": {
+      "service_id": 1,
+      "image": "services/images/primary.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:26.934412+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 32,
+    "fields": {
+      "service_id": 14,
+      "image": "services/images/prp.jpeg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:15.024838+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 31,
+    "fields": {
+      "service_id": 38,
+      "image": "services/images/pimp.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:52:03.168873+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 30,
+    "fields": {
+      "service_id": 16,
+      "image": "services/images/pico.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:57.798749+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 29,
+    "fields": {
+      "service_id": 11,
+      "image": "services/images/oxy.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:52.333109+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 28,
+    "fields": {
+      "service_id": 21,
+      "image": "services/images/neck_white.png",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:44.796399+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 27,
+    "fields": {
+      "service_id": 6,
+      "image": "services/images/neck.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:38.133112+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 26,
+    "fields": {
+      "service_id": 42,
+      "image": "services/images/without.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:30.595264+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 25,
+    "fields": {
+      "service_id": 41,
+      "image": "services/images/korean.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:24.572805+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 24,
+    "fields": {
+      "service_id": 33,
+      "image": "services/images/ipl_lip.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:17.203075+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 23,
+    "fields": {
+      "service_id": 28,
+      "image": "services/images/ipl_udner.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:51:07.827939+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 22,
+    "fields": {
+      "service_id": 36,
+      "image": "services/images/ipl_neck.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:58.741929+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 21,
+    "fields": {
+      "service_id": 29,
+      "image": "services/images/ipl_legs.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:53.644743+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 20,
+    "fields": {
+      "service_id": 3,
+      "image": "services/images/ipl_face.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:46.555977+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 19,
+    "fields": {
+      "service_id": 40,
+      "image": "services/images/ipl_chest.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:39.966474+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 18,
+    "fields": {
+      "service_id": 32,
+      "image": "services/images/ipl_braz.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:32.248433+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 17,
+    "fields": {
+      "service_id": 31,
+      "image": "services/images/bikini_ipl.png",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:23.532092+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 16,
+    "fields": {
+      "service_id": 30,
+      "image": "services/images/ipl_back.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:16.499769+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 15,
+    "fields": {
+      "service_id": 37,
+      "image": "services/images/ipl_arm.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:10.880568+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 14,
+    "fields": {
+      "service_id": 13,
+      "image": "services/images/geneo.png",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:06.078233+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 13,
+    "fields": {
+      "service_id": 12,
+      "image": "services/images/galvanic.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:50:00.966126+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 12,
+    "fields": {
+      "service_id": 27,
+      "image": "services/images/face.jpeg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:56.089589+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 11,
+    "fields": {
+      "service_id": 2,
+      "image": "services/images/diamond.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:50.819981+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 10,
+    "fields": {
+      "service_id": 10,
+      "image": "services/images/collagen.png",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:46.722401+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 9,
+    "fields": {
+      "service_id": 5,
+      "image": "services/images/chestback.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:37.645630+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 8,
+    "fields": {
+      "service_id": 20,
+      "image": "services/images/chest_withte.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:31.593424+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 7,
+    "fields": {
+      "service_id": 7,
+      "image": "services/images/charcoal.webp",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:49:07.570998+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 6,
+    "fields": {
+      "service_id": 9,
+      "image": "services/images/casamara.png",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:44:48.588060+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 5,
+    "fields": {
+      "service_id": 34,
+      "image": "services/images/doll.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:44:41.801738+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 4,
+    "fields": {
+      "service_id": 19,
+      "image": "services/images/butt-acne-680828692.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:44:29.523459+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 3,
+    "fields": {
+      "service_id": 18,
+      "image": "services/images/back.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:44:21.162483+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 2,
+    "fields": {
+      "service_id": 25,
+      "image": "services/images/arms.jpeg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:43:48.268400+00:00"
+    }
+  },
+  {
+    "model": "services.serviceimage",
+    "pk": 1,
+    "fields": {
+      "service_id": 24,
+      "image": "services/images/anti_acne.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:43:25.708690+00:00"
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 24,
+    "fields": {
+      "datetime": "2025-12-27T02:13:21.031787+00:00",
+      "type": "Closed Day",
+      "name": "2026-01-01 Closed Day",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Reason: New Year's Day",
+      "related_id": 2
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 23,
+    "fields": {
+      "datetime": "2025-12-26T14:29:09.774569+00:00",
+      "type": "Service",
+      "name": "Nigga Whitening (Emil Exclusive)",
+      "action": "Deleted",
+      "performed_by": "admin",
+      "details": "Service archived",
+      "related_id": 44
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 22,
+    "fields": {
+      "datetime": "2025-12-26T14:27:40.525085+00:00",
+      "type": "Service",
+      "name": "Nigga Whitening (Emil Exclusive)",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Updated: Nigga Whitening -> Nigga Whitening (Emil Exclusive)",
+      "related_id": 44
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 21,
+    "fields": {
+      "datetime": "2025-12-26T14:27:07.493139+00:00",
+      "type": "Service",
+      "name": "Nigga Whitening",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Price: 6900.00, Duration: 60",
+      "related_id": 44
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 20,
+    "fields": {
+      "datetime": "2025-12-22T13:06:01.144869+00:00",
+      "type": "Product",
+      "name": "Soap",
+      "action": "Deleted",
+      "performed_by": "admin",
+      "details": "Product archived",
+      "related_id": 8
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 19,
+    "fields": {
+      "datetime": "2025-12-22T13:05:29.721280+00:00",
+      "type": "Product",
+      "name": "Soap",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Price: 150, Stock: 50",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 18,
+    "fields": {
+      "datetime": "2025-12-22T12:55:42.556998+00:00",
+      "type": "Service",
+      "name": "aa",
+      "action": "Deleted",
+      "performed_by": "admin",
+      "details": "Service archived",
+      "related_id": 43
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 17,
+    "fields": {
+      "datetime": "2025-12-22T12:54:06.256187+00:00",
+      "type": "Service",
+      "name": "aa",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Price: 100, Duration: 60",
+      "related_id": 43
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 16,
+    "fields": {
+      "datetime": "2025-12-22T12:48:21.336027+00:00",
+      "type": "Product",
+      "name": "dasdsa",
+      "action": "Deleted",
+      "performed_by": "admin",
+      "details": "Product archived",
+      "related_id": 7
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 15,
+    "fields": {
+      "datetime": "2025-12-22T12:47:55.071894+00:00",
+      "type": "Product",
+      "name": "dasdsa",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Price: 100, Stock: 5",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 14,
+    "fields": {
+      "datetime": "2025-12-14T14:26:08.232498+00:00",
+      "type": "Time Slot",
+      "name": "04:30 PM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 13,
+    "fields": {
+      "datetime": "2025-12-14T14:26:06.248264+00:00",
+      "type": "Time Slot",
+      "name": "03:30 PM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 12,
+    "fields": {
+      "datetime": "2025-12-14T14:26:03.454864+00:00",
+      "type": "Time Slot",
+      "name": "02:30 PM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 11,
+    "fields": {
+      "datetime": "2025-12-14T14:25:58.465845+00:00",
+      "type": "Time Slot",
+      "name": "01:30 PM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 10,
+    "fields": {
+      "datetime": "2025-12-14T14:25:55.528645+00:00",
+      "type": "Time Slot",
+      "name": "12:30 PM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 9,
+    "fields": {
+      "datetime": "2025-12-14T14:25:52.882901+00:00",
+      "type": "Time Slot",
+      "name": "11:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 8,
+    "fields": {
+      "datetime": "2025-12-14T14:25:47.916601+00:00",
+      "type": "Time Slot",
+      "name": "10:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 7,
+    "fields": {
+      "datetime": "2025-12-14T14:24:45.023438+00:00",
+      "type": "Time Slot",
+      "name": "10:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Inactive \u2192 Active",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 6,
+    "fields": {
+      "datetime": "2025-12-14T14:20:00.434146+00:00",
+      "type": "Time Slot",
+      "name": "10:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 5,
+    "fields": {
+      "datetime": "2025-12-14T14:19:58.946612+00:00",
+      "type": "Time Slot",
+      "name": "10:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Inactive \u2192 Active",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 4,
+    "fields": {
+      "datetime": "2025-12-14T14:19:55.774130+00:00",
+      "type": "Time Slot",
+      "name": "10:30 AM",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Status changed: Active \u2192 Inactive",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 3,
+    "fields": {
+      "datetime": "2025-12-14T03:59:52.712871+00:00",
+      "type": "Product",
+      "name": "dasdsa",
+      "action": "Deleted",
+      "performed_by": "admin",
+      "details": "Product archived",
+      "related_id": 6
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 2,
+    "fields": {
+      "datetime": "2025-12-14T03:59:45.798422+00:00",
+      "type": "Product",
+      "name": "dasdsa",
+      "action": "Added",
+      "performed_by": "admin",
+      "details": "Price: 100, Stock: 100",
+      "related_id": null
+    }
+  },
+  {
+    "model": "services.historylog",
+    "pk": 1,
+    "fields": {
+      "datetime": "2025-12-14T03:54:24.573224+00:00",
+      "type": "Package",
+      "name": "3 + 1 Arms Cavitation",
+      "action": "Edited",
+      "performed_by": "admin",
+      "details": "Updated: 3 + 1 Arms Cavitation -> 3 + 1 Arms Cavitation",
+      "related_id": 11
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 74,
+    "fields": {
+      "appointment_date": "2025-12-31",
+      "appointment_time": "16:00:00",
+      "status": "confirmed",
+      "quantity": 1,
+      "created_at": "2025-12-26T14:57:44.929193+00:00",
+      "updated_at": "2025-12-26T15:00:14.274459+00:00",
+      "transaction_id": "70C87806",
+      "patient_id": 21,
+      "attendant_id": 3,
+      "service_id": 9,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 73,
+    "fields": {
+      "appointment_date": "2025-12-23",
+      "appointment_time": "13:00:00",
+      "status": "confirmed",
+      "quantity": 1,
+      "created_at": "2025-12-22T13:54:50.817248+00:00",
+      "updated_at": "2025-12-22T14:05:37.124575+00:00",
+      "transaction_id": "3E719C29",
+      "patient_id": 20,
+      "attendant_id": 3,
+      "service_id": 38,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 72,
+    "fields": {
+      "appointment_date": "2025-12-23",
+      "appointment_time": "10:00:00",
+      "status": "confirmed",
+      "quantity": 1,
+      "created_at": "2025-12-22T13:15:52.877677+00:00",
+      "updated_at": "2025-12-22T14:05:47.557412+00:00",
+      "transaction_id": "E0CBE916",
+      "patient_id": 16,
+      "attendant_id": 3,
+      "service_id": 24,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 70,
+    "fields": {
+      "appointment_date": "2025-12-15",
+      "appointment_time": "10:00:00",
+      "status": "confirmed",
+      "quantity": 1,
+      "created_at": "2025-12-14T14:24:09.782210+00:00",
+      "updated_at": "2025-12-14T14:41:35.257520+00:00",
+      "transaction_id": "2A47B1B0",
+      "patient_id": 16,
+      "attendant_id": 3,
+      "service_id": 25,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 69,
+    "fields": {
+      "appointment_date": "2025-12-13",
+      "appointment_time": "16:00:00",
+      "status": "completed",
+      "quantity": 1,
+      "created_at": "2025-12-11T06:19:07.917936+00:00",
+      "updated_at": "2025-12-11T06:38:35.227078+00:00",
+      "transaction_id": "5DD20245",
+      "patient_id": 15,
+      "attendant_id": 3,
+      "service_id": 27,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 68,
+    "fields": {
+      "appointment_date": "2025-12-12",
+      "appointment_time": "16:00:00",
+      "status": "completed",
+      "quantity": 4,
+      "created_at": "2025-12-11T06:05:59.803780+00:00",
+      "updated_at": "2025-12-11T06:09:06.480689+00:00",
+      "transaction_id": "B6F46F20",
+      "patient_id": 15,
+      "attendant_id": 1,
+      "service_id": null,
+      "product_id": 4,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 67,
+    "fields": {
+      "appointment_date": "2025-12-11",
+      "appointment_time": "17:00:00",
+      "status": "cancelled",
+      "quantity": 1,
+      "created_at": "2025-12-11T05:58:49.926762+00:00",
+      "updated_at": "2025-12-11T06:01:50.271224+00:00",
+      "transaction_id": "9C80CDF3",
+      "patient_id": 15,
+      "attendant_id": 1,
+      "service_id": null,
+      "product_id": 2,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 66,
+    "fields": {
+      "appointment_date": "2025-12-11",
+      "appointment_time": "17:00:00",
+      "status": "no_show",
+      "quantity": 1,
+      "created_at": "2025-12-11T05:53:28.790392+00:00",
+      "updated_at": "2025-12-11T05:53:58.251270+00:00",
+      "transaction_id": "77C70C6C",
+      "patient_id": 15,
+      "attendant_id": 3,
+      "service_id": 36,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 65,
+    "fields": {
+      "appointment_date": "2025-12-19",
+      "appointment_time": "14:00:00",
+      "status": "completed",
+      "quantity": 1,
+      "created_at": "2025-12-11T05:01:08.808660+00:00",
+      "updated_at": "2025-12-11T05:42:06.943714+00:00",
+      "transaction_id": "DD2DEE11",
+      "patient_id": 18,
+      "attendant_id": 3,
+      "service_id": null,
+      "product_id": null,
+      "package_id": 15
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 63,
+    "fields": {
+      "appointment_date": "2025-12-12",
+      "appointment_time": "10:00:00",
+      "status": "completed",
+      "quantity": 1,
+      "created_at": "2025-12-11T04:13:16.615867+00:00",
+      "updated_at": "2025-12-11T04:14:05.546856+00:00",
+      "transaction_id": "34F1AC21",
+      "patient_id": 16,
+      "attendant_id": 1,
+      "service_id": null,
+      "product_id": 4,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 62,
+    "fields": {
+      "appointment_date": "2025-12-12",
+      "appointment_time": "13:00:00",
+      "status": "cancelled",
+      "quantity": 1,
+      "created_at": "2025-12-11T04:10:53.969310+00:00",
+      "updated_at": "2025-12-11T04:11:38.925088+00:00",
+      "transaction_id": "DC59FF5B",
+      "patient_id": 16,
+      "attendant_id": 3,
+      "service_id": 37,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 59,
+    "fields": {
+      "appointment_date": "2025-12-11",
+      "appointment_time": "15:00:00",
+      "status": "cancelled",
+      "quantity": 1,
+      "created_at": "2025-12-11T02:51:28.289540+00:00",
+      "updated_at": "2025-12-11T02:52:09.021475+00:00",
+      "transaction_id": "CBD03023",
+      "patient_id": 16,
+      "attendant_id": 3,
+      "service_id": 38,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.appointment",
+    "pk": 57,
+    "fields": {
+      "appointment_date": "2025-12-12",
+      "appointment_time": "11:00:00",
+      "status": "completed",
+      "quantity": 1,
+      "created_at": "2025-12-09T10:47:04.346386+00:00",
+      "updated_at": "2025-12-09T10:49:26.682128+00:00",
+      "transaction_id": "CD0130FC",
+      "patient_id": 15,
+      "attendant_id": 3,
+      "service_id": 24,
+      "product_id": null,
+      "package_id": null
+    }
+  },
+  {
+    "model": "appointments.cancellationrequest",
+    "pk": 1,
+    "fields": {
+      "appointment_id": 59,
+      "appointment_type": "regular",
+      "reason": "Cancelled by admin",
+      "status": "approved",
+      "created_at": "2025-12-11T02:52:09.039136+00:00",
+      "updated_at": "2025-12-11T02:52:09.039163+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.cancellationrequest",
+    "pk": 2,
+    "fields": {
+      "appointment_id": 62,
+      "appointment_type": "regular",
+      "reason": "Cancelled by admin",
+      "status": "approved",
+      "created_at": "2025-12-11T04:11:38.940674+00:00",
+      "updated_at": "2025-12-11T04:11:38.940698+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.cancellationrequest",
+    "pk": 3,
+    "fields": {
+      "appointment_id": 67,
+      "appointment_type": "regular",
+      "reason": "Cancelled by admin",
+      "status": "approved",
+      "created_at": "2025-12-11T06:01:50.288053+00:00",
+      "updated_at": "2025-12-11T06:01:50.288083+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.reschedulerequest",
+    "pk": 1,
+    "fields": {
+      "appointment_id": 57,
+      "new_appointment_date": "2025-12-12",
+      "new_appointment_time": "11:00:00",
+      "reason": "",
+      "status": "approved",
+      "created_at": "2025-12-09T10:47:55.516290+00:00",
+      "updated_at": "2025-12-09T10:49:01.355884+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.reschedulerequest",
+    "pk": 2,
+    "fields": {
+      "appointment_id": 60,
+      "new_appointment_date": "2025-12-14",
+      "new_appointment_time": "11:02:00",
+      "reason": "",
+      "status": "approved",
+      "created_at": "2025-12-11T03:02:12.691024+00:00",
+      "updated_at": "2025-12-11T03:02:36.665693+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.reschedulerequest",
+    "pk": 3,
+    "fields": {
+      "appointment_id": 70,
+      "new_appointment_date": "2025-12-15",
+      "new_appointment_time": "12:00:00",
+      "reason": "qqqqqqqqqqqqqqqqqqqqqq",
+      "status": "rejected",
+      "created_at": "2025-12-14T15:39:28.332564+00:00",
+      "updated_at": "2025-12-14T15:40:03.077624+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.feedback",
+    "pk": 23,
+    "fields": {
+      "rating": 5,
+      "attendant_rating": 5,
+      "comment": "qq",
+      "created_at": "2025-12-11T02:47:41.318723+00:00",
+      "appointment_id": 57,
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.feedback",
+    "pk": 24,
+    "fields": {
+      "rating": 4,
+      "attendant_rating": 4,
+      "comment": "",
+      "created_at": "2025-12-14T14:24:22.312258+00:00",
+      "appointment_id": 63,
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 106,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 74,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-31 at 16:00:00 will now be handled by Melanie Cosas.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-26T15:00:14.293299+00:00",
+      "patient_id": 21
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 105,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 74,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Jean Urbano - Casmara on 2025-12-31 at 16:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-26T14:58:24.640563+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 104,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 74,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Casmara on 2025-12-31 at 04:00 PM has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-26T14:58:24.623732+00:00",
+      "patient_id": 21
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 103,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 74,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Jean Urbano - Casmara on 2025-12-31 at 16:00.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-26T14:57:45.006923+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 102,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 74,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Jean Urbano - Casmara on 2025-12-31 at 16:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-26T14:57:44.982151+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 101,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 74,
+      "title": "Appointment Scheduled",
+      "message": "Your Casmara appointment has been scheduled for 2025-12-31 at 16:00. Please await staff confirmation. Transaction ID: 70C87806",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-26T14:57:44.964019+00:00",
+      "patient_id": 21
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 100,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 72,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt12 Baylosis - Anti-Acne Treatment on 2025-12-23 at 10:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-22T14:05:47.587615+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 99,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 72,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Anti-Acne Treatment on 2025-12-23 at 10:00 AM has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-22T14:05:47.573601+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 98,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 73,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kenai Reyes - Pimple Injection on 2025-12-23 at 13:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-22T14:05:37.155307+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 97,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 73,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Pimple Injection on 2025-12-23 at 01:00 PM has been confirmed. Your attendant is Melanie Cosas.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-22T14:05:37.141793+00:00",
+      "patient_id": 20
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 96,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 73,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kenai Reyes - Pimple Injection on 2025-12-23 at 13:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-22T13:54:50.876664+00:00",
+      "patient_id": 17
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 95,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 73,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kenai Reyes - Pimple Injection on 2025-12-23 at 13:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-22T13:54:50.859692+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 94,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 73,
+      "title": "Appointment Scheduled",
+      "message": "Your Pimple Injection appointment has been scheduled for 2025-12-23 at 13:00. Please await staff confirmation. Transaction ID: 3E719C29",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-22T13:54:50.845981+00:00",
+      "patient_id": 20
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 93,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 72,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt12 Baylosis - Anti-Acne Treatment on 2025-12-23 at 10:00.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-22T13:15:54.255625+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 92,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 72,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt12 Baylosis - Anti-Acne Treatment on 2025-12-23 at 10:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-22T13:15:52.920757+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 91,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 72,
+      "title": "Appointment Scheduled",
+      "message": "Your Anti-Acne Treatment appointment has been scheduled for 2025-12-23 at 10:00. Please await staff confirmation. Transaction ID: E0CBE916",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-22T13:15:52.908533+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 90,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 70,
+      "title": "Reschedule Request Rejected",
+      "message": "Your reschedule request for Arms Cavitation on 2025-12-15 at 10:00:00 has been rejected. Please contact us for more information.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-14T15:40:03.095388+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 89,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 70,
+      "title": "Reschedule Request",
+      "message": "Patient Kurt12  Baylosis has requested to reschedule their appointment for Arms Cavitation from 2025-12-15 at 10:00:00 to 2025-12-15 at 12:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:39:28.361594+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 88,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 70,
+      "title": "Reschedule Request",
+      "message": "Patient Kurt12  Baylosis has requested to reschedule their appointment for Arms Cavitation from 2025-12-15 at 10:00:00 to 2025-12-15 at 12:00. Reason: qqqqqqqqqqqqqqqqqqqqqq",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:39:28.349523+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 86,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 71,
+      "title": "Cancellation Request",
+      "message": "Patient Nesol  Krem has requested to cancel their appointment for Warts Removal on 2025-12-17 at 11:00:00. Reason: eqqwe",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:29:56.604975+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 85,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 71,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Nesol Krem - Warts Removal on 2025-12-17 at 11:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:25:45.780839+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 83,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 71,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Nesol Krem - Warts Removal on 2025-12-17 at 11:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:25:15.094636+00:00",
+      "patient_id": 17
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 82,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 71,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Nesol Krem - Warts Removal on 2025-12-17 at 11:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T15:25:14.096240+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 80,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 70,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt Baylosis - Arms Cavitation on 2025-12-15 at 10:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T14:41:36.079257+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 79,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 70,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Arms Cavitation on 2025-12-15 at 10:00 AM has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-14T14:41:36.065365+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 78,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 70,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt Baylosis - Arms Cavitation on 2025-12-15 at 10:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T14:24:11.317618+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 77,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 70,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt Baylosis - Arms Cavitation on 2025-12-15 at 10:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-14T14:24:09.838678+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 76,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 70,
+      "title": "Appointment Scheduled",
+      "message": "Your Arms Cavitation appointment has been scheduled for 2025-12-15 at 10:00. Please await staff confirmation. Transaction ID: 2A47B1B0",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-14T14:24:09.821551+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 75,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Completed",
+      "message": "Your appointment for Face Cavitation on 2025-12-13 has been completed. Thank you for choosing Skinovation Beauty Clinic!",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:38:35.242278+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 74,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-13 at 16:00:00 will now be handled by Melanie Cosas.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:37:40.888790+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 73,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-13 at 16:00:00 will now be handled by Kranchy Reyes. Note from staff: Sqeoqw",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:23:15.673785+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 72,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-13 at 16:00:00 will now be handled by Melanie Cosas. Note from staff: I'm sick",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:20:11.888670+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 71,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-13 at 16:00:00 will now be handled by Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:38.507288+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 70,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 69,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for kenai reyes - Face Cavitation on 2025-12-13 at 16:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:23.579862+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 69,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 69,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Face Cavitation on 2025-12-13 at 04:00 PM has been confirmed. Your attendant is Melanie Cosas.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:23.564755+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 68,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: kenai reyes - Face Cavitation on 2025-12-13 at 16:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:07.985428+00:00",
+      "patient_id": 17
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 67,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: kenai reyes - Face Cavitation on 2025-12-13 at 16:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:07.967625+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 66,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 69,
+      "title": "Appointment Scheduled",
+      "message": "Your Face Cavitation appointment has been scheduled for 2025-12-13 at 16:00. Please await staff confirmation. Transaction ID: 5DD20245",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:19:07.955252+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 65,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 68,
+      "title": "Appointment Completed",
+      "message": "Your appointment for Derm Options Kojic Soap on 2025-12-12 has been completed. Thank you for choosing Skinovation Beauty Clinic!",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:09:06.496553+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 64,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 68,
+      "title": "Product Order",
+      "message": "Product order: kenai reyes - 4x Derm Options Kojic Soap (\u20b1720.00) on 2025-12-12 at 16:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T06:05:59.846968+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 63,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 68,
+      "title": "Product Order Scheduled",
+      "message": "Your order for 4x Derm Options Kojic Soap has been scheduled for pickup on 2025-12-12 at 16:00. Total: \u20b1720.00. Please await staff confirmation. Transaction ID: B6F46F20",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:05:59.832728+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 62,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 67,
+      "title": "Appointment Cancelled",
+      "message": "Appointment for kenai reyes - Sunscreen Cream on 2025-12-11 at 17:00:00 has been cancelled.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T06:01:50.315737+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 61,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 67,
+      "title": "Appointment Cancelled",
+      "message": "Your appointment for Sunscreen Cream on 2025-12-11 at 17:00:00 has been cancelled. Please contact us to reschedule.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T06:01:50.302113+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 60,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 67,
+      "title": "Product Order",
+      "message": "Product order: kenai reyes - 1x Sunscreen Cream (\u20b1225.00) on 2025-12-11 at 17:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:58:49.977267+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 59,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 67,
+      "title": "Product Order Scheduled",
+      "message": "Your order for 1x Sunscreen Cream has been scheduled for pickup on 2025-12-11 at 17:00. Total: \u20b1225.00. Please await staff confirmation. Transaction ID: 9C80CDF3",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T05:58:49.964618+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 58,
+    "fields": {
+      "type": "no_show",
+      "appointment_id": 66,
+      "title": "Appointment Marked as No-Show",
+      "message": "You did not arrive for your appointment on 2025-12-11 at 17:00:00 for IPL Neck. Please contact us to reschedule or cancel future appointments if you cannot attend.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:58.266694+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 57,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 66,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for kenai reyes - IPL Neck on 2025-12-11 at 17:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:50.091677+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 56,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 66,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for IPL Neck on 2025-12-11 at 17:00:00 has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:50.077512+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 55,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 66,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: kenai reyes - IPL Neck on 2025-12-11 at 17:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:28.855758+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 54,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 66,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: kenai reyes - IPL Neck on 2025-12-11 at 17:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:28.839584+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 53,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 66,
+      "title": "Appointment Scheduled",
+      "message": "Your IPL Neck appointment has been scheduled for 2025-12-11 at 17:00. Please await staff confirmation. Transaction ID: 77C70C6C",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:53:28.827489+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 52,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 65,
+      "title": "Appointment Completed",
+      "message": "Your appointment for 3 + 1 Carbon Doll Laser on 2025-12-19 has been completed. Thank you for choosing Skinovation Beauty Clinic!",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T05:42:06.964395+00:00",
+      "patient_id": 18
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 51,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 65,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kim Reyes - 3 + 1 Carbon Doll Laser on 2025-12-19 at 14:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:01:28.779045+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 50,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 65,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for 3 + 1 Carbon Doll Laser on 2025-12-19 at 14:00:00 has been confirmed. Your attendant is Melanie Cosas.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T05:01:28.764698+00:00",
+      "patient_id": 18
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 49,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 65,
+      "title": "Package Booked",
+      "message": "Package booking: Kim Reyes - 3 + 1 Carbon Doll Laser on 2025-12-19 at 14:00. Status: scheduled.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T05:01:08.861628+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 48,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 65,
+      "title": "Package Booked",
+      "message": "Your 3 + 1 Carbon Doll Laser package has been booked for 2025-12-19 at 14:00. Waiting for staff approval. Transaction ID: DD2DEE11",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T05:01:08.847841+00:00",
+      "patient_id": 18
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 47,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 64,
+      "title": "Package Booked",
+      "message": "Package booking: Kim Reyes - 3 + 1 Arms Cavitation on 2025-12-12 at 14:00. Status: pending.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:53:36.806348+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 46,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 64,
+      "title": "Package Booked",
+      "message": "Your 3 + 1 Arms Cavitation package has been booked for 2025-12-12 at 14:00. Waiting for staff approval. Transaction ID: E4E82B14",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:53:36.786680+00:00",
+      "patient_id": 18
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 45,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 63,
+      "title": "Appointment Completed",
+      "message": "Your appointment for Derm Options Kojic Soap on 2025-12-12 has been completed. Thank you for choosing Skinovation Beauty Clinic!",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:14:05.562880+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 44,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 63,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt Baylosis - Derm Options Kojic Soap on 2025-12-12 at 10:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:13:32.492049+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 43,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 63,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Derm Options Kojic Soap on 2025-12-12 at 10:00:00 has been confirmed. Your attendant is Jillian Ynares.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:13:32.477705+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 42,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 63,
+      "title": "Product Order",
+      "message": "Product order: Kurt Baylosis - 1x Derm Options Kojic Soap (\u20b1180.00) on 2025-12-12 at 10:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:13:16.674818+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 41,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 63,
+      "title": "Product Order Scheduled",
+      "message": "Your order for 1x Derm Options Kojic Soap has been scheduled for pickup on 2025-12-12 at 10:00. Total: \u20b1180.00. Please await staff confirmation. Transaction ID: 34F1AC21",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:13:16.661025+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 40,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 62,
+      "title": "Appointment Cancelled",
+      "message": "Appointment for Kurt Baylosis - IPL Arm on 2025-12-12 at 13:00:00 has been cancelled.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:11:38.981885+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 39,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 62,
+      "title": "Appointment Cancelled",
+      "message": "Your appointment for IPL Arm on 2025-12-12 at 13:00:00 has been cancelled. Please contact us to reschedule.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:11:38.965840+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 38,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 62,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt Baylosis - IPL Arm on 2025-12-12 at 13:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:11:16.785833+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 37,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 62,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for IPL Arm on 2025-12-12 at 13:00:00 has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:11:16.771625+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 36,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 62,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt Baylosis - IPL Arm on 2025-12-12 at 13:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:10:54.040086+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 35,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 62,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt Baylosis - IPL Arm on 2025-12-12 at 13:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T04:10:54.023846+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 34,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 62,
+      "title": "Appointment Scheduled",
+      "message": "Your IPL Arm appointment has been scheduled for 2025-12-12 at 13:00. Please await staff confirmation. Transaction ID: DC59FF5B",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T04:10:54.009658+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 33,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 61,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt Baylosis - Arms Cavitation on 2025-12-12 at 15:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:45:19.006369+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 32,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 61,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Arms Cavitation on 2025-12-12 at 15:00:00 has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T03:45:18.992158+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 31,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 61,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt Baylosis - Arms Cavitation on 2025-12-12 at 15:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:44:04.480213+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 30,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 61,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt Baylosis - Arms Cavitation on 2025-12-12 at 15:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:44:04.463157+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 29,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 61,
+      "title": "Appointment Scheduled",
+      "message": "Your Arms Cavitation appointment has been scheduled for 2025-12-12 at 15:00. Please await staff confirmation. Transaction ID: BA89DFF2",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T03:44:04.451235+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 28,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 60,
+      "title": "Reschedule Request Approved",
+      "message": "Your reschedule request for Pimple Injection has been approved. New date and time: 2025-12-14 at 11:02:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:02:36.703175+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 27,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 60,
+      "title": "Reschedule Request",
+      "message": "Patient kenai  reyes has requested to reschedule their appointment for Pimple Injection from 2025-12-12 at 10:00:00 to 2025-12-14 at 11:02.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:02:12.720829+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 26,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 60,
+      "title": "Reschedule Request",
+      "message": "Patient kenai  reyes has requested to reschedule their appointment for Pimple Injection from 2025-12-12 at 10:00:00 to 2025-12-14 at 11:02. Reason: ",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T03:02:12.708666+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 25,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 60,
+      "title": "Appointment Staff Updated",
+      "message": "Your appointment on 2025-12-12 at 10:00:00 will now be handled by Jillian Ynares.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:57:10.067350+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 24,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 60,
+      "title": "Attendant Unavailable - Please Choose an Option",
+      "message": "Your assigned attendant Kranchy Reyes is unavailable for your appointment on 2025-12-12 at 10:00:00. Reason: Emergency. Please choose one of the following options: 1) Choose another attendant, 2) Reschedule with same attendant, or 3) Cancel appointment.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:56:58.181793+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 23,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 60,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for kenai reyes - Pimple Injection on 2025-12-12 at 10:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:54:51.956485+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 22,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 60,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Pimple Injection on 2025-12-12 at 10:00:00 has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:54:51.942004+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 21,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 60,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: kenai reyes - Pimple Injection on 2025-12-12 at 10:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:54:27.340338+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 20,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 60,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: kenai reyes - Pimple Injection on 2025-12-12 at 10:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:54:27.323535+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 19,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 60,
+      "title": "Appointment Scheduled",
+      "message": "Your Pimple Injection appointment has been scheduled for 2025-12-12 at 10:00. Please await staff confirmation. Transaction ID: 0DF090FF",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:54:27.310617+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 18,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 59,
+      "title": "Appointment Cancelled",
+      "message": "Appointment for Kurt Baylosis - Pimple Injection on 2025-12-11 at 15:00:00 has been cancelled.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:52:09.076967+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 17,
+    "fields": {
+      "type": "cancellation",
+      "appointment_id": 59,
+      "title": "Appointment Cancelled",
+      "message": "Your appointment for Pimple Injection on 2025-12-11 at 15:00:00 has been cancelled. Please contact us to reschedule.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T02:52:09.052892+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 16,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 59,
+      "title": "Appointment Confirmed",
+      "message": "Appointment for Kurt Baylosis - Pimple Injection on 2025-12-11 at 15:00:00 has been confirmed.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:51:49.815344+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 15,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 59,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Pimple Injection on 2025-12-11 at 15:00:00 has been confirmed. Your attendant is Kranchy Reyes.",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T02:51:49.803105+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 14,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 59,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt Baylosis - Pimple Injection on 2025-12-11 at 15:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:51:28.352218+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 13,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 59,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt Baylosis - Pimple Injection on 2025-12-11 at 15:00. Status: scheduled. Please review and confirm.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-11T02:51:28.335662+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 12,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 59,
+      "title": "Appointment Scheduled",
+      "message": "Your Pimple Injection appointment has been scheduled for 2025-12-11 at 15:00. Please await staff confirmation. Transaction ID: CBD03023",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-11T02:51:28.321601+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 11,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 58,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: Kurt Baylosis - Carbon Doll Laser on 2025-12-11 at 11:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T11:15:58.237191+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 10,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 58,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: Kurt Baylosis - Carbon Doll Laser on 2025-12-11 at 11:00. Status: pending.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T11:15:58.219236+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 9,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 58,
+      "title": "Appointment Booked",
+      "message": "Your Carbon Doll Laser appointment has been booked for 2025-12-11 at 11:00. Waiting for staff approval. Transaction ID: B0457D06",
+      "is_read": false,
+      "archived": false,
+      "created_at": "2025-12-09T11:15:58.198570+00:00",
+      "patient_id": 16
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 8,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 57,
+      "title": "Treatment Completed - Please Rate Your Experience",
+      "message": "Your treatment for Anti-Acne Treatment on 2025-12-12 has been completed. Please rate your experience and leave feedback to help us improve our services!",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:49:26.714847+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 7,
+    "fields": {
+      "type": "confirmation",
+      "appointment_id": 57,
+      "title": "Appointment Confirmed",
+      "message": "Your appointment for Anti-Acne Treatment on 2025-12-12 at 11:00:00 has been confirmed by your attendant.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:49:22.081388+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 6,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 57,
+      "title": "Reschedule Request Approved",
+      "message": "Your reschedule request for Anti-Acne Treatment has been approved. New date and time: 2025-12-12 at 11:00:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:49:01.386112+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 5,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 57,
+      "title": "Reschedule Request",
+      "message": "Patient kenai  reyes has requested to reschedule their appointment for Anti-Acne Treatment from 2025-12-11 at 10:00:00 to 2025-12-12 at 11:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:47:55.571357+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 4,
+    "fields": {
+      "type": "reschedule",
+      "appointment_id": 57,
+      "title": "Reschedule Request",
+      "message": "Patient kenai  reyes has requested to reschedule their appointment for Anti-Acne Treatment from 2025-12-11 at 10:00:00 to 2025-12-12 at 11:00. Reason: ",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:47:55.547886+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 3,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 57,
+      "title": "New Appointment Assigned",
+      "message": "You have been assigned a new appointment: kenai reyes - Anti-Acne Treatment on 2025-12-11 at 10:00.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:47:04.415550+00:00",
+      "patient_id": 3
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 2,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 57,
+      "title": "New Appointment Booked",
+      "message": "New appointment booked: kenai reyes - Anti-Acne Treatment on 2025-12-11 at 10:00. Status: pending.",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:47:04.398789+00:00",
+      "patient_id": null
+    }
+  },
+  {
+    "model": "appointments.notification",
+    "pk": 1,
+    "fields": {
+      "type": "appointment",
+      "appointment_id": 57,
+      "title": "Appointment Booked",
+      "message": "Your Anti-Acne Treatment appointment has been booked for 2025-12-11 at 10:00. Waiting for staff approval. Transaction ID: CD0130FC",
+      "is_read": true,
+      "archived": false,
+      "created_at": "2025-12-09T10:47:04.385084+00:00",
+      "patient_id": 15
+    }
+  },
+  {
+    "model": "appointments.closedday",
+    "pk": 2,
+    "fields": {
+      "date": "2026-01-01",
+      "reason": "New Year's Day",
+      "created_at": "2025-12-27T02:13:21.016256+00:00"
+    }
+  },
+  {
+    "model": "appointments.smstemplate",
+    "pk": 1,
+    "fields": {
+      "name": "Default Attendant Reassignment",
+      "template_type": "attendant_reassignment",
+      "subject": "",
+      "message": "Hi {patient_name}!\n\nWe have assigned a new staff member to assist you for your upcoming appointment:\nDate: {appointment_date}\nTime: {appointment_time}\nService: {service_name}\nNew Staff: {attendant_name}\n\nIf you have any questions, feel free to contact us at {clinic_phone}.\nWe look forward to seeing you!\n\n- Skinovation Clinic",
+      "is_active": true,
+      "created_at": "2025-12-11T06:25:07.819950+00:00",
+      "updated_at": "2025-12-11T06:25:07.819978+00:00",
+      "created_by_id": 1
+    }
+  },
+  {
+    "model": "appointments.smstemplate",
+    "pk": 4,
+    "fields": {
+      "name": "Default Cancellation",
+      "template_type": "cancellation",
+      "subject": "",
+      "message": "Hi {patient_name}!\n\nYour appointment has been cancelled:\nDate: {appointment_date}\nTime: {appointment_time}\nService: {service_name}\n\n{cancellation_reason}\n\nPlease contact us to reschedule.\nThank you for your understanding.\n\n- Skinovation Clinic",
+      "is_active": true,
+      "created_at": "2025-12-11T06:25:07.866203+00:00",
+      "updated_at": "2025-12-11T06:25:07.866224+00:00",
+      "created_by_id": 1
+    }
+  },
+  {
+    "model": "appointments.smstemplate",
+    "pk": 2,
+    "fields": {
+      "name": "Default Appointment Confirmation",
+      "template_type": "confirmation",
+      "subject": "",
+      "message": "Hi {patient_name}!\n\nYour appointment has been confirmed:\nDate: {appointment_date}\nTime: {appointment_time}\nService: {service_name}\nStaff: {attendant_name}\n\nWe look forward to seeing you!\n\n- Skinovation Clinic",
+      "is_active": true,
+      "created_at": "2025-12-11T06:25:07.834879+00:00",
+      "updated_at": "2025-12-11T06:25:07.834899+00:00",
+      "created_by_id": 1
+    }
+  },
+  {
+    "model": "appointments.smstemplate",
+    "pk": 3,
+    "fields": {
+      "name": "Default Appointment Scheduled",
+      "template_type": "scheduled",
+      "subject": "",
+      "message": "Hi {patient_name}!\n\nYour appointment has been scheduled and is pending confirmation:\nDate: {appointment_date}\nTime: {appointment_time}\nService: {service_name}\n\nWe will confirm your appointment soon!\n\n- Skinovation Clinic",
+      "is_active": true,
+      "created_at": "2025-12-11T06:25:07.850771+00:00",
+      "updated_at": "2025-12-11T06:25:07.850792+00:00",
+      "created_by_id": 1
+    }
+  },
+  {
+    "model": "appointments.smshistory",
+    "pk": 2,
+    "fields": {
+      "sender_id": 1,
+      "phone_number": "09925663102",
+      "message": "Hi kenai  reyes! This is a test message from Beauty Clinic.",
+      "template_used_id": null,
+      "status": "sent",
+      "message_id": null,
+      "api_response": {
+        "success": true,
+        "data": {
+          "status": 200,
+          "message": "SMS successfully queued for delivery.",
+          "message_id": "iSms-0pBfdC",
+          "message_status_link": "https://sms.iprogtech.com/api/v1/sms_messages/status?api_token=12345&message_id=iSms-0pBfdC",
+          "message_status_request_mode": "GET",
+          "sms_rate": 1.0
+        },
+        "message": "SMS successfully queued for delivery."
+      },
+      "sent_at": "2025-12-11T05:49:18.768071+00:00"
+    }
+  },
+  {
+    "model": "appointments.smshistory",
+    "pk": 1,
+    "fields": {
+      "sender_id": 1,
+      "phone_number": "09925663102",
+      "message": "Hi kenai  reyes! This is a test message from Beauty Clinic.",
+      "template_used_id": null,
+      "status": "failed",
+      "message_id": null,
+      "api_response": {
+        "success": false,
+        "error": "API Error: Invalid api token or no load balance",
+        "message": "Failed to send SMS: Invalid api token or no load balance"
+      },
+      "sent_at": "2025-12-11T05:46:06.780946+00:00"
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 42,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 74,
+      "item_name": "Casmara - Jean Urbano",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-26T14:58:24.653053+00:00",
+      "details": {
+        "appointment_id": 74,
+        "patient": "Jean Urbano",
+        "date": "2025-12-31",
+        "time": "16:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 41,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 74,
+      "item_name": "Casmara - Jean Urbano",
+      "performed_by_id": 21,
+      "timestamp": "2025-12-26T14:57:44.946213+00:00",
+      "details": {
+        "appointment_id": 74,
+        "patient": "Jean Urbano",
+        "service": "Casmara",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-31",
+        "time": "16:00",
+        "status": "scheduled",
+        "transaction_id": "70C87806"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 40,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 72,
+      "item_name": "Anti-Acne Treatment - Kurt12 Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-22T14:05:48.684714+00:00",
+      "details": {
+        "appointment_id": 72,
+        "patient": "Kurt12 Baylosis",
+        "date": "2025-12-23",
+        "time": "10:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 39,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 73,
+      "item_name": "Pimple Injection - Kenai Reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-22T14:05:37.171966+00:00",
+      "details": {
+        "appointment_id": 73,
+        "patient": "Kenai Reyes",
+        "date": "2025-12-23",
+        "time": "13:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 38,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 73,
+      "item_name": "Pimple Injection - Kenai Reyes",
+      "performed_by_id": 20,
+      "timestamp": "2025-12-22T13:54:50.831953+00:00",
+      "details": {
+        "appointment_id": 73,
+        "patient": "Kenai Reyes",
+        "service": "Pimple Injection",
+        "attendant": "Melanie Cosas",
+        "date": "2025-12-23",
+        "time": "13:00",
+        "status": "scheduled",
+        "transaction_id": "3E719C29"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 37,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 72,
+      "item_name": "Anti-Acne Treatment - Kurt12 Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-22T13:15:52.892809+00:00",
+      "details": {
+        "appointment_id": 72,
+        "patient": "Kurt12 Baylosis",
+        "service": "Anti-Acne Treatment",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-23",
+        "time": "10:00",
+        "status": "scheduled",
+        "transaction_id": "E0CBE916"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 36,
+    "fields": {
+      "action_type": "reject",
+      "item_type": "reschedule_request",
+      "item_id": 3,
+      "item_name": "Reschedule Request #3 - Kurt12 Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-14T15:40:03.108390+00:00",
+      "details": {
+        "appointment_id": 70,
+        "patient": "Kurt12 Baylosis",
+        "requested_date": "2025-12-15",
+        "requested_time": "12:00:00"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 35,
+    "fields": {
+      "action_type": "approve",
+      "item_type": "cancellation_request",
+      "item_id": 4,
+      "item_name": "Cancellation Request #4 - Nesol Krem",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-14T15:30:53.834193+00:00",
+      "details": {
+        "appointment_id": 71,
+        "patient": "Nesol Krem",
+        "reason": "eqqwe"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 34,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 71,
+      "item_name": "Warts Removal - Nesol Krem",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-14T15:25:46.976197+00:00",
+      "details": {
+        "appointment_id": 71,
+        "patient": "Nesol Krem",
+        "date": "2025-12-17",
+        "time": "11:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 33,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 71,
+      "item_name": "Warts Removal - Nesol Krem",
+      "performed_by_id": null,
+      "timestamp": "2025-12-14T15:25:14.067548+00:00",
+      "details": {
+        "appointment_id": 71,
+        "patient": "Nesol Krem",
+        "service": "Warts Removal",
+        "attendant": "Melanie Cosas",
+        "date": "2025-12-17",
+        "time": "11:00",
+        "status": "scheduled",
+        "transaction_id": "2A5AE4B2"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 32,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 70,
+      "item_name": "Arms Cavitation - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-14T14:41:37.221465+00:00",
+      "details": {
+        "appointment_id": 70,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-15",
+        "time": "10:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 31,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 70,
+      "item_name": "Arms Cavitation - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-14T14:24:09.804026+00:00",
+      "details": {
+        "appointment_id": 70,
+        "patient": "Kurt Baylosis",
+        "service": "Arms Cavitation",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-15",
+        "time": "10:00",
+        "status": "scheduled",
+        "transaction_id": "2A47B1B0"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 30,
+    "fields": {
+      "action_type": "complete",
+      "item_type": "appointment",
+      "item_id": 69,
+      "item_name": "Face Cavitation - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T06:38:35.256492+00:00",
+      "details": {
+        "appointment_id": 69,
+        "patient": "kenai reyes",
+        "date": "2025-12-13",
+        "time": "16:00:00",
+        "status": "completed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 29,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 69,
+      "item_name": "Face Cavitation - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T06:19:23.596114+00:00",
+      "details": {
+        "appointment_id": 69,
+        "patient": "kenai reyes",
+        "date": "2025-12-13",
+        "time": "16:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 28,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 69,
+      "item_name": "Face Cavitation - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-11T06:19:07.942442+00:00",
+      "details": {
+        "appointment_id": 69,
+        "patient": "kenai reyes",
+        "service": "Face Cavitation",
+        "attendant": "Melanie Cosas",
+        "date": "2025-12-13",
+        "time": "16:00",
+        "status": "scheduled",
+        "transaction_id": "5DD20245"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 27,
+    "fields": {
+      "action_type": "complete",
+      "item_type": "appointment",
+      "item_id": 68,
+      "item_name": "Derm Options Kojic Soap - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T06:09:06.510461+00:00",
+      "details": {
+        "appointment_id": 68,
+        "patient": "kenai reyes",
+        "date": "2025-12-12",
+        "time": "16:00:00",
+        "status": "completed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 26,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 68,
+      "item_name": "Derm Options Kojic Soap (x4) - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-11T06:05:59.819444+00:00",
+      "details": {
+        "appointment_id": 68,
+        "patient": "kenai reyes",
+        "product": "Derm Options Kojic Soap",
+        "quantity": 4,
+        "unit_price": "180.00",
+        "total_amount": "720.00",
+        "attendant": "Jillian Ynares",
+        "date": "2025-12-12",
+        "time": "16:00",
+        "status": "scheduled",
+        "transaction_id": "B6F46F20"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 25,
+    "fields": {
+      "action_type": "cancel",
+      "item_type": "appointment",
+      "item_id": 67,
+      "item_name": "Sunscreen Cream - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T06:01:50.337642+00:00",
+      "details": {
+        "appointment_id": 67,
+        "patient": "kenai reyes",
+        "date": "2025-12-11",
+        "time": "17:00:00",
+        "status": "cancelled"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 24,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 67,
+      "item_name": "Sunscreen Cream (x1) - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-11T05:58:49.947017+00:00",
+      "details": {
+        "appointment_id": 67,
+        "patient": "kenai reyes",
+        "product": "Sunscreen Cream",
+        "quantity": 1,
+        "unit_price": "225.00",
+        "total_amount": "225.00",
+        "attendant": "Jillian Ynares",
+        "date": "2025-12-11",
+        "time": "17:00",
+        "status": "scheduled",
+        "transaction_id": "9C80CDF3"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 23,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 66,
+      "item_name": "IPL Neck - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T05:53:50.108998+00:00",
+      "details": {
+        "appointment_id": 66,
+        "patient": "kenai reyes",
+        "date": "2025-12-11",
+        "time": "17:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 22,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 66,
+      "item_name": "IPL Neck - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-11T05:53:28.813349+00:00",
+      "details": {
+        "appointment_id": 66,
+        "patient": "kenai reyes",
+        "service": "IPL Neck",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-11",
+        "time": "17:00",
+        "status": "scheduled",
+        "transaction_id": "77C70C6C"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 21,
+    "fields": {
+      "action_type": "complete",
+      "item_type": "appointment",
+      "item_id": 65,
+      "item_name": "3 + 1 Carbon Doll Laser - Kim Reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T05:42:06.978739+00:00",
+      "details": {
+        "appointment_id": 65,
+        "patient": "Kim Reyes",
+        "date": "2025-12-19",
+        "time": "14:00:00",
+        "status": "completed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 20,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 65,
+      "item_name": "3 + 1 Carbon Doll Laser - Kim Reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T05:01:28.795271+00:00",
+      "details": {
+        "appointment_id": 65,
+        "patient": "Kim Reyes",
+        "date": "2025-12-19",
+        "time": "14:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 19,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 65,
+      "item_name": "3 + 1 Carbon Doll Laser - Kim Reyes",
+      "performed_by_id": 18,
+      "timestamp": "2025-12-11T05:01:08.829714+00:00",
+      "details": {
+        "appointment_id": 65,
+        "patient": "Kim Reyes",
+        "package": "3 + 1 Carbon Doll Laser",
+        "attendant": "Melanie Cosas",
+        "date": "2025-12-19",
+        "time": "14:00",
+        "status": "scheduled",
+        "transaction_id": "DD2DEE11"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 18,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 64,
+      "item_name": "3 + 1 Arms Cavitation - Kim Reyes",
+      "performed_by_id": 18,
+      "timestamp": "2025-12-11T04:53:36.770851+00:00",
+      "details": {
+        "appointment_id": 64,
+        "patient": "Kim Reyes",
+        "package": "3 + 1 Arms Cavitation",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-12",
+        "time": "14:00",
+        "status": "pending",
+        "transaction_id": "E4E82B14"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 17,
+    "fields": {
+      "action_type": "complete",
+      "item_type": "appointment",
+      "item_id": 63,
+      "item_name": "Derm Options Kojic Soap - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T04:14:05.577470+00:00",
+      "details": {
+        "appointment_id": 63,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-12",
+        "time": "10:00:00",
+        "status": "completed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 16,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 63,
+      "item_name": "Derm Options Kojic Soap - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T04:13:32.507631+00:00",
+      "details": {
+        "appointment_id": 63,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-12",
+        "time": "10:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 15,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 63,
+      "item_name": "Derm Options Kojic Soap (x1) - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-11T04:13:16.640385+00:00",
+      "details": {
+        "appointment_id": 63,
+        "patient": "Kurt Baylosis",
+        "product": "Derm Options Kojic Soap",
+        "quantity": 1,
+        "unit_price": "180.00",
+        "total_amount": "180.00",
+        "attendant": "Jillian Ynares",
+        "date": "2025-12-12",
+        "time": "10:00",
+        "status": "scheduled",
+        "transaction_id": "34F1AC21"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 14,
+    "fields": {
+      "action_type": "cancel",
+      "item_type": "appointment",
+      "item_id": 62,
+      "item_name": "IPL Arm - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T04:11:39.003244+00:00",
+      "details": {
+        "appointment_id": 62,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-12",
+        "time": "13:00:00",
+        "status": "cancelled"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 13,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 62,
+      "item_name": "IPL Arm - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T04:11:16.800467+00:00",
+      "details": {
+        "appointment_id": 62,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-12",
+        "time": "13:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 12,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 62,
+      "item_name": "IPL Arm - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-11T04:10:53.992322+00:00",
+      "details": {
+        "appointment_id": 62,
+        "patient": "Kurt Baylosis",
+        "service": "IPL Arm",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-12",
+        "time": "13:00",
+        "status": "scheduled",
+        "transaction_id": "DC59FF5B"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 11,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 61,
+      "item_name": "Arms Cavitation - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T03:45:19.030258+00:00",
+      "details": {
+        "appointment_id": 61,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-12",
+        "time": "15:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 10,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 61,
+      "item_name": "Arms Cavitation - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-11T03:44:04.438195+00:00",
+      "details": {
+        "appointment_id": 61,
+        "patient": "Kurt Baylosis",
+        "service": "Arms Cavitation",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-12",
+        "time": "15:00",
+        "status": "scheduled",
+        "transaction_id": "BA89DFF2"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 9,
+    "fields": {
+      "action_type": "reschedule",
+      "item_type": "appointment",
+      "item_id": 60,
+      "item_name": "Pimple Injection - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T03:02:36.715954+00:00",
+      "details": {
+        "appointment_id": 60,
+        "patient": "kenai reyes",
+        "date": "2025-12-14",
+        "time": "11:02:00",
+        "status": "pending",
+        "old_date": "2025-12-12",
+        "old_time": "10:00:00",
+        "new_date": "2025-12-14",
+        "new_time": "11:02:00",
+        "reschedule_request_id": 2
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 8,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 60,
+      "item_name": "Pimple Injection - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T02:54:51.972394+00:00",
+      "details": {
+        "appointment_id": 60,
+        "patient": "kenai reyes",
+        "date": "2025-12-12",
+        "time": "10:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 7,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 60,
+      "item_name": "Pimple Injection - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-11T02:54:27.296956+00:00",
+      "details": {
+        "appointment_id": 60,
+        "patient": "kenai reyes",
+        "service": "Pimple Injection",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-12",
+        "time": "10:00",
+        "status": "scheduled",
+        "transaction_id": "0DF090FF"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 6,
+    "fields": {
+      "action_type": "cancel",
+      "item_type": "appointment",
+      "item_id": 59,
+      "item_name": "Pimple Injection - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T02:52:09.092143+00:00",
+      "details": {
+        "appointment_id": 59,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-11",
+        "time": "15:00:00",
+        "status": "cancelled"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 5,
+    "fields": {
+      "action_type": "confirm",
+      "item_type": "appointment",
+      "item_id": 59,
+      "item_name": "Pimple Injection - Kurt Baylosis",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-11T02:51:49.831001+00:00",
+      "details": {
+        "appointment_id": 59,
+        "patient": "Kurt Baylosis",
+        "date": "2025-12-11",
+        "time": "15:00:00",
+        "status": "confirmed"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 4,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 59,
+      "item_name": "Pimple Injection - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-11T02:51:28.308056+00:00",
+      "details": {
+        "appointment_id": 59,
+        "patient": "Kurt Baylosis",
+        "service": "Pimple Injection",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-11",
+        "time": "15:00",
+        "status": "scheduled",
+        "transaction_id": "CBD03023"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 3,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 58,
+      "item_name": "Carbon Doll Laser - Kurt Baylosis",
+      "performed_by_id": 16,
+      "timestamp": "2025-12-09T11:15:58.184712+00:00",
+      "details": {
+        "appointment_id": 58,
+        "patient": "Kurt Baylosis",
+        "service": "Carbon Doll Laser",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-11",
+        "time": "11:00",
+        "status": "pending",
+        "transaction_id": "B0457D06"
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 2,
+    "fields": {
+      "action_type": "reschedule",
+      "item_type": "appointment",
+      "item_id": 57,
+      "item_name": "Anti-Acne Treatment - kenai reyes",
+      "performed_by_id": 1,
+      "timestamp": "2025-12-09T10:49:01.399635+00:00",
+      "details": {
+        "appointment_id": 57,
+        "patient": "kenai reyes",
+        "date": "2025-12-12",
+        "time": "11:00:00",
+        "status": "pending",
+        "old_date": "2025-12-11",
+        "old_time": "10:00:00",
+        "new_date": "2025-12-12",
+        "new_time": "11:00:00",
+        "reschedule_request_id": 1
+      }
+    }
+  },
+  {
+    "model": "appointments.historylog",
+    "pk": 1,
+    "fields": {
+      "action_type": "book",
+      "item_type": "appointment",
+      "item_id": 57,
+      "item_name": "Anti-Acne Treatment - kenai reyes",
+      "performed_by_id": 15,
+      "timestamp": "2025-12-09T10:47:04.371077+00:00",
+      "details": {
+        "appointment_id": 57,
+        "patient": "kenai reyes",
+        "service": "Anti-Acne Treatment",
+        "attendant": "Kranchy Reyes",
+        "date": "2025-12-11",
+        "time": "10:00",
+        "status": "pending",
+        "transaction_id": "CD0130FC"
+      }
+    }
+  },
+  {
+    "model": "appointments.treatment",
+    "pk": 1,
+    "fields": {
+      "appointment_id": 57,
+      "treatment_date": "2025-12-12",
+      "treatment_time": "11:00:00",
+      "notes": null,
+      "next_appointment_recommended": null,
+      "products_used": null,
+      "duration_minutes": null,
+      "created_at": "2025-12-09T10:49:26.699339+00:00",
+      "updated_at": "2025-12-09T10:49:26.699357+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 1,
+    "fields": {
+      "time": "10:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.084902+00:00",
+      "updated_at": "2025-12-14T03:52:47.084930+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 2,
+    "fields": {
+      "time": "10:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.097964+00:00",
+      "updated_at": "2025-12-14T14:25:47.904105+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 3,
+    "fields": {
+      "time": "11:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.112296+00:00",
+      "updated_at": "2025-12-14T03:52:47.112314+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 4,
+    "fields": {
+      "time": "11:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.127584+00:00",
+      "updated_at": "2025-12-14T14:25:52.860178+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 5,
+    "fields": {
+      "time": "12:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.140593+00:00",
+      "updated_at": "2025-12-14T03:52:47.140612+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 6,
+    "fields": {
+      "time": "12:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.154419+00:00",
+      "updated_at": "2025-12-14T14:25:55.514753+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 7,
+    "fields": {
+      "time": "13:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.168596+00:00",
+      "updated_at": "2025-12-14T03:52:47.168613+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 8,
+    "fields": {
+      "time": "13:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.181249+00:00",
+      "updated_at": "2025-12-14T14:25:58.453995+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 9,
+    "fields": {
+      "time": "14:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.194529+00:00",
+      "updated_at": "2025-12-14T03:52:47.194546+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 10,
+    "fields": {
+      "time": "14:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.206845+00:00",
+      "updated_at": "2025-12-14T14:26:03.441370+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 11,
+    "fields": {
+      "time": "15:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.221020+00:00",
+      "updated_at": "2025-12-14T03:52:47.221037+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 12,
+    "fields": {
+      "time": "15:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.235176+00:00",
+      "updated_at": "2025-12-14T14:26:06.235810+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 13,
+    "fields": {
+      "time": "16:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.249263+00:00",
+      "updated_at": "2025-12-14T03:52:47.249280+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 14,
+    "fields": {
+      "time": "16:30:00",
+      "is_active": false,
+      "created_at": "2025-12-14T03:52:47.262962+00:00",
+      "updated_at": "2025-12-14T14:26:08.218707+00:00"
+    }
+  },
+  {
+    "model": "appointments.timeslot",
+    "pk": 15,
+    "fields": {
+      "time": "17:00:00",
+      "is_active": true,
+      "created_at": "2025-12-14T03:52:47.275351+00:00",
+      "updated_at": "2025-12-14T03:52:47.275367+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+      "product_name": "Derm Options Kojic Soap",
+      "description": "Soap to whiten skin effectively",
+      "price": 180.0,
+      "stock": 0,
+      "product_image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.295626+00:00",
+      "updated_at": "2025-12-22T11:34:26.413999+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 5,
+    "fields": {
+      "product_name": "Derm Options Pore Minimizer (Toner)",
+      "description": "AB Astringent",
+      "price": 380.0,
+      "stock": 100,
+      "product_image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.309233+00:00",
+      "updated_at": "2025-12-09T09:51:32.309263+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "product_name": "Derm Options Yellow Soap (Anti-Acne)",
+      "description": "Anti-Acne Soap",
+      "price": 140.0,
+      "stock": 100,
+      "product_image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.972372+00:00",
+      "updated_at": "2025-12-09T09:48:32.972392+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "product_name": "Lightening Cream",
+      "description": "For night use",
+      "price": 230.0,
+      "stock": 100,
+      "product_image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:33.001569+00:00",
+      "updated_at": "2025-12-09T09:48:33.001589+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 8,
+    "fields": {
+      "product_name": "Soap",
+      "description": "asfasdasdsa",
+      "price": 150.0,
+      "stock": 50,
+      "product_image": "",
+      "archived": true,
+      "created_at": "2025-12-22T13:05:29.701577+00:00",
+      "updated_at": "2025-12-22T13:06:01.132028+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "product_name": "Sunscreen Cream",
+      "description": "Apply to help skin fight UV rays",
+      "price": 225.0,
+      "stock": 100,
+      "product_image": "",
+      "archived": false,
+      "created_at": "2025-12-09T09:48:32.986765+00:00",
+      "updated_at": "2025-12-14T03:15:15.491331+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 6,
+    "fields": {
+      "product_name": "dasdsa",
+      "description": "Soap to whiten skin effectively",
+      "price": 100.0,
+      "stock": 100,
+      "product_image": "",
+      "archived": true,
+      "created_at": "2025-12-14T03:59:45.774930+00:00",
+      "updated_at": "2025-12-14T03:59:52.699016+00:00"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 7,
+    "fields": {
+      "product_name": "dasdsa",
+      "description": "",
+      "price": 100.0,
+      "stock": 5,
+      "product_image": "",
+      "archived": true,
+      "created_at": "2025-12-22T12:47:55.052989+00:00",
+      "updated_at": "2025-12-22T12:48:21.321976+00:00"
+    }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 6,
+    "fields": {
+      "product_id": 2,
+      "image": "products/images/sunscreen.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:47:16.731919+00:00"
+    }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 5,
+    "fields": {
+      "product_id": 3,
+      "image": "products/images/lightening_cream.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:47:08.601720+00:00"
+    }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 4,
+    "fields": {
+      "product_id": 1,
+      "image": "products/images/yellow_soap.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:47:03.716578+00:00"
+    }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 2,
+    "fields": {
+      "product_id": 5,
+      "image": "products/images/toner.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:46:50.285970+00:00"
+    }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 1,
+    "fields": {
+      "product_id": 4,
+      "image": "products/images/kojic_soap.jpg",
+      "alt_text": "",
+      "is_primary": false,
+      "created_at": "2025-12-22T12:46:43.651164+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 6,
+    "fields": {
+      "product_id": 4,
+      "action": "minus",
+      "quantity": -5,
+      "previous_stock": 5,
+      "new_stock": 0,
+      "reason": "Stock manually reduced via inventory: 5 \u2192 0",
+      "staff_id": 1,
+      "created_at": "2025-12-22T11:34:26.428422+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 5,
+    "fields": {
+      "product_id": 4,
+      "action": "add",
+      "quantity": 4,
+      "previous_stock": 1,
+      "new_stock": 5,
+      "reason": "Stock manually added via inventory: 1 \u2192 5",
+      "staff_id": 1,
+      "created_at": "2025-12-22T11:34:01.651408+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 4,
+    "fields": {
+      "product_id": 4,
+      "action": "minus",
+      "quantity": -9,
+      "previous_stock": 10,
+      "new_stock": 1,
+      "reason": "Stock manually reduced via inventory: 10 \u2192 1",
+      "staff_id": 1,
+      "created_at": "2025-12-22T11:33:52.047485+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 3,
+    "fields": {
+      "product_id": 4,
+      "action": "minus",
+      "quantity": -90,
+      "previous_stock": 100,
+      "new_stock": 10,
+      "reason": "Stock manually reduced via inventory: 100 \u2192 10",
+      "staff_id": 1,
+      "created_at": "2025-12-22T11:31:56.904361+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 2,
+    "fields": {
+      "product_id": 4,
+      "action": "minus",
+      "quantity": -2,
+      "previous_stock": 102,
+      "new_stock": 100,
+      "reason": "Stock manually reduced via inventory: 102 \u2192 100",
+      "staff_id": 1,
+      "created_at": "2025-12-14T03:18:13.003804+00:00"
+    }
+  },
+  {
+    "model": "products.stockhistory",
+    "pk": 1,
+    "fields": {
+      "product_id": 2,
+      "action": "add",
+      "quantity": 1,
+      "previous_stock": 99,
+      "new_stock": 100,
+      "reason": "Stock manually added via inventory: 99 \u2192 100",
+      "staff_id": 1,
+      "created_at": "2025-12-14T03:15:15.513660+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 11,
+    "fields": {
+      "package_name": "3 + 1 Arms Cavitation",
+      "description": "Get 4 arms cavitation sessions for the price of 3",
+      "price": 2697.0,
+      "sessions": 4,
+      "duration_days": 80,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.103062+00:00",
+      "updated_at": "2025-12-14T03:54:24.552265+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 5,
+    "fields": {
+      "package_name": "3 + 1 Back Whitening",
+      "description": "Get 4 back whitening sessions for the price of 3",
+      "price": 2397.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.361496+00:00",
+      "updated_at": "2025-12-09T09:51:32.361518+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 15,
+    "fields": {
+      "package_name": "3 + 1 Carbon Doll Laser",
+      "description": "Get 4 Carbon Doll Laser sessions for the price of 3",
+      "price": 2397.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.153241+00:00",
+      "updated_at": "2025-12-09T10:23:58.153263+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 8,
+    "fields": {
+      "package_name": "3 + 1 Charcoal Facial",
+      "description": "Get 4 charcoal facial sessions for the price of 3",
+      "price": 2097.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.059026+00:00",
+      "updated_at": "2025-12-09T10:23:58.059046+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 6,
+    "fields": {
+      "package_name": "3 + 1 Chest Whitening",
+      "description": "Get 4 chest whitening sessions for the price of 3",
+      "price": 2097.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.375013+00:00",
+      "updated_at": "2025-12-09T09:51:32.375042+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 9,
+    "fields": {
+      "package_name": "3 + 1 Collagen Facial",
+      "description": "Get 4 collagen facial sessions for the price of 3",
+      "price": 2397.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.071286+00:00",
+      "updated_at": "2025-12-09T10:23:58.071307+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 2,
+    "fields": {
+      "package_name": "3 + 1 Diamond Peel",
+      "description": "Get 4 sessions for the price of 3",
+      "price": 1697.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:48:33.029363+00:00",
+      "updated_at": "2025-12-09T09:48:33.029384+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 13,
+    "fields": {
+      "package_name": "3 + 1 Face Cavitation",
+      "description": "Get 4 face cavitation sessions for the price of 3",
+      "price": 2397.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.128384+00:00",
+      "updated_at": "2025-12-09T10:23:58.128407+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 16,
+    "fields": {
+      "package_name": "3 + 1 Geneo Infusion",
+      "description": "Get 4 Geneo Infusion sessions for the price of 3",
+      "price": 2997.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.165300+00:00",
+      "updated_at": "2025-12-09T10:23:58.165320+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 4,
+    "fields": {
+      "package_name": "3 + 1 IPL Face",
+      "description": "Get 4 IPL face sessions for the price of 3",
+      "price": 2697.0,
+      "sessions": 4,
+      "duration_days": 120,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.347664+00:00",
+      "updated_at": "2025-12-09T09:51:32.347685+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 10,
+    "fields": {
+      "package_name": "3 + 1 IPL Legs",
+      "description": "Get 4 IPL leg sessions for the price of 3",
+      "price": 3897.0,
+      "sessions": 4,
+      "duration_days": 120,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.090450+00:00",
+      "updated_at": "2025-12-09T10:23:58.090469+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 3,
+    "fields": {
+      "package_name": "3 + 1 IPL Underarms",
+      "description": "Get 4 IPL sessions for the price of 3",
+      "price": 1497.0,
+      "sessions": 4,
+      "duration_days": 120,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:51:32.333620+00:00",
+      "updated_at": "2025-12-09T09:51:32.333639+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 14,
+    "fields": {
+      "package_name": "3 + 1 Pico Glow",
+      "description": "Get 4 Pico Glow laser sessions for the price of 3",
+      "price": 5997.0,
+      "sessions": 4,
+      "duration_days": 120,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.140525+00:00",
+      "updated_at": "2025-12-09T10:23:58.140546+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 7,
+    "fields": {
+      "package_name": "3 + 1 Primary Facial",
+      "description": "Get 4 primary facial sessions for the price of 3",
+      "price": 1497.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.045953+00:00",
+      "updated_at": "2025-12-09T10:23:58.045980+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 1,
+    "fields": {
+      "package_name": "3 + 1 Underarm Whitening",
+      "description": "Get 4 sessions for the price of 3",
+      "price": 1847.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T09:48:33.015658+00:00",
+      "updated_at": "2025-12-09T09:48:33.015680+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 17,
+    "fields": {
+      "package_name": "3 + 1 Vitamin C Infusion",
+      "description": "Get 4 Vitamin C Infusion sessions for the price of 3",
+      "price": 2697.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.178014+00:00",
+      "updated_at": "2025-12-09T10:23:58.178034+00:00"
+    }
+  },
+  {
+    "model": "packages.package",
+    "pk": 12,
+    "fields": {
+      "package_name": "3 + 1 Waist Cavitation",
+      "description": "Get 4 waist cavitation sessions for the price of 3",
+      "price": 2997.0,
+      "sessions": 4,
+      "duration_days": 90,
+      "grace_period_days": 180,
+      "archived": false,
+      "created_at": "2025-12-09T10:23:58.115940+00:00",
+      "updated_at": "2025-12-09T10:23:58.115961+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 1,
+    "fields": {
+      "service_id": 24,
+      "total_bookings": 1,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.278425+00:00",
+      "updated_at": "2025-12-09T09:55:46.278445+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 2,
+    "fields": {
+      "service_id": 25,
+      "total_bookings": 2,
+      "completed_bookings": 2,
+      "cancelled_bookings": 0,
+      "total_revenue": 1798.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.8571428571428572,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 2,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.301898+00:00",
+      "updated_at": "2025-12-09T09:55:46.301928+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 3,
+    "fields": {
+      "service_id": 18,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 799.0,
+      "average_rating": 3.0,
+      "popularity_score": 0.6904761904761905,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 1,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.325007+00:00",
+      "updated_at": "2025-12-09T09:55:46.325028+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 4,
+    "fields": {
+      "service_id": 19,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 899.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.6666666666666667,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 1,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.346679+00:00",
+      "updated_at": "2025-12-09T09:55:46.346699+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 5,
+    "fields": {
+      "service_id": 34,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 799.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.5714285714285714,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 1,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.374897+00:00",
+      "updated_at": "2025-12-09T09:55:46.374924+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 6,
+    "fields": {
+      "service_id": 9,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.400621+00:00",
+      "updated_at": "2025-12-09T09:55:46.400644+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 7,
+    "fields": {
+      "service_id": 7,
+      "total_bookings": 2,
+      "completed_bookings": 2,
+      "cancelled_bookings": 0,
+      "total_revenue": 1398.0,
+      "average_rating": 5.0,
+      "popularity_score": 0.9047619047619048,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 1,
+        "10": 0,
+        "11": 0,
+        "12": 1
+      },
+      "created_at": "2025-12-09T09:55:46.424259+00:00",
+      "updated_at": "2025-12-09T09:55:46.424279+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 8,
+    "fields": {
+      "service_id": 20,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.445889+00:00",
+      "updated_at": "2025-12-09T09:55:46.445910+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 9,
+    "fields": {
+      "service_id": 5,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 649.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.8095238095238095,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 1,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.467073+00:00",
+      "updated_at": "2025-12-09T09:55:46.467097+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 10,
+    "fields": {
+      "service_id": 10,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.488998+00:00",
+      "updated_at": "2025-12-09T09:55:46.489018+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 11,
+    "fields": {
+      "service_id": 2,
+      "total_bookings": 2,
+      "completed_bookings": 2,
+      "cancelled_bookings": 0,
+      "total_revenue": 998.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.9523809523809523,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 2,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.509904+00:00",
+      "updated_at": "2025-12-09T09:55:46.509923+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 12,
+    "fields": {
+      "service_id": 27,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.533352+00:00",
+      "updated_at": "2025-12-09T09:55:46.533375+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 13,
+    "fields": {
+      "service_id": 12,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 699.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.7619047619047619,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 1
+      },
+      "created_at": "2025-12-09T09:55:46.556793+00:00",
+      "updated_at": "2025-12-09T09:55:46.556813+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 14,
+    "fields": {
+      "service_id": 13,
+      "total_bookings": 1,
+      "completed_bookings": 1,
+      "cancelled_bookings": 0,
+      "total_revenue": 999.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.7380952380952381,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 1
+      },
+      "created_at": "2025-12-09T09:55:46.579495+00:00",
+      "updated_at": "2025-12-09T09:55:46.579515+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 15,
+    "fields": {
+      "service_id": 37,
+      "total_bookings": 2,
+      "completed_bookings": 1,
+      "cancelled_bookings": 1,
+      "total_revenue": 899.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.5476190476190477,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 1,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.601905+00:00",
+      "updated_at": "2025-12-09T09:55:46.601925+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 16,
+    "fields": {
+      "service_id": 30,
+      "total_bookings": 3,
+      "completed_bookings": 2,
+      "cancelled_bookings": 1,
+      "total_revenue": 2398.0,
+      "average_rating": 4.5,
+      "popularity_score": 0.8333333333333334,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 1,
+        "10": 0,
+        "11": 1,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.625944+00:00",
+      "updated_at": "2025-12-09T09:55:46.625964+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 17,
+    "fields": {
+      "service_id": 31,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.648883+00:00",
+      "updated_at": "2025-12-09T09:55:46.648903+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 18,
+    "fields": {
+      "service_id": 32,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.671715+00:00",
+      "updated_at": "2025-12-09T09:55:46.671739+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 19,
+    "fields": {
+      "service_id": 40,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.695525+00:00",
+      "updated_at": "2025-12-09T09:55:46.695545+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 20,
+    "fields": {
+      "service_id": 3,
+      "total_bookings": 3,
+      "completed_bookings": 2,
+      "cancelled_bookings": 1,
+      "total_revenue": 998.0,
+      "average_rating": 4.0,
+      "popularity_score": 0.9285714285714286,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 1,
+        "11": 1,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.717028+00:00",
+      "updated_at": "2025-12-09T09:55:46.717047+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 21,
+    "fields": {
+      "service_id": 29,
+      "total_bookings": 3,
+      "completed_bookings": 3,
+      "cancelled_bookings": 0,
+      "total_revenue": 3897.0,
+      "average_rating": 4.5,
+      "popularity_score": 0.9761904761904762,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 1,
+        "11": 2,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.739986+00:00",
+      "updated_at": "2025-12-09T09:55:46.740005+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 22,
+    "fields": {
+      "service_id": 36,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.767078+00:00",
+      "updated_at": "2025-12-09T09:55:46.767099+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 23,
+    "fields": {
+      "service_id": 28,
+      "total_bookings": 1,
+      "completed_bookings": 0,
+      "cancelled_bookings": 1,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.788085+00:00",
+      "updated_at": "2025-12-09T09:55:46.788106+00:00"
+    }
+  },
+  {
+    "model": "analytics.serviceanalytics",
+    "pk": 24,
+    "fields": {
+      "service_id": 33,
+      "total_bookings": 0,
+      "completed_bookings": 0,
+      "cancelled_bookings": 0,
+      "total_revenue": 0.0,
+      "average_rating": 0.0,
+      "popularity_score": 0.0,
+      "seasonal_trends": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "created_at": "2025-12-09T09:55:46.810440+00:00",
+      "updated_at": "2025-12-09T09:55:46.810460+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 6,
+    "fields": {
+      "user_id": 1,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "timestamp": "2025-12-26T14:32:45.408355+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 5,
+    "fields": {
+      "user_id": 2,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "timestamp": "2025-12-26T11:55:54.537176+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 4,
+    "fields": {
+      "user_id": 1,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
+      "timestamp": "2025-12-22T11:59:54.972950+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 3,
+    "fields": {
+      "user_id": 1,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
+      "timestamp": "2025-12-22T11:57:30.598531+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 2,
+    "fields": {
+      "user_id": 2,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
+      "timestamp": "2025-12-22T11:53:51.034697+00:00"
+    }
+  },
+  {
+    "model": "payments.useractivitylog",
+    "pk": 1,
+    "fields": {
+      "user_id": 2,
+      "action": "export",
+      "model_name": "Revenue Report",
+      "object_id": null,
+      "description": "Generated revenue report for December 2025",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
+      "timestamp": "2025-12-22T11:44:45.541808+00:00"
+    }
+  },
+  {
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+      "domain": "example.com",
+      "name": "example.com"
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 1,
+    "fields": {
+      "user_id": 15,
+      "email": "kenai.reyes@chmsc.edu.ph",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 2,
+    "fields": {
+      "user_id": 20,
+      "email": "ksreyes.chmsu@gmail.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 3,
+    "fields": {
+      "user_id": 21,
+      "email": "jeanurbano1803@gmail.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 4,
+    "fields": {
+      "user_id": 27,
+      "email": "jrmurbano.chmsu@gmail.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "socialaccount.socialaccount",
+    "pk": 1,
+    "fields": {
+      "user_id": 15,
+      "provider": "google",
+      "uid": "109923253188567574348",
+      "last_login": "2025-12-11T06:18:13.277027+00:00",
+      "date_joined": "2025-12-09T10:45:49.471653+00:00",
+      "extra_data": {
+        "iss": "https://accounts.google.com",
+        "azp": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "aud": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "sub": "109923253188567574348",
+        "hd": "chmsc.edu.ph",
+        "email": "kenai.reyes@chmsc.edu.ph",
+        "email_verified": true,
+        "at_hash": "GZwf1o6G4zL18MbLsdLBKw",
+        "name": "kenai reyes",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocLsnyaUcm5Q5fjJDbTR2eAn059pAv9gTxxLjCWoXkFW4VF2iw=s96-c",
+        "given_name": "kenai",
+        "family_name": "reyes",
+        "iat": 1765433864,
+        "exp": 1765437464
+      }
+    }
+  },
+  {
+    "model": "socialaccount.socialaccount",
+    "pk": 2,
+    "fields": {
+      "user_id": 20,
+      "provider": "google",
+      "uid": "101039063677319370038",
+      "last_login": "2025-12-22T13:47:06.089067+00:00",
+      "date_joined": "2025-12-22T13:16:33.970562+00:00",
+      "extra_data": {
+        "iss": "https://accounts.google.com",
+        "azp": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "aud": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "sub": "101039063677319370038",
+        "email": "ksreyes.chmsu@gmail.com",
+        "email_verified": true,
+        "at_hash": "oSrToQcKRBpuckwP66rKgg",
+        "name": "Kenai Reyes",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIAZ8_Ok1P55TXeXqPJWf2X0VW_CmhPP6TeofcZ76cFbl-K94I=s96-c",
+        "given_name": "Kenai",
+        "family_name": "Reyes",
+        "iat": 1766411178,
+        "exp": 1766414778
+      }
+    }
+  },
+  {
+    "model": "socialaccount.socialaccount",
+    "pk": 3,
+    "fields": {
+      "user_id": 21,
+      "provider": "google",
+      "uid": "104795433635123321227",
+      "last_login": "2025-12-26T15:00:44.647670+00:00",
+      "date_joined": "2025-12-26T14:54:20.120866+00:00",
+      "extra_data": {
+        "iss": "https://accounts.google.com",
+        "azp": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "aud": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "sub": "104795433635123321227",
+        "email": "jeanurbano1803@gmail.com",
+        "email_verified": true,
+        "at_hash": "JtbfzWCjYEjZoCh8oMXjXQ",
+        "name": "Jean Urbano",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocLSXvmG7jltXxaqVvUWIzlsGJx-l57eBwO6mMGuoNP0pu2Xrk3U=s96-c",
+        "given_name": "Jean",
+        "family_name": "Urbano",
+        "iat": 1766761245,
+        "exp": 1766764845
+      }
+    }
+  },
+  {
+    "model": "socialaccount.socialaccount",
+    "pk": 4,
+    "fields": {
+      "user_id": 27,
+      "provider": "google",
+      "uid": "110717016494844807068",
+      "last_login": "2025-12-27T02:22:51.583649+00:00",
+      "date_joined": "2025-12-27T02:17:19.352228+00:00",
+      "extra_data": {
+        "iss": "https://accounts.google.com",
+        "azp": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "aud": "348599831665-i0g4c6ka0t91vh4sj1chkafokobtpf97.apps.googleusercontent.com",
+        "sub": "110717016494844807068",
+        "email": "jrmurbano.chmsu@gmail.com",
+        "email_verified": true,
+        "at_hash": "HZZoeUwxlyddLpJUAaK0qA",
+        "name": "Jean Roshan M. Urbano",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocJWfWxPjux_htwdrGjZD92n5-TLl3asik4aw4GnFtZn_eOJyB91=s96-c",
+        "given_name": "Jean Roshan M.",
+        "family_name": "Urbano",
+        "iat": 1766802171,
+        "exp": 1766805771
+      }
+    }
+  }
+]

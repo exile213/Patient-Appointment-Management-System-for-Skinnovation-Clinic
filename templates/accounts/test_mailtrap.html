@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Test Mailtrap - Skinovation Beauty Clinic{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #6f42c1;
+        --secondary-color: #8e44ad;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    body {
+        background: var(--gradient-primary);
+        background-attachment: fixed;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    .test-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .test-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .card-header {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.8rem;
+    }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 15px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: white;
+    }
+
+    .btn-primary {
+        background: var(--gradient-primary);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .back-link {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .back-link:hover {
+        color: rgba(255, 255, 255, 0.8);
+        transform: translateX(-5px);
+    }
+
+    .info-box {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-box h6 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-box p {
+        color: #6c757d;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="test-container">
+    <a href="{% url 'accounts:patient_login' %}" class="back-link">
+        <i class="fas fa-arrow-left me-2"></i>Back to Login
+    </a>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="test-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-envelope me-2"></i>Test Mailtrap</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-box">
+                            <h6><i class="fas fa-info-circle me-1"></i>Mailtrap Integration Test</h6>
+                            <p>This will send a test email using your Mailtrap API to verify the integration is working correctly.</p>
+                        </div>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="ksreyes.chmsu@gmail.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Name (Optional)</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="Test User" placeholder="Enter name">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Send Test Email
+                            </button>
+                        </form>
+                        
+                        <div class="text-center mt-3">
+                            <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">
+                                <i class="fas fa-key me-1"></i>Test Password Reset Instead
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

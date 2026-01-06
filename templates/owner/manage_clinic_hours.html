@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Clinic Hours - Owner Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="fas fa-clock"></i> Manage Clinic Hours</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Open Time</th>
+                                    <th>Close Time</th>
+                                    <th>Closed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for store_hour in store_hours %}
+                                <tr>
+                                    <td><strong>{{ store_hour.day_of_week }}</strong></td>
+                                    <td>
+                                        <input type="time" 
+                                               name="{{ store_hour.day_of_week|lower }}_open_time" 
+                                               value="{{ store_hour.open_time|time:'H:i' }}" 
+                                               class="form-control"
+                                               {% if store_hour.is_closed %}disabled{% endif %}>
+                                    </td>
+                                    <td>
+                                        <input type="time" 
+                                               name="{{ store_hour.day_of_week|lower }}_close_time" 
+                                               value="{{ store_hour.close_time|time:'H:i' }}" 
+                                               class="form-control"
+                                               {% if store_hour.is_closed %}disabled{% endif %}>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" 
+                                               name="{{ store_hour.day_of_week|lower }}_closed" 
+                                               {% if store_hour.is_closed %}checked{% endif %}
+                                               class="form-check-input"
+                                               onchange="toggleDayHours(this, '{{ store_hour.day_of_week|lower }}')">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Clinic Hours
+                            </button>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleDayHours(checkbox, dayPrefix) {
+    const openTime = document.querySelector(`input[name="${dayPrefix}_open_time"]`);
+    const closeTime = document.querySelector(`input[name="${dayPrefix}_close_time"]`);
+    
+    if (checkbox.checked) {
+        openTime.disabled = true;
+        closeTime.disabled = true;
+    } else {
+        openTime.disabled = false;
+        closeTime.disabled = false;
+    }
+}
+</script>
+{% endblock %}
+

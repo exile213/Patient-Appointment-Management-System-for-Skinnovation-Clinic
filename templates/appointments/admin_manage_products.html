@@ -1,0 +1,360 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Manage Products - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header (consistent) -->
+<div class="content-header">
+    <div>
+        <h1 class="page-title" style="margin:0;">
+            <i class="fas fa-shopping-bag"></i>
+            Manage Products
+        </h1>
+        <p class="text-muted mb-0">Add, edit, and manage clinic products</p>
+    </div>
+    {% include 'appointments/includes/admin_notification_icon.html' %}
+</div>
+    
+<!-- Add Product Form -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-plus-circle me-2"></i>Add New Product
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="product_name" class="form-label">
+                            <i class="fas fa-box me-2"></i>Product Name
+                        </label>
+                        <input type="text" class="form-control" id="product_name" name="product_name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="price" class="form-label">
+                            <i class="fas fa-tag me-2"></i>Price (₱)
+                        </label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">
+                            <i class="fas fa-warehouse me-2"></i>Stock Quantity
+                        </label>
+                        <input type="number" class="form-control" id="stock" name="stock" value="0">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">
+                            <i class="fas fa-list me-2"></i>Category
+                        </label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="skincare">Skincare</option>
+                            <option value="cosmetics">Cosmetics</option>
+                            <option value="tools">Tools</option>
+                            <option value="supplements">Supplements</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">
+                    <i class="fas fa-align-left me-2"></i>Description
+                </label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter product description..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Product
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Products List -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-list me-2"></i>All Products
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if products %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-box me-2"></i>Product Name</th>
+                            <th><i class="fas fa-tag me-2"></i>Price</th>
+                            <th><i class="fas fa-warehouse me-2"></i>Stock</th>
+                            <th><i class="fas fa-align-left me-2"></i>Description</th>
+                            <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="product-icon me-3">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                    <strong>{{ product.product_name }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="price-badge">₱{{ product.price|floatformat:2 }}</span>
+                            </td>
+                            <td>
+                                <span class="stock-badge {% if product.stock > 10 %}stock-high{% elif product.stock > 0 %}stock-medium{% else %}stock-low{% endif %}">
+                                    {{ product.stock }}
+                                </span>
+                            </td>
+                            <td>{{ product.description|truncatechars:50|default:"No description" }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-warning" onclick="showEditForm({{ product.id }})">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </button>
+                                    <form method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this product?')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Edit Form Row (Hidden by default) -->
+                        <tr id="edit-row-{{ product.id }}" style="display: none;" class="edit-form-row">
+                            <td colspan="5">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="mb-3"><i class="fas fa-edit me-2"></i>Edit Product</h6>
+                                        <form method="post" id="edit-form-{{ product.id }}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="edit">
+                                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="edit_product_name_{{ product.id }}" class="form-label">Product Name</label>
+                                                        <input type="text" class="form-control" id="edit_product_name_{{ product.id }}" name="product_name" value="{{ product.product_name }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="edit_price_{{ product.id }}" class="form-label">Price (₱)</label>
+                                                        <input type="number" class="form-control" id="edit_price_{{ product.id }}" name="price" value="{{ product.price|default:0 }}" step="0.01" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="edit_stock_{{ product.id }}" class="form-label">Stock Quantity</label>
+                                                        <input type="number" class="form-control" id="edit_stock_{{ product.id }}" name="stock" value="{{ product.stock|default:0 }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="edit_description_{{ product.id }}" class="form-label">Description</label>
+                                                <textarea class="form-control" id="edit_description_{{ product.id }}" name="description" rows="3">{{ product.description|default:"" }}</textarea>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save me-1"></i>Save Changes
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" onclick="hideEditForm({{ product.id }})">
+                                                    <i class="fas fa-times me-1"></i>Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Controls -->
+            {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;&laquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;&raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="text-center mt-2 text-muted">
+                    <small>Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} ({{ page_obj.paginator.count }} total products)</small>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No products found</h5>
+                <p class="text-muted">Add your first product using the form above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.product-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.price-badge {
+    background: rgba(255,255,255,0.95);
+    color: var(--dark-color);
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    display: inline-block;
+}
+
+.stock-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stock-high {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.stock-medium {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.stock-low {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.btn-group .btn {
+    margin-right: 0.25rem;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+</style>
+
+<script>
+function showEditForm(productId) {
+    // Hide all other edit forms
+    document.querySelectorAll('.edit-form-row').forEach(row => {
+        row.style.display = 'none';
+    });
+    
+    // Show the edit form for this product
+    const editRow = document.getElementById('edit-row-' + productId);
+    if (editRow) {
+        editRow.style.display = '';
+        // Scroll to the edit form
+        editRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+function hideEditForm(productId) {
+    const editRow = document.getElementById('edit-row-' + productId);
+    if (editRow) {
+        editRow.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.edit-form-row {
+    background-color: #f8f9fa;
+}
+
+.edit-form-row .card {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+</style>
+{% endblock %}

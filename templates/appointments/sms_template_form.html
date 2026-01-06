@@ -1,0 +1,168 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if template %}Edit Template{% else %}Create Template{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-{% if template %}edit{% else %}plus{% endif %}"></i>
+                        {% if template %}Edit Template{% else %}Create New Template{% endif %}
+                    </h3>
+                </div>
+                
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                                        Template Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.template_type.id_for_label }}" class="form-label">
+                                        Template Type <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.template_type }}
+                                    {% if form.template_type.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.template_type.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">{{ form.template_type.help_text }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                Subject (Optional)
+                            </label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.subject.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.message.id_for_label }}" class="form-label">
+                                Message Template <span class="text-danger">*</span>
+                            </label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.message.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ form.message.help_text }}</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    Active Template
+                                </label>
+                            </div>
+                            {% if form.is_active.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.is_active.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Available Variables -->
+                        <div class="mb-4">
+                            <h5>Available Variables</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>General Variables:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><code>{patient_name}</code> - Patient's full name</li>
+                                        <li><code>{clinic_name}</code> - Clinic name</li>
+                                        <li><code>{clinic_phone}</code> - Clinic phone number</li>
+                                        <li><code>{clinic_address}</code> - Clinic address</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Appointment Variables:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><code>{appointment_date}</code> - Appointment date</li>
+                                        <li><code>{appointment_time}</code> - Appointment time</li>
+                                        <li><code>{service_name}</code> - Service name</li>
+                                        <li><code>{cancellation_reason}</code> - Cancellation reason</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Package Variables:</h6>
+                                    <ul class="list-unstyled">
+                                        <li><code>{package_name}</code> - Package name</li>
+                                        <li><code>{package_price}</code> - Package price</li>
+                                        <li><code>{package_sessions}</code> - Number of sessions</li>
+                                        <li><code>{package_duration}</code> - Package duration</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'appointments:template_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Templates
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                {% if template %}Update Template{% else %}Create Template{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('{{ form.message.id_for_label }}');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    }
+});
+</script>
+{% endblock %}

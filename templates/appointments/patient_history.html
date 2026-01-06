@@ -1,0 +1,207 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Patient History - {{ patient.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="fas fa-history"></i>
+            Patient History: {{ patient.get_full_name }}
+        </h1>
+        <a href="javascript:history.back()" class="btn btn-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Back
+        </a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Patient Info Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Patient Name</h6>
+                            <p class="mb-0"><strong>{{ patient.get_full_name }}</strong></p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Email</h6>
+                            <p class="mb-0">{{ patient.email|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Phone</h6>
+                            <p class="mb-0">{{ patient.phone|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Member Since</h6>
+                            <p class="mb-0">{{ patient.date_joined|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-primary mb-0">{{ total_appointments }}</h3>
+                    <small class="text-muted">Total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-success mb-0">{{ completed_count }}</h3>
+                    <small class="text-muted">Completed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-info mb-0">{{ confirmed_count }}</h3>
+                    <small class="text-muted">Confirmed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-warning mb-0">{{ scheduled_count }}</h3>
+                    <small class="text-muted">Scheduled</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-danger mb-0">{{ cancelled_count }}</h3>
+                    <small class="text-muted">Cancelled</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-success mb-0">₱{{ total_spent|floatformat:2 }}</h3>
+                    <small class="text-muted">Total Spent</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment History Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Transaction History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Service/Product</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Attendant</th>
+                                    <th>Status</th>
+                                    <th>Transaction ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                                    <td>{{ appointment.appointment_time|time:"g:i A" }}</td>
+                                    <td>
+                                        {% if appointment.service %}
+                                            <i class="fas fa-spa text-primary"></i> {{ appointment.service.service_name }}
+                                        {% elif appointment.package %}
+                                            <i class="fas fa-box text-info"></i> {{ appointment.package.package_name }}
+                                        {% elif appointment.product %}
+                                            <i class="fas fa-shopping-bag text-success"></i> {{ appointment.product.product_name }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.service %}
+                                            <span class="badge bg-primary">Service</span>
+                                        {% elif appointment.package %}
+                                            <span class="badge bg-info">Package</span>
+                                        {% elif appointment.product %}
+                                            <span class="badge bg-success">Product</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.product and appointment.quantity %}
+                                            {{ appointment.quantity }}x
+                                        {% else %}
+                                            1x
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.service %}
+                                            ₱{{ appointment.service.price|floatformat:2 }}
+                                        {% elif appointment.package %}
+                                            ₱{{ appointment.package.price|floatformat:2 }}
+                                        {% elif appointment.product %}
+                                            {% with qty=appointment.quantity|default:1 %}
+                                                ₱{{ appointment.product.price|floatformat:2 }}
+                                                {% if qty > 1 %}
+                                                    <small class="text-muted">(₱{{ appointment.product.price|floatformat:2 }} × {{ qty }})</small>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.attendant %}
+                                            {{ appointment.attendant.first_name }} {{ appointment.attendant.last_name }}
+                                        {% else %}
+                                            <span class="text-muted">Not assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="badge bg-info">Confirmed</span>
+                                        {% elif appointment.status == 'scheduled' %}
+                                            <span class="badge bg-warning">Scheduled</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ appointment.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="font-monospace">{{ appointment.transaction_id|default:"—" }}</small>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                        No transaction history found for this patient.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

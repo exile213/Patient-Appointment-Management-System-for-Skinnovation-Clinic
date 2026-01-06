@@ -1,0 +1,3 @@
+# This is a placeholder for the notification sound file
+# In a real implementation, this would be an actual .wav audio file
+# For now, the JavaScript will handle the missing sound gracefully

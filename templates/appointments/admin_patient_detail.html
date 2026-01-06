@@ -1,0 +1,95 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Patient Details - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="page-title">
+            <i class="fas fa-user"></i>
+            Patient Details
+        </h1>
+        <a href="{% url 'appointments:admin_patients' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Patients
+        </a>
+    </div>
+</div>
+
+<!-- Patient Information -->
+<div class="content-card mb-4">
+    <h3 class="card-title">
+        <i class="fas fa-user-circle"></i>
+        Patient Information
+    </h3>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span class="info-value">{{ patient.full_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ patient.email }}</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span class="info-value">{{ patient.phone|default:"Not provided" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Username:</span>
+                <span class="info-value">{{ patient.username }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Appointments -->
+<div class="content-card">
+    <h3 class="card-title">
+        <i class="fas fa-calendar-check"></i>
+        Appointment History
+    </h3>
+    
+    {% if appointments %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Service/Product/Package</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Attendant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.get_service_name }}</td>
+                        <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                        <td>{{ appointment.appointment_time|time:"g:i A" }}</td>
+                        <td>
+                            <span class="status-badge status-{{ appointment.status }}">
+                                {{ appointment.status|title }}
+                            </span>
+                        </td>
+                        <td>{{ appointment.attendant.full_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-calendar-times fa-2x text-muted mb-3"></i>
+            <p class="text-muted">No appointments found for this patient.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

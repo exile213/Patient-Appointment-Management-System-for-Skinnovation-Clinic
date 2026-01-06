@@ -1,0 +1,683 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}History Log - Staff Panel{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Page Header */
+    .page-header-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        animation: slideDown 0.5s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .page-title-main {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .page-title-main i {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+    
+    .page-subtitle {
+        color: #718096;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    
+    /* Main Card */
+    .history-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .card-header-custom {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .card-header-custom h5 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .card-header-custom i {
+        color: #667eea;
+    }
+    
+    /* Card Body Padding */
+    .card-body {
+        padding: 1.5rem 2rem;
+    }
+    
+    /* Table Styles */
+    .table-container {
+        padding: 0;
+        overflow-x: auto;
+        width: 100%;
+    }
+    
+    .history-table {
+        margin: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    .history-table thead th {
+        background: #f8f9fa;
+        color: #4a5568;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.25rem;
+        border: none;
+        border-bottom: 2px solid #e2e8f0;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    /* Set column widths for better alignment */
+    .history-table thead th:nth-child(1) { width: 12%; } /* Date & Time */
+    .history-table thead th:nth-child(2) { width: 10%; } /* Type */
+    .history-table thead th:nth-child(3) { width: 18%; } /* Name */
+    .history-table thead th:nth-child(4) { width: 10%; } /* Action */
+    .history-table thead th:nth-child(5) { width: 15%; } /* Performed By */
+    .history-table thead th:nth-child(6) { width: 35%; }   /* Details */
+    
+    .history-table thead th i {
+        margin-right: 0.5rem;
+        color: #667eea;
+        font-size: 0.85rem;
+    }
+    
+    .history-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+        animation: fadeInRow 0.4s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    @keyframes fadeInRow {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .history-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+    .history-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+    .history-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+    .history-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+    .history-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+    .history-table tbody tr:nth-child(n+6) { animation-delay: 0.3s; }
+    
+    .history-table tbody tr:hover {
+        background: #f8f9fa;
+        transform: translateX(4px);
+        box-shadow: -4px 0 0 0 #667eea;
+    }
+    
+    .history-table tbody td {
+        padding: 1.25rem 1.25rem;
+        vertical-align: middle;
+        color: #2d3748;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Ensure consistent cell content alignment */
+    .history-table tbody td:nth-child(1),
+    .history-table tbody td:nth-child(2),
+    .history-table tbody td:nth-child(3),
+    .history-table tbody td:nth-child(4),
+    .history-table tbody td:nth-child(5),
+    .history-table tbody td:nth-child(6) {
+        text-align: left;
+    }
+    
+    /* Date & Time */
+    .datetime-cell {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .datetime-icon {
+        width: 40px;
+        height: 40px;
+        background: #edf2f7;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .history-table tbody tr:hover .datetime-icon {
+        background: #667eea;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .datetime-text {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .datetime-date {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .datetime-time {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 0.25rem;
+    }
+    
+    /* Type Badge */
+    .type-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    
+    .type-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .type-service {
+        background: #e6f3ff;
+        color: #0066cc;
+        border-color: #b3d9ff;
+    }
+    
+    .type-product {
+        background: #e6f9f0;
+        color: #00a86b;
+        border-color: #b3f0d9;
+    }
+    
+    .type-package {
+        background: #fff4e6;
+        color: #ff8c00;
+        border-color: #ffd9b3;
+    }
+    
+    .type-badge i {
+        font-size: 0.75rem;
+    }
+    
+    /* Item Name */
+    .item-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .item-icon {
+        width: 32px;
+        height: 32px;
+        background: #f7fafc;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #718096;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .history-table tbody tr:hover .item-icon {
+        background: #edf2f7;
+        color: #667eea;
+        transform: rotate(5deg) scale(1.1);
+    }
+    
+    .item-name {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.9rem;
+    }
+    
+    /* Action Badge */
+    .action-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .action-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .action-added {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .action-edited {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .action-deleted {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .action-badge i {
+        font-size: 0.75rem;
+    }
+    
+    /* Performed By */
+    .performed-by-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background: #edf2f7;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .history-table tbody tr:hover .user-avatar {
+        background: #667eea;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .performed-by-name {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.9rem;
+    }
+    
+    /* Details */
+    .details-text {
+        max-width: 100%;
+        font-size: 0.85rem;
+        color: #718096;
+        line-height: 1.6;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+    
+    .empty-state h5 {
+        color: #718096;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: #a0aec0;
+        font-size: 0.9rem;
+    }
+    
+    /* Back Button */
+    .btn-back-dashboard {
+        background: white;
+        color: #667eea;
+        border: 2px solid #e2e8f0;
+        padding: 0.6rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-back-dashboard:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .history-table thead th:nth-child(1) { width: 13%; }
+        .history-table thead th:nth-child(2) { width: 11%; }
+        .history-table thead th:nth-child(3) { width: 19%; }
+        .history-table thead th:nth-child(4) { width: 11%; }
+        .history-table thead th:nth-child(5) { width: 16%; }
+        .history-table thead th:nth-child(6) { width: 30%; }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header-section {
+            padding: 1.5rem;
+        }
+        
+        .history-table {
+            table-layout: auto;
+        }
+        
+        .history-table thead th,
+        .history-table tbody td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .history-table thead th {
+            min-width: 100px;
+        }
+        
+        .datetime-cell,
+        .item-name-cell,
+        .performed-by-cell {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .type-badge,
+        .action-badge {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h1 class="page-title-main">
+                <i class="fas fa-history"></i>
+                History Log
+            </h1>
+            <p class="page-subtitle">Track all system activities and changes</p>
+        </div>
+        <a href="{% url 'appointments:admin_dashboard' %}" class="btn-back-dashboard">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Filter Form -->
+<div class="history-card mb-4" style="background: #f8f9fa;">
+    <div class="card-header-custom">
+        <h5>
+            <i class="fas fa-filter"></i>
+            Filter History Log
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'appointments:admin_history_log' %}" class="row g-3">
+            <div class="col-md-3">
+                <label for="patient" class="form-label">Patient</label>
+                <input type="text" class="form-control" id="patient" name="patient" placeholder="Patient name..." value="{{ patient_filter }}">
+            </div>
+            <div class="col-md-3">
+                <label for="treatment" class="form-label">Treatment/Service</label>
+                <input type="text" class="form-control" id="treatment" name="treatment" placeholder="Treatment name..." value="{{ treatment_filter }}">
+            </div>
+            <div class="col-md-2">
+                <label for="attendant" class="form-label">Attendant</label>
+                <input type="text" class="form-control" id="attendant" name="attendant" placeholder="Attendant name..." value="{{ attendant_filter }}">
+            </div>
+            <div class="col-md-2">
+                <label for="year" class="form-label">Year</label>
+                <select class="form-select" id="year" name="year">
+                    <option value="">All Years</option>
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year_filter == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="type" class="form-label">Type</label>
+                <select class="form-select" id="type" name="type">
+                    <option value="">All Types</option>
+                    <option value="Service" {% if type_filter == 'Service' %}selected{% endif %}>Service</option>
+                    <option value="Product" {% if type_filter == 'Product' %}selected{% endif %}>Product</option>
+                    <option value="Package" {% if type_filter == 'Package' %}selected{% endif %}>Package</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Apply Filters
+                </button>
+                <a href="{% url 'appointments:admin_history_log' %}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Clear Filters
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- History Log Card -->
+<div class="history-card">
+    <div class="card-header-custom">
+        <h5>
+            <i class="fas fa-list-alt"></i>
+            System Activity Log
+        </h5>
+    </div>
+    <div class="table-container">
+        {% if history_logs %}
+            <div class="table-responsive" style="width: 100%;">
+                <table class="table history-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-clock"></i>Date & Time</th>
+                            <th><i class="fas fa-tag"></i>Type</th>
+                            <th><i class="fas fa-file-alt"></i>Name</th>
+                            <th><i class="fas fa-cogs"></i>Action</th>
+                            <th><i class="fas fa-user"></i>Performed By</th>
+                            <th><i class="fas fa-info-circle"></i>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in history_logs %}
+                        <tr>
+                            <td>
+                                <div class="datetime-cell">
+                                    <div class="datetime-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="datetime-text">
+                                        <span class="datetime-date">{{ log.datetime|date:"M d, Y" }}</span>
+                                        <span class="datetime-time">{{ log.datetime|date:"g:i A" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="type-badge type-{{ log.type|lower }}">
+                                    <i class="fas fa-{% if log.type == 'Service' %}spa{% elif log.type == 'Product' %}shopping-bag{% elif log.type == 'Package' %}box{% else %}info-circle{% endif %}"></i>
+                                    {{ log.type }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="item-name-cell">
+                                    <div class="item-icon">
+                                        <i class="fas fa-{% if log.type == 'Service' %}spa{% elif log.type == 'Product' %}shopping-bag{% elif log.type == 'Package' %}box{% else %}file{% endif %}"></i>
+                                    </div>
+                                    <span class="item-name">{{ log.name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="action-badge action-{{ log.action|lower }}">
+                                    <i class="fas fa-{% if log.action == 'Added' %}plus{% elif log.action == 'Edited' %}edit{% elif log.action == 'Deleted' %}trash{% else %}info{% endif %}"></i>
+                                    {{ log.action }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="performed-by-cell">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <span class="performed-by-name">{{ log.performed_by }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="details-text">
+                                    {{ log.details|truncatechars:50|default:"No details available" }}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="History logs pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">«</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">‹</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">«</span></li>
+                            <li class="page-item disabled"><span class="page-link">‹</span></li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">›</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if patient_filter %}&patient={{ patient_filter }}{% endif %}{% if treatment_filter %}&treatment={{ treatment_filter }}{% endif %}{% if attendant_filter %}&attendant={{ attendant_filter }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">»</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">›</span></li>
+                            <li class="page-item disabled"><span class="page-link">»</span></li>
+                        {% endif %}
+                    </ul>
+                    <div class="text-center mt-2 text-muted small"><p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p></div>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h5>No history logs found</h5>
+                <p>System activities will appear here once they occur.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

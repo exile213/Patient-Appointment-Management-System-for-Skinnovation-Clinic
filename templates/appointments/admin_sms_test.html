@@ -1,0 +1,1058 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}SMS Testing{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/animations.css' %}">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+        z-index: -1;
+    }
+    
+    .sms-container {
+        padding: 2rem;
+        background: transparent;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+        animation: slideInDown 0.8s ease-out;
+    }
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 200% 100%;
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    
+    .page-subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+        font-weight: 500;
+        animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+    
+    .back-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+    
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .sms-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    .sms-card:hover {
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.4);
+        transform: translateY(-8px) scale(1.01);
+        background: rgba(255, 255, 255, 0.98);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .card-header i {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .card-body {
+        padding: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .form-label i {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+    }
+    
+    .form-control {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+        transform: translateY(-1px);
+    }
+    
+    .form-text {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 12px;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+        color: #065f46;
+        border-left: 4px solid #10b981;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+    }
+    
+    .alert-info {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+    }
+    
+    .patient-item {
+        border-left: 3px solid transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .patient-item:hover {
+        border-left-color: #667eea;
+        background-color: rgba(102, 126, 234, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .patient-avatar {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .patient-item:hover .patient-avatar {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .patients-list {
+        scrollbar-width: thin;
+        scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+    }
+    
+    .patients-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .patients-list::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .patients-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 3px;
+    }
+    
+    .patients-list::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    }
+    
+    .api-info-card {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .api-info-card .card-header {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+    }
+    
+    .api-info-card .card-header i {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .badge.bg-success {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+    }
+    
+    .sms-history-item {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .sms-history-item:hover {
+        background-color: rgba(102, 126, 234, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .sms-status-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .badge-status {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+    
+    .sms-message {
+        background: rgba(248, 250, 252, 0.8);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        border-left: 3px solid #e5e7eb;
+    }
+    
+    .sms-history-item:hover .sms-message {
+        background: rgba(102, 126, 234, 0.05);
+        border-left-color: #667eea;
+    }
+    
+    .sms-history-list {
+        scrollbar-width: thin;
+        scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+    }
+    
+    .sms-history-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .sms-history-list::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .sms-history-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 3px;
+    }
+    
+    .sms-history-list::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    /* Template Button Styling */
+    .btn-outline-primary {
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-outline-primary.active {
+        background: #667eea;
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .template-preview {
+        background: rgba(102, 126, 234, 0.05);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #374151;
+    }
+    
+    .template-preview strong {
+        color: #667eea;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .sms-container {
+            padding: 1rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sms-container">
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-sms me-3"></i>
+                    SMS Testing
+                </h1>
+                <p class="page-subtitle">Send SMS notifications to patients using SkySMS API</p>
+            </div>
+            <a href="{% url 'appointments:admin_dashboard' %}" class="back-btn">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Automated Reminders Notice -->
+    <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #2196f3;">
+        <div class="d-flex align-items-start">
+            <i class="fas fa-info-circle me-3 mt-1" style="font-size: 1.5rem; color: #2196f3;"></i>
+            <div>
+                <h5 class="alert-heading mb-2"><i class="fas fa-robot me-2"></i>Automated Reminders Active</h5>
+                <p class="mb-2">
+                    <strong>Automated appointment reminders are enabled.</strong> The system automatically sends SMS reminders to patients 24 hours before their appointments.
+                </p>
+                <p class="mb-0">
+                    <strong>Manual messaging via this page should only be used if automated messaging fails.</strong> To test or send manual messages, use the form below.
+                </p>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fas fa-clock me-1"></i>Reminders are sent daily via: <code>python manage.py send_reminders</code>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="sms-card">
+                <div class="card-header">
+                    <h5>
+                        <i class="fas fa-paper-plane"></i>
+                        Send SMS Message
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="smsForm">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="phone_number" class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number" 
+                                   placeholder="09123456789" maxlength="11" pattern="09[0-9]{9}" required>
+                            <div class="form-text">Enter 11-digit Philippine phone number starting with 09 (e.g., 09123456789)</div>
+                            <div id="phoneError" class="text-danger mt-2" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="message" class="form-label">
+                                <i class="fas fa-comment"></i>
+                                Message
+                            </label>
+                            
+                            <!-- Quick Template Buttons -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-magic"></i>
+                                    Quick Templates
+                                </label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="useTemplate('appointment_confirmation')">
+                                        <i class="fas fa-calendar-check"></i> Appointment Confirmation
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="useTemplate('appointment_reminder')">
+                                        <i class="fas fa-bell"></i> Appointment Reminder
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="useTemplate('appointment_cancelled')">
+                                        <i class="fas fa-times-circle"></i> Appointment Cancelled
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="useTemplate('welcome_message')">
+                                        <i class="fas fa-hand-wave"></i> Welcome Message
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="useTemplate('custom')">
+                                        <i class="fas fa-edit"></i> Custom Message
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <textarea class="form-control" id="message" name="message" rows="4" 
+                                      placeholder="Select a template above or enter your custom message here..." required></textarea>
+                            <div class="form-text">Maximum 160 characters per SMS</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Send SMS
+                        </button>
+                    </form>
+                    
+                    <div id="smsResult" class="mt-4" style="display: none;">
+                        <div class="alert" role="alert">
+                            <span id="resultMessage"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SMS API Info -->
+            <div class="sms-card api-info-card mt-4">
+                <div class="card-header">
+                    <h5>
+                        <i class="fas fa-info-circle"></i>
+                        SMS API Info
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="mb-2"><strong>Provider:</strong> SkySMS API</p>
+                            <p class="mb-2"><strong>Limit:</strong> 160 characters per SMS</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="mb-2"><strong>Sender ID:</strong> BEAUTY</p>
+                            <p class="mb-0"><strong>Status:</strong> <span id="apiStatus" class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="sms-card">
+                <div class="card-header">
+                    <h5>
+                        <i class="fas fa-users"></i>
+                        Recent Patients
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_patients %}
+                        <div class="p-4 border-bottom">
+                            <p class="text-muted mb-0">Click on a patient to use their phone number:</p>
+                        </div>
+                        <div class="patients-list" style="max-height: 200px; overflow-y: auto;">
+                            {% for patient in recent_patients %}
+                                <div class="patient-item p-3 border-bottom" 
+                                     onclick="usePatientPhone('{{ patient.phone }}', '{{ patient.full_name }}')">
+                                    <div class="d-flex align-items-center">
+                                        <div class="patient-avatar me-3">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <strong>{{ patient.full_name }}</strong><br>
+                                            <small class="text-muted">{{ patient.phone }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="p-4 text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-users text-muted" style="font-size: 2rem; opacity: 0.3;"></i>
+                            </div>
+                            <p class="text-muted">No patients with phone numbers found.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- SMS History -->
+            <div class="sms-card mt-4">
+                <div class="card-header">
+                    <h5>
+                        <i class="fas fa-history"></i>
+                        SMS History
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if sms_history %}
+                        <div class="p-4 border-bottom">
+                            <p class="text-muted mb-0">Recent SMS messages sent:</p>
+                        </div>
+                        <div class="sms-history-list" style="max-height: 300px; overflow-y: auto;">
+                            {% for sms in sms_history %}
+                                <div class="sms-history-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="sms-status-icon me-2">
+                                                {% if sms.status == 'sent' %}
+                                                    <i class="fas fa-check-circle text-success"></i>
+                                                {% elif sms.status == 'failed' %}
+                                                    <i class="fas fa-times-circle text-danger"></i>
+                                                {% else %}
+                                                    <i class="fas fa-clock text-warning"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong class="text-dark">{{ sms.phone_number }}</strong>
+                                                <span class="badge badge-status ms-2 {% if sms.status == 'sent' %}bg-success{% elif sms.status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
+                                                    {{ sms.status|title }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">{{ sms.time_ago }}</small>
+                                    </div>
+                                    <div class="sms-message">
+                                        <p class="mb-1 text-dark">{{ sms.message|truncatechars:80 }}</p>
+                                        <small class="text-muted">{{ sms.formatted_sent_at }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="p-4 text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-history text-muted" style="font-size: 2rem; opacity: 0.3;"></i>
+                            </div>
+                            <p class="text-muted">No SMS history found.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced SMS Testing with Animations
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Enhanced SMS Testing Loading...');
+    
+    // Add staggered animations to cards
+    const cards = document.querySelectorAll('.sms-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+    });
+    
+    // Initialize form interactions
+    initializeFormInteractions();
+});
+
+// Phone number validation
+function validatePhoneNumber(phone) {
+    const phoneRegex = /^09[0-9]{9}$/;
+    return phoneRegex.test(phone);
+}
+
+// Initialize form interactions with enhanced animations
+function initializeFormInteractions() {
+    const phoneInput = document.getElementById('phone_number');
+    const messageInput = document.getElementById('message');
+    const form = document.getElementById('smsForm');
+    
+    // Enhanced phone number input handling
+    phoneInput.addEventListener('input', function(e) {
+        // Remove any non-digit characters
+        let value = e.target.value.replace(/\D/g, '');
+        
+        // Limit to 11 digits
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
+        
+        // Update the input value
+        e.target.value = value;
+        
+        // Validate and show error with animation
+        const phoneError = document.getElementById('phoneError');
+        if (value.length > 0 && !validatePhoneNumber(value)) {
+            phoneError.textContent = 'Please enter a valid 11-digit Philippine phone number starting with 09';
+            phoneError.style.display = 'block';
+            phoneError.style.animation = 'slideInUp 0.3s ease-out';
+            e.target.classList.add('is-invalid');
+            e.target.style.borderColor = '#ef4444';
+            e.target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+        } else {
+            phoneError.style.display = 'none';
+            e.target.classList.remove('is-invalid');
+            e.target.style.borderColor = '#e5e7eb';
+            e.target.style.boxShadow = 'none';
+        }
+    });
+    
+    // Prevent non-numeric input
+    phoneInput.addEventListener('keypress', function(e) {
+        // Allow backspace, delete, tab, escape, enter
+        if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+            // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true)) {
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+    
+    // Enhanced form submission with animations
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const phoneNumber = phoneInput.value;
+        const message = messageInput.value;
+        const resultDiv = document.getElementById('smsResult');
+        const resultMessage = document.getElementById('resultMessage');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        
+        // Validate phone number
+        if (!validatePhoneNumber(phoneNumber)) {
+            const phoneError = document.getElementById('phoneError');
+            phoneError.textContent = 'Please enter a valid 11-digit Philippine phone number starting with 09';
+            phoneError.style.display = 'block';
+            phoneError.style.animation = 'slideInUp 0.3s ease-out';
+            phoneInput.classList.add('is-invalid');
+            phoneInput.style.borderColor = '#ef4444';
+            phoneInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+            
+            // Shake animation for error
+            phoneInput.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+                phoneInput.style.animation = '';
+            }, 500);
+            return;
+        }
+        
+        // Show loading state with enhanced animation
+        resultDiv.style.display = 'block';
+        resultDiv.style.animation = 'slideInUp 0.5s ease-out';
+        resultDiv.querySelector('.alert').className = 'alert alert-info';
+        resultMessage.innerHTML = '<div class="loading-spinner me-2"></div>Sending SMS...';
+        
+        // Disable submit button and add loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<div class="loading-spinner me-2"></div>Sending...';
+        submitBtn.style.opacity = '0.7';
+        
+        // Send AJAX request
+        fetch('{% url "appointments:admin_send_test_sms" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: `phone_number=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send SMS';
+            submitBtn.style.opacity = '1';
+            
+            if (data.success) {
+                resultDiv.querySelector('.alert').className = 'alert alert-success';
+                resultMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>' + data.message;
+                
+                // Success animation
+                resultDiv.style.animation = 'bounceIn 0.6s ease-out';
+                
+                // Clear form after successful send
+                setTimeout(() => {
+                    form.reset();
+                    phoneInput.style.borderColor = '#e5e7eb';
+                    phoneInput.style.boxShadow = 'none';
+                }, 2000);
+            } else {
+                resultDiv.querySelector('.alert').className = 'alert alert-danger';
+                resultMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + data.message;
+                
+                // Error animation
+                resultDiv.style.animation = 'shake 0.5s ease-in-out';
+            }
+        })
+        .catch(error => {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send SMS';
+            submitBtn.style.opacity = '1';
+            
+            resultDiv.querySelector('.alert').className = 'alert alert-danger';
+            resultMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Error: ' + error.message;
+            
+            // Error animation
+            resultDiv.style.animation = 'shake 0.5s ease-in-out';
+        });
+    });
+}
+
+// Enhanced patient phone selection with animation
+function usePatientPhone(phoneNumber, patientName) {
+    // Format the phone number to 11 digits if needed
+    let formattedPhone = phoneNumber.replace(/\D/g, '');
+    if (formattedPhone.length === 10 && formattedPhone.startsWith('9')) {
+        formattedPhone = '0' + formattedPhone;
+    }
+    
+    // Animate the form filling
+    const phoneInput = document.getElementById('phone_number');
+    const messageInput = document.getElementById('message');
+    
+    // Add typing animation effect
+    phoneInput.style.animation = 'pulse 0.3s ease-in-out';
+    messageInput.style.animation = 'pulse 0.3s ease-in-out';
+    
+    setTimeout(() => {
+        phoneInput.value = formattedPhone;
+        messageInput.value = `Hi ${patientName}! This is a test message from Beauty Clinic.`;
+        
+        // Trigger validation
+        phoneInput.dispatchEvent(new Event('input'));
+        
+        // Remove animation
+        phoneInput.style.animation = '';
+        messageInput.style.animation = '';
+        
+        // Focus on message input
+        messageInput.focus();
+        messageInput.setSelectionRange(messageInput.value.length, messageInput.value.length);
+    }, 300);
+}
+
+// Template selection function
+function useTemplate(templateType) {
+    const messageInput = document.getElementById('message');
+    const templateButtons = document.querySelectorAll('.btn-outline-primary');
+    
+    // Remove active class from all buttons
+    templateButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+    
+    // Define templates
+    const templates = {
+        'appointment_confirmation': `Hello [PATIENT_NAME]! Your appointment is confirmed for [DATE] at [TIME]. Service: [SERVICE]. Please arrive 10 minutes early. See you soon! - Beauty Clinic`,
+        
+        'appointment_reminder': `Hi [PATIENT_NAME]! Reminder: You have an appointment tomorrow ([DATE]) at [TIME] for [SERVICE]. Please confirm by replying YES. - Beauty Clinic`,
+        
+        'appointment_cancelled': `Dear [PATIENT_NAME], your appointment on [DATE] at [TIME] has been cancelled. Please call us at 09123456789 to reschedule. We apologize for any inconvenience. - Beauty Clinic`,
+        
+        'welcome_message': `Welcome to Beauty Clinic, [PATIENT_NAME]! We're excited to help you look and feel your best. Book your first appointment today! Call 09123456789. - Beauty Clinic`,
+        
+        'custom': ''
+    };
+    
+    if (templateType === 'custom') {
+        messageInput.value = '';
+        messageInput.placeholder = 'Enter your custom message here...';
+        messageInput.focus();
+    } else {
+        messageInput.value = templates[templateType];
+        messageInput.placeholder = 'Select a template above or enter your custom message here...';
+        
+        // Add animation
+        messageInput.style.animation = 'pulse 0.3s ease-in-out';
+        setTimeout(() => {
+            messageInput.style.animation = '';
+        }, 300);
+        
+        // Focus and select the text for easy editing
+        messageInput.focus();
+        messageInput.select();
+        
+        // Show template preview
+        showTemplatePreview(templateType, templates[templateType]);
+    }
+}
+
+// Show template preview with instructions
+function showTemplatePreview(templateType, template) {
+    // Remove existing preview
+    const existingPreview = document.getElementById('templatePreview');
+    if (existingPreview) {
+        existingPreview.remove();
+    }
+    
+    // Create preview element
+    const preview = document.createElement('div');
+    preview.id = 'templatePreview';
+    preview.className = 'template-preview';
+    
+    const instructions = {
+        'appointment_confirmation': 'Replace [PATIENT_NAME], [DATE], [TIME], and [SERVICE] with actual details',
+        'appointment_reminder': 'Replace [PATIENT_NAME], [DATE], [TIME], and [SERVICE] with actual details',
+        'appointment_cancelled': 'Replace [PATIENT_NAME], [DATE], and [TIME] with actual details',
+        'welcome_message': 'Replace [PATIENT_NAME] with the actual patient name'
+    };
+    
+    preview.innerHTML = `
+        <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-info-circle text-primary me-2"></i>
+            <strong>Template Instructions:</strong>
+        </div>
+        <p class="mb-2">${instructions[templateType]}</p>
+        <div class="d-flex align-items-center">
+            <i class="fas fa-edit text-primary me-2"></i>
+            <small>Click in the message box to edit the template</small>
+        </div>
+    `;
+    
+    // Insert after the message textarea
+    const messageContainer = document.querySelector('textarea[name="message"]').parentElement;
+    messageContainer.appendChild(preview);
+    
+    // Auto-hide preview after 5 seconds
+    setTimeout(() => {
+        if (preview.parentElement) {
+            preview.style.opacity = '0.7';
+        }
+    }, 5000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

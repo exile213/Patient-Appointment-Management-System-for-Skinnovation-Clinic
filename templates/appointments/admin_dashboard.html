@@ -1,0 +1,245 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Staff Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div>
+        <h1 class="page-title" style="margin: 0;">
+            <i class="fas fa-tachometer-alt"></i>
+            Staff Dashboard
+        </h1>
+        <p class="text-muted mb-0">Manage appointments, orders, and patient profiles</p>
+    </div>
+    {% include 'appointments/includes/admin_notification_icon.html' %}
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4 justify-content-center">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card purple">
+            <div class="stats-number">{{ total_appointments }}</div>
+            <div class="stats-label">Total Appointments</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card orange">
+            <div class="stats-number">{{ scheduled_count }}</div>
+            <div class="stats-label">Scheduled (Need Approval)</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card green">
+            <div class="stats-number">{{ confirmed_count }}</div>
+            <div class="stats-label">Confirmed</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card red">
+            <div class="stats-number">{{ no_show_count }}</div>
+            <div class="stats-label">No-Show Patients</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card cyan">
+            <div class="stats-number">{{ pre_order_count }}</div>
+            <div class="stats-label">Product Orders</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card blue">
+            <div class="stats-number">{{ total_patients }}</div>
+            <div class="stats-label">Total Patients</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4 justify-content-center">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <a href="{% url 'appointments:admin_appointments' %}?status=no_show" class="text-decoration-none">
+            <div class="stats-card yellow" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stats-number">{{ no_show_count }}</div>
+                <div class="stats-label">View No-Show List</div>
+                <small class="text-muted"><i class="fas fa-arrow-right"></i> Click to manage</small>
+            </div>
+        </a>
+    </div>
+</div>
+
+
+
+<!-- Appointments Section -->
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-calendar-check"></i>
+                    Recent Appointments
+                </h3>
+                <a href="{% url 'appointments:admin_appointments' %}" class="btn-action btn-view btn-sm">
+                    View All
+                </a>
+            </div>
+            
+            {% if all_appointments %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Service/Package</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in all_appointments|slice:":5" %}
+                            <tr>
+                                <td>
+                                    <strong>{{ appointment.patient.get_full_name }}</strong>
+                                </td>
+                                <td>
+                                    {% if appointment.service %}
+                                        <span class="type-badge type-regular">{{ appointment.service.service_name }}</span>
+                                    {% elif appointment.package %}
+                                        <span class="type-badge type-package">{{ appointment.package.package_name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ appointment.appointment_date|date:"M d, Y" }}<br>
+                                    <small class="text-muted">{{ appointment.appointment_time|time:"g:i A" }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ appointment.status }}">
+                                        {{ appointment.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No appointments yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Orders Section -->
+    <div class="col-lg-6">
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-shopping-bag"></i>
+                    Recent Orders
+                </h3>
+                <a href="{% url 'appointments:admin_appointments' %}?type=product" class="btn-action btn-view btn-sm">
+                    View All
+                </a>
+            </div>
+            
+            {% if pre_orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Product</th>
+                                <th>Pickup Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in pre_orders|slice:":5" %}
+                            <tr>
+                                <td>
+                                    <strong>{{ order.patient.get_full_name }}</strong>
+                                </td>
+                                <td>
+                                    <span class="type-badge type-product">{{ order.product.product_name }}</span>
+                                </td>
+                                <td>
+                                    {{ order.appointment_date|date:"M d, Y" }}<br>
+                                    <small class="text-muted">{{ order.appointment_time|time:"g:i A" }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ order.status }}">
+                                        {{ order.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No orders yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Patient List Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-users"></i>
+                    Recent Patients
+                </h3>
+                <a href="{% url 'appointments:admin_patients' %}" class="btn-action btn-view btn-sm">
+                    View All
+                </a>
+            </div>
+            
+            {% if patients %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Member Since</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>
+                                    <strong>{{ patient.get_full_name }}</strong>
+                                </td>
+                                <td>{{ patient.email|default:"N/A" }}</td>
+                                <td>{{ patient.phone|default:"N/A" }}</td>
+                                <td>{{ patient.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'appointments:admin_view_patient' patient.id %}" class="btn-action btn-view btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No patients registered yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

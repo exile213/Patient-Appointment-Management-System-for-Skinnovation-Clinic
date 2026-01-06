@@ -1,0 +1,185 @@
+{% extends 'owner/base.html' %}
+{% load static %}
+
+{% block title %}Owner - Patient Details{% endblock %}
+
+{% block page_title %}Patient Details{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="content-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-user"></i>
+            {{ patient.full_name }}
+        </h1>
+        <p class="text-muted mb-0" style="margin-top: 0.5rem;">View patient information and appointment history</p>
+    </div>
+    
+</div>
+
+<!-- Patient Information Card -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-user-circle me-2"></i>Patient Information
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-circle me-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">{{ patient.full_name }}</h5>
+                        <p class="text-muted mb-0">@{{ patient.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="text-muted small">Email</label>
+                    <p class="mb-0"><i class="fas fa-envelope me-2"></i>{{ patient.email|default:"Not provided" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Phone</label>
+                    <p class="mb-0"><i class="fas fa-phone me-2"></i>{{ patient.phone|default:"Not provided" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Gender</label>
+                    <p class="mb-0">
+                        <span class="badge bg-{% if patient.gender == 'M' %}primary{% else %}info{% endif %}">
+                            {{ patient.gender|title|default:"Not provided" }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="text-muted small">Address</label>
+                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ patient.address|default:"Not provided" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Member Since</label>
+                    <p class="mb-0"><i class="fas fa-calendar-plus me-2"></i>{{ patient.created_at|date:"M d, Y" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Last Visit</label>
+                    <p class="mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>
+                        {% if last_visit %}
+                            {{ last_visit.appointment_date|date:"M d, Y" }}
+                        {% else %}
+                            <span class="text-muted">Never</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Statistics Card -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-chart-bar me-2"></i>Patient Statistics
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center p-3 bg-light rounded">
+                    <h3 class="mb-0 text-primary">{{ total_appointments }}</h3>
+                    <p class="text-muted mb-0 small">Total Appointments</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-3 bg-light rounded">
+                    <h3 class="mb-0 text-success">{{ completed_appointments }}</h3>
+                    <p class="text-muted mb-0 small">Completed</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-3 bg-light rounded">
+                    <h3 class="mb-0 text-danger">{{ cancelled_appointments }}</h3>
+                    <p class="text-muted mb-0 small">Cancelled</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-3 bg-light rounded">
+                    <h3 class="mb-0 text-info">₱{{ total_spent|floatformat:2 }}</h3>
+                    <p class="text-muted mb-0 small">Total Spent</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment History Card -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-calendar-check me-2"></i>Appointment History
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if appointments %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar me-2"></i>Date</th>
+                            <th><i class="fas fa-clock me-2"></i>Time</th>
+                            <th><i class="fas fa-cog me-2"></i>Service/Product/Package</th>
+                            <th><i class="fas fa-user-md me-2"></i>Attendant</th>
+                            <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                            <td>{{ appointment.appointment_time|time:"g:i A" }}</td>
+                            <td>{{ appointment.get_service_name }}</td>
+                            <td>{{ appointment.attendant.full_name|default:"Not assigned" }}</td>
+                            <td>
+                                <span class="badge bg-{% if appointment.status == 'completed' %}success{% elif appointment.status == 'cancelled' %}danger{% elif appointment.status == 'confirmed' %}primary{% else %}warning{% endif %}">
+                                    {{ appointment.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No appointments found</h5>
+                <p class="text-muted">This patient has no appointment history.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+</style>
+{% endblock %}
+

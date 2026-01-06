@@ -1,0 +1,717 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Product - Skinovation Beauty Clinic{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .product-info-box {
+        background: linear-gradient(135deg, #f8f9ff, #e8e3ff);
+        border: 2px solid var(--primary-color);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(111, 66, 193, 0.1);
+    }
+    
+    .product-name {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-details {
+        color: #666;
+        font-size: 1rem;
+    }
+    
+    .calendar-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .calendar-nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .calendar-nav button {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-nav button:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .calendar-nav button:active {
+        background: var(--dark-color);
+    }
+    
+    .calendar-month {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .calendar-view-toggle {
+        display: flex;
+        gap: 0.25rem;
+    }
+    
+    .calendar-view-toggle button {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-view-toggle button.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background: #dee2e6;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .calendar-day-header {
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    .calendar-day-header.sunday {
+        background: #dc3545 !important;
+        color: white;
+    }
+    
+    .calendar-day {
+        background: white;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .calendar-day:hover {
+        background: #f8f9ff;
+    }
+    
+    .calendar-day.selected {
+        background: #fff3cd;
+        border: 2px solid var(--primary-color);
+    }
+    
+    .calendar-day.other-month {
+        color: #ccc;
+        background: #f8f9fa;
+    }
+    
+    .calendar-day.sunday {
+        background: #f8f9fa !important;
+        color: #999 !important;
+        cursor: not-allowed;
+    }
+    
+    .calendar-day.sunday:hover {
+        background: #f8f9fa !important;
+    }
+    
+    .calendar-day.closed {
+        background: #dc3545 !important;
+        color: white !important;
+        cursor: not-allowed;
+        font-weight: bold;
+    }
+    
+    .calendar-day.closed:hover {
+        background: #c82333 !important;
+    }
+    
+    .booking-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: #ffc107;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .time-slots-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+        display: none;
+    }
+    
+    .time-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .time-slot {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .time-slot:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .time-slot.selected {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .time-slot.booked {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        cursor: not-allowed;
+    }
+    
+    .booking-form {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+        display: none;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        outline: none;
+    }
+    
+    .btn-book {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-book:hover {
+        background: var(--dark-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    }
+    
+    .btn-back {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        width: 100%;
+    }
+    
+    .btn-back:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    /* Animations */
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+    
+    .slide-up {
+        animation: slideUp 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    <h1 class="text-center mb-4 fade-in">Order Product</h1>
+    
+    <!-- Product Information Box -->
+    <div class="product-info-box slide-up">
+        <div class="product-name">{{ product.product_name }}</div>
+        <div class="product-details">
+            Price: ₱{{ product.price|floatformat:2 }}
+        </div>
+    </div>
+    
+    <!-- Calendar Container -->
+    <div class="calendar-container slide-up">
+        <div class="calendar-header">
+            <div class="calendar-nav">
+                <button onclick="previousMonth()" class="btn-nav">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button onclick="nextMonth()" class="btn-nav">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button onclick="goToToday()" class="btn-nav">Today</button>
+            </div>
+            <div class="calendar-month" id="currentMonth">September 2025</div>
+            <div class="calendar-view-toggle">
+                <button class="active" onclick="setView('month')">Month</button>
+                <button onclick="setView('week')">Week</button>
+            </div>
+        </div>
+        
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- Calendar will be generated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Time Slots Container -->
+    <div class="time-slots-container" id="timeSlotsContainer">
+        <h4>Select Claim Date</h4>
+        <p id="selectedDateText"></p>
+        <div class="time-slots-grid" id="timeSlotsGrid">
+            <!-- Time slots will be generated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Booking Form -->
+    <div class="booking-form" id="bookingForm">
+        <h4>Complete Your Order</h4>
+        <form method="post" id="productOrderForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label"><strong>Product</strong></label>
+                <input type="text" class="form-control" value="{{ product.product_name }}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><strong>Price per Unit</strong></label>
+                <input type="text" class="form-control" value="₱{{ product.price|floatformat:2 }}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><strong>Quantity <span class="text-danger">*</span></strong></label>
+                <input type="number" name="quantity" id="quantityInput" class="form-control" min="1" max="{{ product.stock }}" value="1" required onchange="updateEstimatedTotal()">
+                <small class="form-text text-muted">Available stock: <strong id="stockDisplay">{{ product.stock }}</strong></small>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><strong>Estimated Total Amount</strong></label>
+                <input type="text" class="form-control" id="estimatedTotal" value="₱{{ product.price|floatformat:2 }}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Claim Date</label>
+                <input type="text" name="appointment_date" class="form-control" id="selectedDateInput" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Claim Time</label>
+                <input type="text" class="form-control" id="selectedTimeDisplay" readonly>
+                <input type="hidden" name="appointment_time" id="selectedTimeInput">
+            </div>
+            <button type="button" class="btn-book pulse" onclick="showCancellationPolicyModal()">Order Product</button>
+            <button type="button" class="btn-back" onclick="goBack()">Back to Products</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const productPrice = parseFloat("{{ product.price|floatformat:2 }}");
+const maxStock = parseInt("{{ product.stock }}");
+
+function updateEstimatedTotal() {
+    const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+    
+    // Validate quantity
+    if (quantity < 1) {
+        document.getElementById('quantityInput').value = 1;
+        alert('Quantity must be at least 1.');
+        return;
+    }
+    
+    if (quantity > maxStock) {
+        document.getElementById('quantityInput').value = maxStock;
+        alert(`Quantity cannot exceed available stock (${maxStock} units).`);
+        return;
+    }
+    
+    // Update estimated total
+    const total = (productPrice * quantity).toFixed(2);
+    document.getElementById('estimatedTotal').value = '₱' + total;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateEstimatedTotal();
+});
+</script>
+
+<!-- Cancellation Policy Modal -->
+<div class="modal fade" id="cancellationPolicyModal" tabindex="-1" aria-labelledby="cancellationPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" id="cancellationPolicyModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Important: Cancellation Policy
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                    <h5 class="fw-bold">Before You Order</h5>
+                </div>
+                <div class="alert alert-warning" role="alert" style="border-radius: 10px;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Cancellation Policy:</strong> Cancellations are <strong>not allowed within 2 days</strong> before your scheduled appointment.
+                </div>
+                <p class="mb-3">Please note:</p>
+                <ul class="mb-3">
+                    <li>You must cancel at least <strong>2 days in advance</strong> of your appointment date</li>
+                    <li>Cancellations within 2 days require direct clinic contact</li>
+                    <li>Rescheduling requests are subject to availability</li>
+                </ul>
+                <div class="bg-light p-3 rounded mb-3">
+                    <strong><i class="fas fa-phone me-2"></i>Contact Us:</strong><br>
+                    Phone: <strong>0933 232 5122</strong><br>
+                    Email: <strong>skinovationbeautyclinic@gmail.com</strong>
+                </div>
+                <p class="text-muted mb-0">
+                    <small>By clicking "I Understand & Continue", you acknowledge that you have read and understood the cancellation policy.</small>
+                </p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #dee2e6;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitBookingForm()">
+                    <i class="fas fa-check me-2"></i>I Understand & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showCancellationPolicyModal() {
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('cancellationPolicyModal'));
+    modal.show();
+}
+
+function submitBookingForm() {
+    // Close the modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('cancellationPolicyModal'));
+    modal.hide();
+    
+    // Submit the form
+    document.querySelector('#bookingForm form').submit();
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentDate = new Date();
+let selectedDate = null;
+let selectedTime = null;
+
+// Available time slots (loaded from database)
+const timeSlots = JSON.parse('{{ time_slots|escapejs }}');
+
+// Booked slots (from server)
+const bookedSlots = JSON.parse('{{ booked_slots|escapejs }}');
+
+// Closed days from server
+const closedDays = JSON.parse('{{ closed_days|escapejs }}');
+
+function generateCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    // Update month display
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    
+    // Generate calendar grid
+    let calendarHTML = '';
+    
+    // Day headers
+    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayHeaders.forEach((day, index) => {
+        const headerClass = index === 0 ? 'calendar-day-header sunday' : 'calendar-day-header';
+        calendarHTML += `<div class="${headerClass}">${day}</div>`;
+    });
+    
+    // Previous month days
+    const prevMonth = new Date(year, month, 0);
+    const daysInPrevMonth = prevMonth.getDate();
+    for (let i = startingDay - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
+    }
+    
+    // Current month days
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayOfWeek = new Date(year, month, day).getDay();
+        const isSunday = dayOfWeek === 0;
+        const isPast = new Date(year, month, day) < new Date().setHours(0, 0, 0, 0);
+        const isClosed = closedDays.includes(dateStr);
+        const hasBookings = bookedSlots.hasOwnProperty(dateStr);
+        
+        let dayClass = 'calendar-day';
+        if (isSunday) dayClass += ' sunday';
+        if (isPast) dayClass += ' other-month';
+        if (isClosed) dayClass += ' closed';
+        
+        // Add indicator dot for booked dates
+        let dayContent = `${day}`;
+        if (hasBookings && !isPast && !isSunday && !isClosed) {
+            dayContent = `${day}<div class="booking-indicator"></div>`;
+        }
+        
+        const canSelect = !isSunday && !isPast && !isClosed;
+        calendarHTML += `<div class="${dayClass}" data-date="${dateStr}" onclick="selectDate('${dateStr}', ${!canSelect}, ${!canSelect})">${dayContent}</div>`;
+    }
+    
+    // Next month days
+    const remainingCells = 42 - (startingDay + daysInMonth); // 6 rows * 7 days
+    for (let day = 1; day <= remainingCells; day++) {
+        calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
+    }
+    
+    document.getElementById('calendarGrid').innerHTML = calendarHTML;
+}
+
+function selectDate(dateStr, isSunday, isPast) {
+    if (isSunday || isPast) return;
+    // Check if date is closed
+    if (closedDays.includes(dateStr)) return;
+    
+    // Remove previous selection
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('selected');
+    });
+    
+    // Add selection to clicked day
+    event.target.classList.add('selected');
+    
+    selectedDate = dateStr;
+    showTimeSlots(dateStr);
+}
+
+function showTimeSlots(dateStr) {
+    const date = new Date(dateStr);
+    const dateText = date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    document.getElementById('selectedDateText').textContent = `Available slots for ${dateText}`;
+    
+    // Generate time slots
+    let timeSlotsHTML = '';
+    const bookedForDate = bookedSlots[dateStr] || [];
+    const today = new Date();
+    const isToday = dateStr === today.toISOString().split('T')[0];
+    const currentTime = today.getHours() * 100 + today.getMinutes(); // Format: HHMM
+    
+    timeSlots.forEach(slot => {
+        const timeValue = slot.value;
+        const timeDisplay = slot.display;
+        const isBooked = bookedForDate.includes(timeValue);
+        // Check if time is in the past (for today only)
+        let isPast = false;
+        if (isToday) {
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            const timeVal = hours * 100 + minutes;
+            isPast = timeVal <= currentTime;
+        }
+        
+        const slotClass = (isBooked || isPast) ? 'time-slot booked' : 'time-slot';
+        const disabled = (isBooked || isPast) ? 'disabled' : `onclick="selectTime('${timeValue}', '${timeDisplay}')"`;
+        
+        // Add tooltip for booked/past slots
+        let tooltip = '';
+        let statusText = '';
+        if (isBooked) {
+            tooltip = 'title="This time slot is already booked"';
+            statusText = '<br><small>Booked</small>';
+        } else if (isPast) {
+            tooltip = 'title="This time slot is no longer available"';
+            statusText = '<br><small>Closed</small>';
+        }
+        
+        timeSlotsHTML += `<div class="${slotClass}" ${disabled} ${tooltip}>${timeDisplay}${statusText}</div>`;
+    });
+    
+    document.getElementById('timeSlotsGrid').innerHTML = timeSlotsHTML;
+    document.getElementById('timeSlotsContainer').style.display = 'block';
+    document.getElementById('timeSlotsContainer').classList.add('slide-up');
+}
+
+function selectTime(time, displayTime) {
+    // Remove previous selection
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+    });
+    
+    // Add selection to clicked slot
+    event.target.classList.add('selected');
+    
+    selectedTime = time;
+    showBookingForm(displayTime);
+}
+
+function showBookingForm(displayTime) {
+    if (selectedDate && selectedTime) {
+        document.getElementById('selectedDateInput').value = selectedDate;
+        document.getElementById('selectedTimeDisplay').value = displayTime;  // Show 12-hour format to user
+        document.getElementById('selectedTimeInput').value = selectedTime;  // Submit 24-hour format to backend
+        document.getElementById('bookingForm').style.display = 'block';
+        document.getElementById('bookingForm').classList.add('slide-up');
+    }
+}
+
+function previousMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    generateCalendar();
+}
+
+function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    generateCalendar();
+}
+
+function goToToday() {
+    currentDate = new Date();
+    generateCalendar();
+}
+
+function setView(view) {
+    // Toggle active class
+    document.querySelectorAll('.calendar-view-toggle button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Here you would implement week view if needed
+    console.log('View changed to:', view);
+}
+
+function goBack() {
+    window.history.back();
+}
+
+// Initialize calendar on page load
+document.addEventListener('DOMContentLoaded', function() {
+    generateCalendar();
+});
+</script>
+{% endblock %}

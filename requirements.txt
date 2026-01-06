@@ -1,0 +1,22 @@
+Django>=5.2.1,<6.0
+Pillow>=10.0.0
+python-decouple>=3.8
+mailtrap>=2.0.0
+django-allauth>=0.57.0
+PyJWT>=2.8.0
+cryptography>=41.0.0
+gunicorn>=21.0.0
+whitenoise>=6.6.0
+psycopg2-binary>=2.9.9
+dj-database-url>=2.1.0
+django-jazzmin>=2.6.0
+setuptools>=65.0.0
+reportlab>=4.0.0
+weasyprint>=60.0
+Faker>=22.0.0
+django-cloudinary-storage>=0.3.0
+
+# Development/Testing only (not needed for production)
+# playwright>=1.40.0
+# pytest>=7.4.0
+# pytest-playwright>=0.4.0

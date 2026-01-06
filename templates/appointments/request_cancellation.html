@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request Cancellation - Skinovation Beauty Clinic{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-times-circle"></i> Request {% if appointment.product %}Order{% else %}Appointment{% endif %} Cancellation
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Appointment Details -->
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-calendar-check"></i> Appointment Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Service/Product/Package:</strong><br>
+                                {% if appointment.service %}
+                                    <i class="fas fa-spa"></i> {{ appointment.service.service_name }}
+                                {% elif appointment.product %}
+                                    <i class="fas fa-shopping-bag"></i> {{ appointment.product.product_name }}
+                                {% elif appointment.package %}
+                                    <i class="fas fa-gift"></i> {{ appointment.package.package_name }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Date & Time:</strong><br>
+                                {{ appointment.appointment_date|date:"M d, Y" }} at {{ appointment.appointment_time|time:"h:i A" }}
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <strong>Attendant:</strong><br>
+                                {{ appointment.attendant.first_name }} {{ appointment.attendant.last_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Current Status:</strong><br>
+                                <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% else %}warning{% endif %}">
+                                    {{ appointment.status|title }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancellation Form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">
+                                <strong>Reason for Cancellation <span class="text-danger">*</span></strong>
+                            </label>
+                            <textarea class="form-control" id="reason" name="reason" rows="4" 
+                                    placeholder="Please provide a reason for cancelling this appointment..." required></textarea>
+                            <div class="form-text">
+                                Your cancellation request will be reviewed by our staff team. You will be notified once it's processed.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Important:</strong> Once your cancellation request is approved, this appointment will be cancelled and cannot be restored.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'appointments:my_appointments' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Appointments
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times-circle"></i> Submit Cancellation Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
