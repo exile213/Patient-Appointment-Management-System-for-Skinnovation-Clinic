@@ -257,8 +257,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         Original Attendant: ${data.attendant_name}
                     `;
                     
-                    // Load available attendants
-                    loadAvailableAttendants(data.appointment_date, data.appointment_time);
+                    // Load available attendants (exclude original attendant)
+                    loadAvailableAttendants(data.appointment_date, data.appointment_time, data.attendant_id);
                     
                     // Show modal
                     const modal = new bootstrap.Modal(document.getElementById('unavailabilityModal'));
@@ -273,8 +273,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    function loadAvailableAttendants(date, time) {
-        fetch(`/appointments/api/available-attendants/?date=${date}&time=${time}`)
+    function loadAvailableAttendants(date, time, excludeAttendantId) {
+        let url = `/appointments/api/available-attendants/?date=${date}&time=${time}`;
+        if (excludeAttendantId) {
+            url += `&exclude_attendant_id=${excludeAttendantId}`;
+        }
+        
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('newAttendantSelect');
@@ -319,17 +324,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Option 2: Reschedule
     document.getElementById('btnReschedule').addEventListener('click', function() {
-        if (currentAppointmentId) {
-            // Redirect to reschedule calendar with original attendant filter
-            window.location.href = `/appointments/reschedule/${currentAppointmentId}/?keep_attendant=true`;
+        if (currentUnavailabilityRequestId) {
+            // Submit the choice first, then redirect
+            submitChoice('reschedule_same');
         }
     });
     
     // Option 3: Cancel
     document.getElementById('btnCancel').addEventListener('click', function() {
         if (confirm('Are you sure you want to cancel this appointment?')) {
-            // Redirect to appointments page where they can cancel
-            window.location.href = `/appointments/my-appointments/?cancel=${currentAppointmentId}`;
+            if (currentUnavailabilityRequestId) {
+                // Submit the choice first, then redirect
+                submitChoice('cancel');
+            }
         }
     });
     
@@ -352,8 +359,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message || 'Your choice has been saved successfully!');
-                window.location.reload();
+                if (data.redirect) {
+                    // Redirect to the specified URL
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message || 'Your choice has been saved successfully!');
+                    window.location.reload();
+                }
             } else {
                 alert('Error: ' + (data.error || 'Failed to save your choice'));
             }

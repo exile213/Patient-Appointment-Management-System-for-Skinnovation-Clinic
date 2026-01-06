@@ -1679,6 +1679,7 @@ def api_unavailability_details(request, appointment_id):
             'appointment_date': appointment.appointment_date.strftime('%B %d, %Y'),
             'appointment_time': appointment.appointment_time.strftime('%I:%M %p'),
             'attendant_name': attendant_name,
+            'attendant_id': appointment.attendant.id if appointment.attendant else None,
             'reason': unavailability_request.reason
         })
     except Exception as e:
@@ -1692,10 +1693,12 @@ def api_unavailability_details(request, appointment_id):
 def api_available_attendants(request):
     """
     API endpoint to get available attendants for a specific date/time
+    Excludes the original attendant from the list
     """
     try:
         date_str = request.GET.get('date')
         time_str = request.GET.get('time')
+        exclude_attendant_id = request.GET.get('exclude_attendant_id')
         
         if not date_str or not time_str:
             return JsonResponse({
@@ -1713,6 +1716,10 @@ def api_available_attendants(request):
         
         # Get available attendants
         available_attendants = get_available_attendants(date_formatted, time_formatted)
+        
+        # Filter out the original attendant if specified
+        if exclude_attendant_id:
+            available_attendants = available_attendants.exclude(id=int(exclude_attendant_id))
         
         attendants_data = [
             {
@@ -1808,6 +1815,7 @@ def respond_to_unavailable_attendant(request, unavailability_request_id):
             HistoryLog.objects.create(
                 action_type='edit',
                 item_type='appointment',
+                item_id=appointment.id,
                 performed_by=request.user,
                 details={
                     'appointment_id': appointment.id,
@@ -1825,21 +1833,24 @@ def respond_to_unavailable_attendant(request, unavailability_request_id):
         
         elif choice == 'reschedule_same':
             # Option 2: Reschedule with same attendant
-            # This is handled by redirect in JavaScript, but we can mark the choice
             unavailability_request.patient_choice = 'reschedule_same'
+            unavailability_request.pending_reassignment_choice = False
             unavailability_request.save()
             
             return JsonResponse({
                 'success': True,
-                'redirect': f'/appointments/reschedule/{unavailability_request.appointment.id}/?keep_attendant=true'
+                'redirect': f'/appointments/request-reschedule/{unavailability_request.appointment.id}/?keep_attendant=true'
             })
         
         elif choice == 'cancel':
             # Option 3: Cancel appointment
-            # This is handled by redirect in JavaScript
+            unavailability_request.patient_choice = 'cancel'
+            unavailability_request.pending_reassignment_choice = False
+            unavailability_request.save()
+            
             return JsonResponse({
                 'success': True,
-                'redirect': f'/appointments/my-appointments/?cancel={unavailability_request.appointment.id}'
+                'redirect': f'/appointments/request-cancellation/{unavailability_request.appointment.id}/'
             })
         
         else:
