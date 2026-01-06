@@ -26,16 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-t1=a!a_5oj(saq3q=hwj!b&r)7a2y8=(fcv6(lxpttvlc1^68u')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allowed hosts configuration
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0', cast=Csv())
-
-# Add Render.com domain if not in DEBUG mode
-if not DEBUG:
-    RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-    if RENDER_EXTERNAL_HOSTNAME:
-        ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,skinnovation-clinic.onrender.com', cast=Csv())
 
 
 # Application definition
