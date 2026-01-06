@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('{% url "appointments:get_notifications_api" %}')
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'success') {
+                if (data.success) {
                     displayNotifications(data.notifications);
                     updateNotificationBadge(data.unread_count);
                 }
@@ -284,11 +284,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         notificationList.innerHTML = notifications.map(notification => `
-            <div class="notification-item ${notification.is_read ? '' : 'unread'}" data-id="${notification.id}">
-                <div class="notification-item-type ${notification.type}">${notification.type}</div>
+            <div class="notification-item ${notification.is_read ? '' : 'unread'}" data-id="${notification.notification_id}">
+                <div class="notification-item-type ${notification.type || 'system'}">${notification.type || 'System'}</div>
                 <div class="notification-item-title">${notification.title}</div>
                 <div class="notification-item-message">${notification.message}</div>
-                <div class="notification-item-time">${formatTime(notification.created_at)}</div>
+                <div class="notification-item-time">${formatTime(notification.created_at_formatted)}</div>
             </div>
         `).join('');
         
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
+            if (data.success) {
                 loadNotifications();
             }
         })
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
+            if (data.success) {
                 loadNotifications();
             }
         })
@@ -360,7 +360,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Format time helper function
     function formatTime(timestamp) {
+        // Handle both ISO format and formatted string
+        if (!timestamp) return '';
+        
+        // If already formatted (e.g., "2026-01-07 02:00 PM"), just parse and format
         const date = new Date(timestamp);
+        if (isNaN(date.getTime())) return timestamp; // Return as-is if can't parse
+        
         const now = new Date();
         const diffMs = now - date;
         const diffMins = Math.floor(diffMs / 60000);

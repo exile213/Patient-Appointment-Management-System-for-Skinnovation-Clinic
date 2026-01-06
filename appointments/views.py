@@ -1573,10 +1573,42 @@ def update_notifications_api(request):
             data = json.loads(request.body)
             action = data.get('action')
             notification_id = data.get('notification_id')
+            notification_ids = data.get('notification_ids', [])
+            mark_as_read = data.get('mark_as_read', False)
+            mark_all_as_read = data.get('mark_all_as_read', False)
         else:
             action = request.POST.get('action')
             notification_id = request.POST.get('notification_id')
+            notification_ids = []
+            mark_as_read = False
+            mark_all_as_read = False
         
+        # Handle mark_all_as_read
+        if mark_all_as_read:
+            if request.user.user_type in ('admin', 'owner'):
+                Notification.objects.filter(patient__isnull=True).update(is_read=True)
+            else:
+                Notification.objects.filter(patient=request.user).update(is_read=True)
+            return JsonResponse({'success': True})
+        
+        # Handle notification_ids array
+        if notification_ids and mark_as_read:
+            for nid in notification_ids:
+                try:
+                    notification = Notification.objects.get(id=nid)
+                    # Allow admin, owner, or the notification's patient to mark as read
+                    if request.user.user_type in ('admin', 'owner'):
+                        if notification.patient is None:
+                            notification.is_read = True
+                            notification.save()
+                    elif notification.patient == request.user:
+                        notification.is_read = True
+                        notification.save()
+                except Notification.DoesNotExist:
+                    pass
+            return JsonResponse({'success': True})
+        
+        # Handle legacy action format
         if action == 'mark_read':
             if notification_id:
                 notification = get_object_or_404(Notification, id=notification_id)
