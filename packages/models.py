@@ -12,6 +12,7 @@ class Package(models.Model):
     duration_days = models.IntegerField(help_text="Duration in days")
     grace_period_days = models.IntegerField(help_text="Grace period in days")
     archived = models.BooleanField(default=False)
+    services = models.ManyToManyField('services.Service', related_name='packages', blank=True, through='PackageService')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -62,3 +63,18 @@ class PackageAppointment(models.Model):
 
     class Meta:
         db_table = 'package_appointments'
+
+
+class PackageService(models.Model):
+    """Through model for Package-Service relationship"""
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='package_services')
+    service = models.ForeignKey('services.Service', on_delete=models.CASCADE, related_name='service_packages')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.package.package_name} - {self.service.service_name}"
+
+    class Meta:
+        db_table = 'package_services'
+        unique_together = ('package', 'service')

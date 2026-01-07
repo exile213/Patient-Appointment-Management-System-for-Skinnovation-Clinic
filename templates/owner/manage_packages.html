@@ -23,7 +23,7 @@
         </h5>
     </div>
     <div class="card-body">
-        <form method="post">
+        <form method="post" id="addPackageForm">
             {% csrf_token %}
             <input type="hidden" name="action" value="add">
             <div class="row">
@@ -50,7 +50,7 @@
                         <label for="sessions" class="form-label">
                             <i class="fas fa-calendar-check me-2"></i>Number of Sessions
                         </label>
-                        <input type="number" class="form-control" id="sessions" name="sessions" required>
+                        <input type="number" class="form-control" id="sessions" name="sessions" required min="1">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -58,24 +58,53 @@
                         <label for="duration_days" class="form-label">
                             <i class="fas fa-calendar-alt me-2"></i>Duration (days)
                         </label>
-                        <input type="number" class="form-control" id="duration_days" name="duration_days" placeholder="Optional">
+                        <input type="number" class="form-control" id="duration_days" name="duration_days" required min="1">
                     </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="grace_period_days" class="form-label">
+                        <i class="fas fa-hourglass-end me-2"></i>Grace Period (days)
+                    </label>
+                    <input type="number" class="form-control" id="grace_period_days" name="grace_period_days" value="0" min="0">
                 </div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">
                     <i class="fas fa-align-left me-2"></i>Description
                 </label>
-                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter package description..."></textarea>
+                <textarea class="form-control" id="description" name="description" rows="2" placeholder="Enter package description (optional)..."></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Add Package
-            </button>
-        </form>
-    </div>
-</div>
 
-<!-- Packages List -->
+            <!-- Services Section -->
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-spa me-2"></i>Services Included in Package
+                </label>
+                <small class="text-muted d-block mb-3">Select at least one service. Click "Add Service" to include multiple services.</small>
+                
+                <div id="addServicesContainer">
+                    <div class="service-row mb-2" data-row-index="0">
+                        <div class="input-group">
+                            <select class="form-control service-select" name="service_ids" required>
+                                <option value="">-- Select a Service --</option>
+                                {% for service in all_services %}
+                                    <option value="{{ service.id }}">{{ service.service_name }} (₱{{ service.price|default:"N/A" }})</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-danger remove-service-btn" style="display: none;">
+                                <i class="fas fa-trash me-1"></i>Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-outline-secondary mt-2" id="addServiceBtn">
+                    <i class="fas fa-plus me-2"></i>Add Another Service
+                </button>
+            </div>
+
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
@@ -114,6 +143,7 @@
                             <th><i class="fas fa-tag me-2"></i>Price</th>
                             <th><i class="fas fa-calendar-check me-2"></i>Sessions</th>
                             <th><i class="fas fa-calendar-alt me-2"></i>Duration</th>
+                            <th><i class="fas fa-spa me-2"></i>Services</th>
                             <th><i class="fas fa-align-left me-2"></i>Description</th>
                             <th><i class="fas fa-cogs me-2"></i>Actions</th>
                         </tr>
@@ -136,6 +166,17 @@
                                 <span class="sessions-badge">{{ package.sessions }} sessions</span>
                             </td>
                             <td>{{ package.duration_days|default:"Not set" }} days</td>
+                            <td>
+                                {% if package.services.all %}
+                                    <div class="services-list">
+                                        {% for service in package.services.all %}
+                                            <span class="badge bg-info me-1 mb-1">{{ service.service_name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small">No services</span>
+                                {% endif %}
+                            </td>
                             <td>{{ package.description|truncatechars:50|default:"No description" }}</td>
                             <td>
                                 <div class="btn-group" role="group">
@@ -153,9 +194,9 @@
                                 </div>
                             </td>
                         </tr>
-                        <!-- Edit Form Row (Hidden by default) -->
+                                        <!-- Edit Form Row (Hidden by default) -->
                         <tr id="edit-row-{{ package.id }}" style="display: none;" class="edit-form-row">
-                            <td colspan="6">
+                            <td colspan="7">
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <h6 class="mb-3"><i class="fas fa-edit me-2"></i>Edit Package</h6>
@@ -178,29 +219,74 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label for="edit_sessions_{{ package.id }}" class="form-label">Number of Sessions</label>
-                                                        <input type="number" class="form-control" id="edit_sessions_{{ package.id }}" name="sessions" value="{{ package.sessions }}" required>
+                                                        <input type="number" class="form-control" id="edit_sessions_{{ package.id }}" name="sessions" value="{{ package.sessions }}" required min="1">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label for="edit_duration_days_{{ package.id }}" class="form-label">Duration (days)</label>
-                                                        <input type="number" class="form-control" id="edit_duration_days_{{ package.id }}" name="duration_days" value="{{ package.duration_days|default:0 }}">
+                                                        <input type="number" class="form-control" id="edit_duration_days_{{ package.id }}" name="duration_days" value="{{ package.duration_days|default:0 }}" required min="1">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label for="edit_grace_period_days_{{ package.id }}" class="form-label">Grace Period (days)</label>
-                                                        <input type="number" class="form-control" id="edit_grace_period_days_{{ package.id }}" name="grace_period_days" value="{{ package.grace_period_days|default:0 }}">
+                                                        <input type="number" class="form-control" id="edit_grace_period_days_{{ package.id }}" name="grace_period_days" value="{{ package.grace_period_days|default:0 }}" min="0">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="edit_description_{{ package.id }}" class="form-label">Description</label>
-                                                <textarea class="form-control" id="edit_description_{{ package.id }}" name="description" rows="3">{{ package.description|default:"" }}</textarea>
+                                                <textarea class="form-control" id="edit_description_{{ package.id }}" name="description" rows="2">{{ package.description|default:"" }}</textarea>
                                             </div>
+
+                                            <!-- Edit Services Section -->
+                                            <div class="mb-4">
+                                                <label class="form-label">
+                                                    <i class="fas fa-spa me-2"></i>Services Included in Package
+                                                </label>
+                                                <small class="text-muted d-block mb-3">Select at least one service. Click "Add Service" to include multiple services.</small>
+                                                
+                                                <div id="editServicesContainer-{{ package.id }}" class="edit-services-container">
+                                                    {% for service in package.services.all %}
+                                                    <div class="service-row mb-2" data-row-index="{{ forloop.counter0 }}">
+                                                        <div class="input-group">
+                                                            <select class="form-control service-select" name="service_ids" required>
+                                                                <option value="">-- Select a Service --</option>
+                                                                {% for svc in all_services %}
+                                                                    <option value="{{ svc.id }}" {% if svc.id == service.id %}selected{% endif %}>{{ svc.service_name }} (₱{{ svc.price|default:"N/A" }})</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <button type="button" class="btn btn-outline-danger remove-service-btn" {% if package.services.count == 1 %}style="display: none;"{% endif %}>
+                                                                <i class="fas fa-trash me-1"></i>Remove
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    {% empty %}
+                                                    <div class="service-row mb-2" data-row-index="0">
+                                                        <div class="input-group">
+                                                            <select class="form-control service-select" name="service_ids" required>
+                                                                <option value="">-- Select a Service --</option>
+                                                                {% for svc in all_services %}
+                                                                    <option value="{{ svc.id }}">{{ svc.service_name }} (₱{{ svc.price|default:"N/A" }})</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <button type="button" class="btn btn-outline-danger remove-service-btn" style="display: none;">
+                                                                <i class="fas fa-trash me-1"></i>Remove
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+
+                                                <button type="button" class="btn btn-outline-secondary mt-2 add-service-edit-btn" data-package-id="{{ package.id }}">
+                                                    <i class="fas fa-plus me-2"></i>Add Another Service
+                                                </button>
+                                            </div>
+
                                             <div class="d-flex gap-2">
                                                 <button type="submit" class="btn btn-primary">
                                                     <i class="fas fa-save me-1"></i>Save Changes
@@ -424,8 +510,111 @@ function hideEditForm(packageId) {
     }
 }
 
-// Filter functionality
+// Dynamic Service Rows for Add Form
 document.addEventListener('DOMContentLoaded', function() {
+    // Add Service button for main form
+    const addServiceBtn = document.getElementById('addServiceBtn');
+    const servicesContainer = document.getElementById('addServicesContainer');
+
+    if (addServiceBtn && servicesContainer) {
+        addServiceBtn.addEventListener('click', function() {
+            const rowCount = servicesContainer.querySelectorAll('.service-row').length;
+            const firstRow = servicesContainer.querySelector('.service-row');
+            const newRow = firstRow.cloneNode(true);
+            
+            // Reset the select value
+            newRow.querySelector('select').value = '';
+            newRow.setAttribute('data-row-index', rowCount);
+            
+            // Show remove button
+            newRow.querySelector('.remove-service-btn').style.display = 'inline-block';
+            
+            servicesContainer.appendChild(newRow);
+            attachRemoveListener(newRow.querySelector('.remove-service-btn'));
+            updateRemoveButtons();
+        });
+    }
+
+    // Attach remove listeners to service rows
+    document.querySelectorAll('#addServicesContainer .remove-service-btn').forEach(btn => {
+        attachRemoveListener(btn);
+    });
+
+    function attachRemoveListener(btn) {
+        btn.addEventListener('click', function() {
+            const container = servicesContainer;
+            if (container.querySelectorAll('.service-row').length > 1) {
+                btn.closest('.service-row').remove();
+                updateRemoveButtons();
+            }
+        });
+    }
+
+    function updateRemoveButtons() {
+        const rows = servicesContainer.querySelectorAll('.service-row');
+        rows.forEach(row => {
+            const removeBtn = row.querySelector('.remove-service-btn');
+            if (rows.length === 1) {
+                removeBtn.style.display = 'none';
+            } else {
+                removeBtn.style.display = 'inline-block';
+            }
+        });
+    }
+
+    // Dynamic Service Rows for Edit Forms
+    document.querySelectorAll('.add-service-edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const packageId = this.getAttribute('data-package-id');
+            const container = document.getElementById('editServicesContainer-' + packageId);
+            const rowCount = container.querySelectorAll('.service-row').length;
+            const firstRow = container.querySelector('.service-row');
+            const newRow = firstRow.cloneNode(true);
+            
+            // Reset the select value
+            newRow.querySelector('select').value = '';
+            newRow.setAttribute('data-row-index', rowCount);
+            
+            // Show remove button
+            newRow.querySelector('.remove-service-btn').style.display = 'inline-block';
+            
+            container.appendChild(newRow);
+            attachEditRemoveListener(newRow.querySelector('.remove-service-btn'), packageId);
+            updateEditRemoveButtons(packageId);
+        });
+    });
+
+    // Attach remove listeners to edit service rows
+    document.querySelectorAll('.edit-services-container .remove-service-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const container = this.closest('.edit-services-container');
+            const packageId = container.id.replace('editServicesContainer-', '');
+            attachEditRemoveListener(btn, packageId);
+        });
+    });
+
+    function attachEditRemoveListener(btn, packageId) {
+        const container = document.getElementById('editServicesContainer-' + packageId);
+        if (container.querySelectorAll('.service-row').length > 1) {
+            btn.closest('.service-row').remove();
+            updateEditRemoveButtons(packageId);
+        }
+    }
+
+    function updateEditRemoveButtons(packageId) {
+        const container = document.getElementById('editServicesContainer-' + packageId);
+        const rows = container.querySelectorAll('.service-row');
+        rows.forEach(row => {
+            const removeBtn = row.querySelector('.remove-service-btn');
+            if (rows.length === 1) {
+                removeBtn.style.display = 'none';
+            } else {
+                removeBtn.style.display = 'inline-block';
+            }
+        });
+    }
+
+    // Filter functionality
     const searchInput = document.getElementById('packageSearch');
     const priceFilter = document.getElementById('priceFilter');
     const sessionsFilter = document.getElementById('sessionsFilter');
@@ -506,9 +695,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listeners
-    searchInput.addEventListener('input', filterPackages);
-    priceFilter.addEventListener('change', filterPackages);
-    sessionsFilter.addEventListener('change', filterPackages);
+    if (searchInput) searchInput.addEventListener('input', filterPackages);
+    if (priceFilter) priceFilter.addEventListener('change', filterPackages);
+    if (sessionsFilter) sessionsFilter.addEventListener('change', filterPackages);
 });
 </script>
 {% endblock %}

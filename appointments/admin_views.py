@@ -2146,11 +2146,13 @@ def admin_manage_services(request):
 @login_required
 @user_passes_test(is_admin)
 def admin_manage_packages(request):
-    """Staff manage packages - same interface as owner"""
-    from packages.models import Package
+    """Staff manage packages - same interface as owner with services"""
+    from packages.models import Package, PackageService
+    from services.models import Service
     from django.core.paginator import Paginator
     
     packages = Package.objects.filter(archived=False).order_by('package_name')
+    all_services = Service.objects.filter(archived=False).order_by('service_name')
     
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -2161,6 +2163,10 @@ def admin_manage_packages(request):
             sessions = request.POST.get('sessions')
             duration_days = request.POST.get('duration_days')
             grace_period_days = request.POST.get('grace_period_days')
+            service_ids = request.POST.getlist('service_ids')
+            
+            # Filter out empty service IDs
+            service_ids = [sid for sid in service_ids if sid]
             
             if package_name and price and sessions:
                 try:
@@ -2172,8 +2178,18 @@ def admin_manage_packages(request):
                         duration_days=duration_days or 0,
                         grace_period_days=grace_period_days or 0
                     )
+                    
+                    # Add services to package
+                    if service_ids:
+                        services = Service.objects.filter(id__in=service_ids)
+                        for idx, service in enumerate(services):
+                            PackageService.objects.create(
+                                package=package,
+                                service=service
+                            )
+                    
                     log_admin_history('Package', package_name, 'Added', request.user.get_full_name() or request.user.username,
-                               f'Price: {price}, Sessions: {sessions}', package.id)
+                               f'Price: {price}, Sessions: {sessions}, Services: {len(service_ids)}', package.id)
                     messages.success(request, 'Package added successfully!')
                 except Exception as e:
                     messages.error(request, f'Error adding package: {str(e)}')
@@ -2199,6 +2215,23 @@ def admin_manage_packages(request):
             if grace_period_days:
                 package.grace_period_days = grace_period_days
             package.save()
+            
+            # Update services
+            service_ids = request.POST.getlist('service_ids')
+            service_ids = [sid for sid in service_ids if sid]
+            
+            # Remove old service relationships
+            PackageService.objects.filter(package=package).delete()
+            
+            # Add new services
+            if service_ids:
+                services = Service.objects.filter(id__in=service_ids)
+                for idx, service in enumerate(services):
+                    PackageService.objects.create(
+                        package=package,
+                        service=service
+                    )
+            
             log_admin_history('Package', package.package_name, 'Edited', request.user.get_full_name() or request.user.username,
                        f'Updated: {old_name} -> {package.package_name}', package.id)
             messages.success(request, 'Package updated successfully!')
@@ -2223,6 +2256,7 @@ def admin_manage_packages(request):
     context = {
         'packages': page_obj,
         'page_obj': page_obj,
+        'all_services': all_services,
     }
     return render(request, 'appointments/admin_manage_packages.html', context)
 
