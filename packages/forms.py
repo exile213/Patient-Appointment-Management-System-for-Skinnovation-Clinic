@@ -9,7 +9,7 @@ class PackageForm(forms.ModelForm):
     
     class Meta:
         model = Package
-        fields = ['package_name', 'description', 'price', 'sessions', 'duration_days', 'grace_period_days']
+        fields = ['package_name', 'description', 'price', 'sessions', 'duration_days']
         widgets = {
             'package_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -39,12 +39,7 @@ class PackageForm(forms.ModelForm):
                 'required': True,
                 'min': '1'
             }),
-            'grace_period_days': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Grace period in days',
-                'required': True,
-                'min': '0'
-            }),
+            # grace_period_days intentionally omitted until enforcement is implemented
         }
 
     def clean_package_name(self):
@@ -75,12 +70,7 @@ class PackageForm(forms.ModelForm):
             raise ValidationError('Duration must be at least 1 day.')
         return duration
 
-    def clean_grace_period_days(self):
-        """Validate grace period is not negative"""
-        grace = self.cleaned_data.get('grace_period_days')
-        if grace and grace < 0:
-            raise ValidationError('Grace period cannot be negative.')
-        return grace
+    # No grace_period_days validation for now (field not in form)
 
 
 class PackageServiceForm(forms.ModelForm):

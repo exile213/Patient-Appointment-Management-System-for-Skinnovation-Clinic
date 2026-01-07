@@ -15,7 +15,6 @@ Packages now support bundling multiple services. Staff/owners can select service
    - Price (₱)
    - Sessions (number of patient visits)
    - Duration (days)
-   - Grace Period (optional)
    - Description (optional)
 
 3. **Select Services:**

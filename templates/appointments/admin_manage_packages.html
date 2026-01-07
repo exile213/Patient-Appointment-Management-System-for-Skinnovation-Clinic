@@ -71,14 +71,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="grace_period_days" class="form-label">
-                        <i class="fas fa-hourglass-end me-2"></i>Grace Period (days)
-                    </label>
-                    <input type="number" class="form-control" id="grace_period_days" name="grace_period_days" value="0" min="0">
-                </div>
-            </div>
             <div class="mb-3">
                 <label for="description" class="form-label">
                     <i class="fas fa-align-left me-2"></i>Description
@@ -244,12 +236,6 @@
                                                     <div class="mb-3">
                                                         <label for="edit_duration_days_{{ package.id }}" class="form-label">Duration (days)</label>
                                                         <input type="number" class="form-control" id="edit_duration_days_{{ package.id }}" name="duration_days" value="{{ package.duration_days|default:0 }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="edit_grace_period_days_{{ package.id }}" class="form-label">Grace Period (days)</label>
-                                                        <input type="number" class="form-control" id="edit_grace_period_days_{{ package.id }}" name="grace_period_days" value="{{ package.grace_period_days|default:0 }}">
                                                     </div>
                                                 </div>
                                             </div>
