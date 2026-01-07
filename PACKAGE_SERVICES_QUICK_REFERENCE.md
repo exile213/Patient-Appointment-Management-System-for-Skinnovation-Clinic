@@ -10,6 +10,7 @@ Packages now support bundling multiple services. Staff/owners can select service
 
 1. **Go to:** Owner → Manage Packages (or Staff → Manage Packages)
 2. **Fill in package details:**
+
    - Package Name (e.g., "3 + 1 Diamond Peel")
    - Price (₱)
    - Sessions (number of patient visits)
@@ -18,6 +19,7 @@ Packages now support bundling multiple services. Staff/owners can select service
    - Description (optional)
 
 3. **Select Services:**
+
    - Choose first service from dropdown (required)
    - Click "Add Another Service" to add more services
    - Each service can be removed via the "Remove" button
@@ -38,31 +40,35 @@ Packages now support bundling multiple services. Staff/owners can select service
 ### Viewing Package Services
 
 **In List View:**
+
 - Services display as blue badges under "Services" column
 - Example: `Diamond Peel | IPL Face | Cavitation`
 
 **In Admin:**
+
 - Django admin shows service count in PackageAdmin list
 - Click into package to add/remove services inline
 - PackageService admin shows all service-package relationships
 
 ## Key Features
 
-| Feature | Details |
-|---------|---------|
-| **Dynamic Rows** | Add/remove service dropdowns on-the-fly |
-| **Validation** | At least one service required per package |
-| **Data Integrity** | No duplicate service assignments allowed |
-| **Backward Compatible** | Existing packages preserved without breaking |
-| **Auto-Migration** | Existing packages auto-linked to services by name |
+| Feature                 | Details                                           |
+| ----------------------- | ------------------------------------------------- |
+| **Dynamic Rows**        | Add/remove service dropdowns on-the-fly           |
+| **Validation**          | At least one service required per package         |
+| **Data Integrity**      | No duplicate service assignments allowed          |
+| **Backward Compatible** | Existing packages preserved without breaking      |
+| **Auto-Migration**      | Existing packages auto-linked to services by name |
 
 ## Database Changes
 
 ### New Model: `PackageService`
+
 - Through model to track package-service relationships
 - Unique constraint: no duplicates
 
 ### Updated Model: `Package`
+
 - New field: `services` (ManyToMany to Service)
 - Blank=True to support packages without services during transition
 
@@ -88,13 +94,15 @@ Data migration `0005_auto_link_packages_to_services` automatically links existin
 3. Logs success/failure for each package
 
 Example:
-- Package: "3 + 1 Diamond Peel" 
+
+- Package: "3 + 1 Diamond Peel"
 - Becomes: "Diamond Peel"
 - Links to: Service named "Diamond Peel"
 
 ## Configuration Notes
 
 ### Sessions Field
+
 - Represents number of patient **visits**
 - Manually configured per package
 - Independent from service count
@@ -103,12 +111,14 @@ Example:
   - "3 + 1 IPL Face" = 4 sessions (patient comes 4 times)
 
 ### Services in Package
+
 - Multiple different services can be bundled
 - Each service performed on one or more of the patient visits
 - No automatic session calculation from services
 - Manually configured per package
 
 ### Pricing
+
 - Package price is manually set
 - Not auto-calculated from services
 - Allows for flexible discount strategies
@@ -116,15 +126,19 @@ Example:
 ## Troubleshooting
 
 **Problem:** Existing packages don't show services after migration
+
 - **Solution:** Check migration log, manually assign services in admin
 
 **Problem:** Can't remove last service from package
+
 - **Solution:** This is by design - packages must have at least 1 service
 
 **Problem:** Service dropdown shows archived services
+
 - **Solution:** Only non-archived services appear in dropdowns
 
 **Problem:** Duplicate service assignments attempt
+
 - **Solution:** Database prevents duplicates with unique constraint
 
 ## Testing Checklist
@@ -140,19 +154,20 @@ Example:
 
 ## File Locations
 
-| Component | File |
-|-----------|------|
-| Models | `packages/models.py` |
-| Forms | `packages/forms.py` |
-| Owner View | `owner/views.py` (line 1285+) |
+| Component  | File                                       |
+| ---------- | ------------------------------------------ |
+| Models     | `packages/models.py`                       |
+| Forms      | `packages/forms.py`                        |
+| Owner View | `owner/views.py` (line 1285+)              |
 | Staff View | `appointments/admin_views.py` (line 2145+) |
-| Template | `templates/owner/manage_packages.html` |
-| Admin | `packages/admin.py` |
-| Migrations | `packages/migrations/000X_*.py` |
+| Template   | `templates/owner/manage_packages.html`     |
+| Admin      | `packages/admin.py`                        |
+| Migrations | `packages/migrations/000X_*.py`            |
 
 ## Support
 
 For issues or questions, refer to:
+
 - Full implementation summary: `PACKAGE_SERVICES_IMPLEMENTATION.md`
 - Django admin documentation
 - Package models documentation in code comments
