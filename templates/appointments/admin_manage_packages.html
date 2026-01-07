@@ -531,6 +531,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             servicesContainer.appendChild(newRow);
             attachRemoveListener(newRow.querySelector('.remove-service-btn'));
+            hookServiceSelectListeners(servicesContainer);
+            updateServiceOptions(servicesContainer);
             updateRemoveButtons();
         });
     }
@@ -545,6 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const container = servicesContainer;
             if (container && container.querySelectorAll('.service-row').length > 1) {
                 btn.closest('.service-row').remove();
+                updateServiceOptions(container);
                 updateRemoveButtons();
             }
         });
@@ -582,6 +585,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             container.appendChild(newRow);
             attachEditRemoveListener(newRow.querySelector('.remove-service-btn'), packageId);
+            hookServiceSelectListeners(container);
+            updateServiceOptions(container);
             updateEditRemoveButtons(packageId);
         });
     });
@@ -599,6 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('editServicesContainer-' + packageId);
         if (container && container.querySelectorAll('.service-row').length > 1) {
             btn.closest('.service-row').remove();
+            updateServiceOptions(container);
             updateEditRemoveButtons(packageId);
         }
     }
@@ -616,6 +622,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Enforce unique service selections per container
+    function updateServiceOptions(container) {
+        if (!container) return;
+        const selects = Array.from(container.querySelectorAll('.service-select'));
+        const selectedValues = new Set(
+            selects
+                .map(sel => sel.value)
+                .filter(v => v && v !== '')
+        );
+        selects.forEach(sel => {
+            const current = sel.value;
+            Array.from(sel.options).forEach(opt => {
+                if (!opt.value) return; // skip placeholder
+                if (opt.value === current) {
+                    opt.disabled = false; // keep current enabled
+                } else {
+                    opt.disabled = selectedValues.has(opt.value);
+                }
+            });
+        });
+    }
+
+    function hookServiceSelectListeners(container) {
+        if (!container) return;
+        const selects = container.querySelectorAll('.service-select');
+        selects.forEach(sel => {
+            sel.removeEventListener('_unique_change', sel._uniqueHandler || (()=>{}));
+            const handler = function() { updateServiceOptions(container); };
+            sel.addEventListener('change', handler);
+            sel._uniqueHandler = handler;
+        });
+        updateServiceOptions(container);
+    }
+
+    // Initial hook for add form and all edit forms
+    hookServiceSelectListeners(servicesContainer);
+    document.querySelectorAll('.edit-services-container').forEach(container => hookServiceSelectListeners(container));
     const searchInput = document.getElementById('packageSearch');
     const priceFilter = document.getElementById('priceFilter');
     const sessionsFilter = document.getElementById('sessionsFilter');

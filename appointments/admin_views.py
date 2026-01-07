@@ -2165,8 +2165,9 @@ def admin_manage_packages(request):
             grace_period_days = request.POST.get('grace_period_days')
             service_ids = request.POST.getlist('service_ids')
             
-            # Filter out empty service IDs
+            # Filter out empty service IDs and deduplicate preserving order
             service_ids = [sid for sid in service_ids if sid]
+            service_ids = list(dict.fromkeys(service_ids))
             
             if package_name and price and sessions:
                 try:
@@ -2219,6 +2220,7 @@ def admin_manage_packages(request):
             # Update services
             service_ids = request.POST.getlist('service_ids')
             service_ids = [sid for sid in service_ids if sid]
+            service_ids = list(dict.fromkeys(service_ids))
             
             # Remove old service relationships
             PackageService.objects.filter(package=package).delete()
