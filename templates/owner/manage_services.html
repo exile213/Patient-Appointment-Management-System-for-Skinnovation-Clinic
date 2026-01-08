@@ -482,6 +482,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 visibleCount++;
             } else {
                 row.classList.add('hidden');
+                // Also hide the corresponding edit form row
+                const serviceId = row.querySelector('button[onclick*="showEditForm"]')?.getAttribute('onclick')?.match(/\d+/);
+                if (serviceId) {
+                    const editRow = document.getElementById('edit-row-' + serviceId[0]);
+                    if (editRow) {
+                        editRow.style.display = 'none';
+                    }
+                }
             }
         });
 

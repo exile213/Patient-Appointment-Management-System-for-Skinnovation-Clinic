@@ -21,7 +21,7 @@
                             <label for="service_id" class="form-label">Select Service</label>
                             <select class="form-select" id="service_id" name="service_id" required>
                                 <option value="">Choose a service...</option>
-                                {% for service in services %}
+                                {% for service in all_services %}
                                     <option value="{{ service.id }}">{{ service.service_name }}</option>
                                 {% endfor %}
                             </select>

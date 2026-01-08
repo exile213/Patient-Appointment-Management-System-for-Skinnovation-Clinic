@@ -1591,7 +1591,7 @@ def owner_view_history_log(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_service_images(request):
     """Owner view to manage service images"""
-    services = Service.objects.all().prefetch_related('images').order_by('service_name')
+    all_services = Service.objects.filter(archived=False).prefetch_related('images').order_by('service_name')
     
     if request.method == 'POST':
         service_id = request.POST.get('service_id')
@@ -1618,13 +1618,14 @@ def owner_manage_service_images(request):
                 messages.error(request, 'Please select an image to upload')
     
     # Add pagination
-    paginator = Paginator(services, 15)  # 15 items per page
+    paginator = Paginator(all_services, 15)  # 15 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'services': page_obj,
         'page_obj': page_obj,
+        'all_services': all_services,  # Pass all services for dropdown
     }
     return render(request, 'owner/manage_service_images.html', context)
 
@@ -1633,7 +1634,7 @@ def owner_manage_service_images(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_product_images(request):
     """Owner view to manage product images"""
-    products = Product.objects.all().prefetch_related('images').order_by('product_name')
+    products = Product.objects.filter(archived=False).prefetch_related('images').order_by('product_name')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')

@@ -1517,7 +1517,7 @@ def admin_reject_reschedule(request, request_id):
 def admin_manage_service_images(request):
     """Admin view to manage service images"""
     # Only show active (non-archived) services
-    services = Service.objects.filter(archived=False).prefetch_related('images').order_by('service_name')
+    all_services = Service.objects.filter(archived=False).prefetch_related('images').order_by('service_name')
     
     if request.method == 'POST':
         service_id = request.POST.get('service_id')
@@ -1544,13 +1544,14 @@ def admin_manage_service_images(request):
                 messages.error(request, 'Please select an image to upload')
     
     # Add pagination
-    paginator = Paginator(services, 15)  # 15 items per page
+    paginator = Paginator(all_services, 15)  # 15 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'services': page_obj,
         'page_obj': page_obj,
+        'all_services': all_services,  # Pass all services for dropdown
     }
     return render(request, 'appointments/admin_manage_service_images.html', context)
 
