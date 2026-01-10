@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
+from datetime import datetime
 from django.db.models import Q, Sum, Count, Max
 from django.http import JsonResponse
 from django.core.paginator import Paginator
@@ -14,6 +15,11 @@ from services.utils import send_appointment_sms
 def is_admin(user):
     """Check if user is staff/admin"""
     return user.is_authenticated and user.user_type == 'admin'
+
+
+def is_admin_or_owner(user):
+    """Check if user is admin or owner"""
+    return user.is_authenticated and user.user_type in ['admin', 'owner']
 
 @login_required
 @user_passes_test(is_admin)
@@ -819,6 +825,58 @@ def patient_history(request, patient_id):
     
     return render(request, 'appointments/patient_history.html', context)
 
+@login_required
+@user_passes_test(is_admin_or_owner)
+def service_history(request):
+    """Admin view: list of rendered (completed) service transactions"""
+    # Only include appointments that are completed and are service (not product/package)
+    qs = Appointment.objects.filter(status='completed', service__isnull=False)
+
+    # Date range filter (YYYY-MM-DD expected from <input type="date">)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date:
+        try:
+            sd = datetime.strptime(start_date, '%Y-%m-%d').date()
+            qs = qs.filter(appointment_date__gte=sd)
+        except Exception:
+            sd = None
+    else:
+        sd = None
+
+    if end_date:
+        try:
+            ed = datetime.strptime(end_date, '%Y-%m-%d').date()
+            qs = qs.filter(appointment_date__lte=ed)
+        except Exception:
+            ed = None
+    else:
+        ed = None
+
+    qs = qs.select_related('service', 'patient', 'attendant').order_by('-appointment_date', '-appointment_time')
+
+    # Pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(qs, 20)  # 20 items per page
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'service_history': page_obj,
+        'page_obj': page_obj,
+        'start_date': sd,
+        'end_date': ed,
+        'total_results': paginator.count,
+    }
+
+    return render(request, 'appointments/service_history.html', context)
+
+
+@login_required
+@user_passes_test(is_admin_or_owner)
+def service_history_detail(request, pk):
+    """Admin view: full details for a completed service transaction"""
+    item = get_object_or_404(Appointment, pk=pk, status='completed', service__isnull=False)
+    return render(request, 'appointments/service_history_detail.html', {'item': item})
 @login_required
 @user_passes_test(is_admin)
 def admin_notifications(request):

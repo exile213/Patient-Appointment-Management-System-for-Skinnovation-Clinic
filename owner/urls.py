@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import sms_views
 from . import leave_views
+from appointments import admin_views as appointment_admin_views
 
 app_name = 'owner'
 
@@ -71,4 +72,7 @@ urlpatterns = [
     # Database Backup Management
     path('backup-database/', views.owner_backup_database, name='backup_database'),
     path('backup-database/download/<str:filename>/', views.owner_download_backup, name='download_backup'),
+    # Rendered service history (owner access)
+    path('service-history/', appointment_admin_views.service_history, name='service_history'),
+    path('service-history/<int:pk>/', appointment_admin_views.service_history_detail, name='service_history_detail'),
 ]

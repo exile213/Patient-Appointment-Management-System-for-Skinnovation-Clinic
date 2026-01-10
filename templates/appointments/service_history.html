@@ -1,0 +1,103 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Rendered Service History{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h1 class="page-title"><i class="fas fa-history"></i> Rendered Service History</h1>
+    <p class="text-muted mb-0">View all completed services and transactions</p>
+</div>
+
+<div class="content-card">
+    <div class="mb-3">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label for="start_date" class="form-label">Start</label>
+                <input type="date" id="start_date" name="start_date" class="form-control" value="{% if start_date %}{{ start_date }}{% else %}{{ request.GET.start_date }}{% endif %}">
+            </div>
+            <div class="col-auto">
+                <label for="end_date" class="form-label">End</label>
+                <input type="date" id="end_date" name="end_date" class="form-control" value="{% if end_date %}{{ end_date }}{% else %}{{ request.GET.end_date }}{% endif %}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{% url 'appointments:service_history' %}" class="btn btn-outline-secondary ms-2">Clear</a>
+            </div>
+            <div class="col" style="text-align:right;">
+                <small class="text-muted">Total: <strong>{{ total_results }}</strong></small>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Service</th>
+                    <th>Patient</th>
+                    <th>Attendant</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in service_history %}
+                <tr class="clickable-row" data-href="{% url 'appointments:service_history_detail' item.id %}">
+                    <td>{{ item.transaction_id }}</td>
+                    <td>{{ item.service.service_name }}</td>
+                    <td>{{ item.patient.get_full_name }}</td>
+                    <td>{{ item.attendant.get_full_name }}</td>
+                    <td>{{ item.appointment_date|date:"M d, Y" }} {{ item.appointment_time|time:"H:i" }}</td>
+                    <td><a href="{% url 'appointments:service_history_detail' item.id %}" class="btn btn-sm btn-primary">View Details</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">No completed services found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-3">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="{% if request.GET %}?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{% if request.GET %}?{{ request.GET.urlencode }}&page={{ num }}{% else %}?page={{ num }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{% if request.GET %}?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<script>
+// Make table rows clickable
+const rows = document.querySelectorAll('.clickable-row');
+rows.forEach(row => {
+    row.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('btn')) {
+            window.location = row.dataset.href;
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -48,6 +48,9 @@ urlpatterns = [
     path('admin/cancel/<int:appointment_id>/', admin_views.admin_cancel_appointment, name='admin_cancel'),
     path('admin/delete/<int:appointment_id>/', admin_views.admin_delete_appointment, name='admin_delete_appointment'),
     path('admin/mark-no-show/<int:appointment_id>/', admin_views.admin_mark_no_show, name='admin_mark_no_show'),
+    # Rendered service history
+    path('admin/service-history/', admin_views.service_history, name='service_history'),
+    path('admin/service-history/<int:pk>/', admin_views.service_history_detail, name='service_history_detail'),
     
     # Additional Admin URLs
     path('admin/add-attendant/', admin_views.admin_add_attendant, name='admin_add_attendant'),

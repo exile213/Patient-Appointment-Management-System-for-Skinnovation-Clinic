@@ -1187,6 +1187,12 @@
                 </a>
             </div>
             <div class="nav-item">
+                <a href="{% url 'appointments:service_history' %}" class="nav-link {% if request.resolver_match.url_name == 'service_history' or request.resolver_match.url_name == 'service_history_detail' %}active{% endif %}">
+                    <i class="fas fa-receipt"></i>
+                    <span>Rendered Services</span>
+                </a>
+            </div>
+            <div class="nav-item">
                 <a href="{% url 'appointments:admin_patients' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_patients' %}active{% endif %}">
                     <i class="fas fa-users"></i>
                     <span>Patients</span>

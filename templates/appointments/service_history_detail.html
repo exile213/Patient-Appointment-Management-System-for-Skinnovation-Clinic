@@ -1,0 +1,35 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Service Transaction Details{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h1 class="page-title"><i class="fas fa-file-invoice"></i> Service Transaction Details</h1>
+    <a href="{% url 'appointments:service_history' %}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back to History</a>
+</div>
+
+<div class="content-card">
+    <h4>Transaction ID: <strong>{{ item.transaction_id }}</strong></h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Appointment Details</h5>
+            <p><strong>Date:</strong> {{ item.appointment_date|date:"M d, Y" }} {{ item.appointment_time|time:"H:i" }}</p>
+            <p><strong>Status:</strong> {{ item.status|title }}</p>
+            <p><strong>Service:</strong> {{ item.service.service_name }}</p>
+            <p><strong>Price:</strong> ₱{{ item.service.price }}</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Patient Details</h5>
+            <p><strong>Name:</strong> {{ item.patient.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ item.patient.email }}</p>
+            <p><strong>Phone:</strong> {{ item.patient.phone }}</p>
+            <hr>
+            <h5>Attendant Details</h5>
+            <p><strong>Name:</strong> {{ item.attendant.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ item.attendant.email }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
