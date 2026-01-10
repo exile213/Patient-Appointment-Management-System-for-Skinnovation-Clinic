@@ -723,6 +723,42 @@ def admin_maintenance(request):
     
     return render(request, 'appointments/admin_maintenance.html', context)
 
+
+@login_required
+@user_passes_test(is_admin)
+def admin_backfill_transaction_ids(request):
+    """Run backfill of missing transaction_id from the web (POST only)."""
+    from django.contrib import messages
+    import uuid
+
+    if request.method != 'POST':
+        messages.error(request, 'Invalid request method.')
+        return redirect('appointments:admin_maintenance')
+
+    only_completed = request.POST.get('only_completed') == '1'
+    dry_run = request.POST.get('dry_run') == '1'
+
+    qs = Appointment.objects.filter(transaction_id__isnull=True) | Appointment.objects.filter(transaction_id='')
+    qs = qs.distinct()
+    if only_completed:
+        qs = qs.filter(status='completed')
+
+    count = qs.count()
+    assigned = 0
+    for appt in qs.iterator():
+        # generate unique id
+        tid = str(uuid.uuid4())[:8].upper()
+        while Appointment.objects.filter(transaction_id=tid).exists():
+            tid = str(uuid.uuid4())[:8].upper()
+
+        if not dry_run:
+            appt.transaction_id = tid
+            appt.save(update_fields=['transaction_id'])
+        assigned += 1
+
+    messages.success(request, f'Backfill completed: processed {count} appointments, assigned {assigned} ids (dry_run={dry_run}).')
+    return redirect('appointments:admin_maintenance')
+
 @login_required
 @user_passes_test(is_admin)
 def admin_patients(request):

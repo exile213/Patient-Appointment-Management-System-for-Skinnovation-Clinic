@@ -138,6 +138,28 @@
     </div>
 </div>
 
+<!-- Backfill transaction IDs -->
+<div class="content-card mb-4">
+    <h3 class="card-title">
+        <i class="fas fa-receipt"></i>
+        Transaction ID Backfill
+    </h3>
+    <p class="text-muted">Assign missing transaction IDs to appointments. Use dry-run first to preview changes.</p>
+    <form method="post" action="{% url 'appointments:admin_backfill_transaction_ids' %}">
+        {% csrf_token %}
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="only_completed" value="1" id="onlyCompleted" checked>
+            <label class="form-check-label" for="onlyCompleted">Only completed appointments</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="dry_run" value="1" id="dryRun" checked>
+            <label class="form-check-label" for="dryRun">Dry run (do not save changes)</label>
+        </div>
+        <button type="submit" class="btn btn-warning">Run Backfill</button>
+        <small class="text-muted ms-3">This action requires admin privileges and will assign 8-char transaction IDs.</small>
+    </form>
+</div>
+
 <!-- Treatment & Product History Log -->
 <div class="content-card" id="history-log">
     <h3 class="card-title">
