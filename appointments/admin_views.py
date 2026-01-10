@@ -737,26 +737,42 @@ def admin_backfill_transaction_ids(request):
 
     only_completed = request.POST.get('only_completed') == '1'
     dry_run = request.POST.get('dry_run') == '1'
+    # batch size to limit work per request (avoid timeouts/oom)
+    try:
+        batch_size = int(request.POST.get('batch_size', 50))
+    except Exception:
+        batch_size = 50
+    batch_size = max(1, min(batch_size, 500))
 
-    qs = Appointment.objects.filter(transaction_id__isnull=True) | Appointment.objects.filter(transaction_id='')
-    qs = qs.distinct()
+    base_qs = Appointment.objects.filter(transaction_id__isnull=True) | Appointment.objects.filter(transaction_id='')
+    base_qs = base_qs.distinct()
     if only_completed:
-        qs = qs.filter(status='completed')
+        base_qs = base_qs.filter(status='completed')
 
-    count = qs.count()
+    total_missing = base_qs.count()
+    # limit to a batch to keep request time short
+    qs = base_qs.order_by('id')[:batch_size]
+
     assigned = 0
-    for appt in qs.iterator():
-        # generate unique id
-        tid = str(uuid.uuid4())[:8].upper()
-        while Appointment.objects.filter(transaction_id=tid).exists():
+    try:
+        for appt in qs.iterator():
+            # generate a short unique id; collisions are extremely unlikely
             tid = str(uuid.uuid4())[:8].upper()
+            # rare collision check within DB
+            tries = 0
+            while Appointment.objects.filter(transaction_id=tid).exists() and tries < 5:
+                tid = str(uuid.uuid4())[:8].upper()
+                tries += 1
 
-        if not dry_run:
-            appt.transaction_id = tid
-            appt.save(update_fields=['transaction_id'])
-        assigned += 1
+            if not dry_run:
+                appt.transaction_id = tid
+                appt.save(update_fields=['transaction_id'])
+            assigned += 1
+    except Exception as e:
+        messages.error(request, f'Error during backfill: {e}')
+        return redirect('appointments:admin_maintenance')
 
-    messages.success(request, f'Backfill completed: processed {count} appointments, assigned {assigned} ids (dry_run={dry_run}).')
+    messages.success(request, f'Backfill processed batch: assigned {assigned} ids (dry_run={dry_run}). Total missing before run: {total_missing}.')
     return redirect('appointments:admin_maintenance')
 
 @login_required
