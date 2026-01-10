@@ -1,3 +1,6 @@
+# Postmark configuration
+POSTMARK_API_TOKEN = config('POSTMARK_API_TOKEN')
+POSTMARK_SENDER_EMAIL = config('POSTMARK_SENDER_EMAIL')
 
 import os
 from decouple import config
