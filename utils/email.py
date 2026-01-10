@@ -7,12 +7,14 @@ def send_mailjet_email(subject, to_email, template_name, context):
     api_secret = os.environ['MAILJET_API_SECRET']
     mailjet = Client(auth=(api_key, api_secret), version='v3.1')
     html_body = render_to_string(template_name, context)
+    sender_email = os.environ.get('MAILJET_SENDER_EMAIL', 'your_verified_sender@example.com')
+    sender_name = os.environ.get('MAILJET_SENDER_NAME', 'Skinovation Beauty Clinic')
     data = {
         'Messages': [
             {
                 "From": {
-                    "Email": os.environ.get('MAILJET_SENDER_EMAIL', 'your_verified_sender@example.com'),
-                    "Name": "Skinovation Beauty Clinic"
+                    "Email": sender_email,
+                    "Name": sender_name
                 },
                 "To": [
                     {
