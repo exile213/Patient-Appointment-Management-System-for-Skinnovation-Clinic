@@ -454,6 +454,11 @@ def admin_complete_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     
     if appointment.status in ['scheduled', 'confirmed']:
+        # Ensure a transaction_id exists for this appointment
+        import uuid
+        if not appointment.transaction_id:
+            appointment.transaction_id = str(uuid.uuid4())[:8].upper()
+
         appointment.status = 'completed'
         appointment.save()
         
