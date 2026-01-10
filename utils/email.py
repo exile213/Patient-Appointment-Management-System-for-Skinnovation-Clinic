@@ -1,13 +1,14 @@
-from postmarker.core import PostmarkClient
+import os
+import resend
 from django.template.loader import render_to_string
-from django.conf import settings
 
-def send_postmark_email(subject, to_email, template_name, context):
+def send_resend_email(subject, to_email, template_name, context):
+    resend.api_key = os.environ["RESEND_API_KEY"]
     html_body = render_to_string(template_name, context)
-    client = PostmarkClient(server_token=settings.POSTMARK_API_TOKEN)
-    client.emails.send(
-        From=settings.POSTMARK_SENDER_EMAIL,
-        To=to_email,
-        Subject=subject,
-        HtmlBody=html_body,
-    )
+    params = {
+        "from": "Skinovation Beauty Clinic <onboarding@resend.dev>",
+        "to": [to_email],
+        "subject": subject,
+        "html": html_body,
+    }
+    return resend.Emails.send(params)

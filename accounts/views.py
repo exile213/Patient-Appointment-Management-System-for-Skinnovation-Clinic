@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from utils.email import send_postmark_email
+from utils.email import send_resend_email
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -415,7 +415,7 @@ class CustomPasswordResetView(PasswordResetView):
                 })
                 
                 try:
-                    send_postmark_email(
+                    send_resend_email(
                         subject,
                         user.email,
                         'accounts/password_reset_email.html',
