@@ -516,6 +516,42 @@
                                 {% if feedback.comment %}
                                 <p><strong>Comment:</strong> {{ feedback.comment }}</p>
                                 {% endif %}
+                                {% if feedback.attendant_rating %}
+                                <p><strong>Attendant Rating:</strong>
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= feedback.attendant_rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    ({{ feedback.attendant_rating }}/5)
+                                </p>
+                                {% endif %}
+                                {% if feedback.equipment_rating %}
+                                <p><strong>Equipment Rating:</strong>
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= feedback.equipment_rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    ({{ feedback.equipment_rating }}/5)
+                                </p>
+                                {% endif %}
+                                {% if feedback.room_rating %}
+                                <p><strong>Room Rating:</strong>
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= feedback.room_rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    ({{ feedback.room_rating }}/5)
+                                </p>
+                                {% endif %}
                                 <p class="text-muted small mb-0">Submitted on {{ feedback.created_at|date:"F d, Y g:i A" }}</p>
                             </div>
                         </div>

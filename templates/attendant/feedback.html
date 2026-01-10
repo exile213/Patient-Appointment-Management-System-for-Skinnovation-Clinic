@@ -70,6 +70,8 @@
                             <th>Patient</th>
                             <th>Service/Package</th>
                             <th>Attendant Rating</th>
+                            <th>Equipment Rating</th>
+                            <th>Room Rating</th>
                             <th>Comment</th>
                         </tr>
                     </thead>
@@ -92,6 +94,38 @@
                                             {% endif %}
                                         {% endfor %}
                                         <span class="ms-2">({{ feedback.attendant_rating }}/5)</span>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">No rating</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if feedback.equipment_rating %}
+                                    <div class="d-flex align-items-center">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= feedback.equipment_rating %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="ms-2">({{ feedback.equipment_rating }}/5)</span>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">No rating</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if feedback.room_rating %}
+                                    <div class="d-flex align-items-center">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= feedback.room_rating %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="ms-2">({{ feedback.room_rating }}/5)</span>
                                     </div>
                                 {% else %}
                                     <span class="text-muted">No rating</span>

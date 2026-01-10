@@ -453,6 +453,36 @@
                         </div>
                     </div>
                     {% endif %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-2">Rate Clinic Equipment (Optional):</label>
+                        <div class="star-rating" data-appointment-id="{{ appointment.id }}" data-rating-type="equipment">
+                            <input type="radio" name="equipment_rating" id="star5-eqp-{{ appointment.id }}" value="5">
+                            <label for="star5-eqp-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="equipment_rating" id="star4-eqp-{{ appointment.id }}" value="4">
+                            <label for="star4-eqp-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="equipment_rating" id="star3-eqp-{{ appointment.id }}" value="3">
+                            <label for="star3-eqp-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="equipment_rating" id="star2-eqp-{{ appointment.id }}" value="2">
+                            <label for="star2-eqp-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="equipment_rating" id="star1-eqp-{{ appointment.id }}" value="1">
+                            <label for="star1-eqp-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-2">Rate Room / Ambience (Optional):</label>
+                        <div class="star-rating" data-appointment-id="{{ appointment.id }}" data-rating-type="room">
+                            <input type="radio" name="room_rating" id="star5-room-{{ appointment.id }}" value="5">
+                            <label for="star5-room-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="room_rating" id="star4-room-{{ appointment.id }}" value="4">
+                            <label for="star4-room-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="room_rating" id="star3-room-{{ appointment.id }}" value="3">
+                            <label for="star3-room-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="room_rating" id="star2-room-{{ appointment.id }}" value="2">
+                            <label for="star2-room-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                            <input type="radio" name="room_rating" id="star1-room-{{ appointment.id }}" value="1">
+                            <label for="star1-room-{{ appointment.id }}" class="star-label"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
                     <div class="mb-3">
                         <label for="comment-{{ appointment.id }}" class="form-label fw-bold">Comments (Optional)</label>
                         <textarea class="form-control" id="comment-{{ appointment.id }}" name="comment" rows="4" placeholder="Share your experience..."></textarea>

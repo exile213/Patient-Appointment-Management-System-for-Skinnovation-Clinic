@@ -1469,6 +1469,8 @@ def submit_feedback(request, appointment_id):
     if request.method == 'POST':
         rating = request.POST.get('rating')
         attendant_rating = request.POST.get('attendant_rating')
+        equipment_rating = request.POST.get('equipment_rating')
+        room_rating = request.POST.get('room_rating')
         comment = request.POST.get('comment', '')
         
         if not rating:
@@ -1487,6 +1489,20 @@ def submit_feedback(request, appointment_id):
             if attendant_rating_int < 1 or attendant_rating_int > 5:
                 messages.error(request, 'Attendant rating must be between 1 and 5.')
                 return redirect('appointments:my_appointments')
+        # Validate equipment rating if provided
+        equipment_rating_int = None
+        if equipment_rating:
+            equipment_rating_int = int(equipment_rating)
+            if equipment_rating_int < 1 or equipment_rating_int > 5:
+                messages.error(request, 'Equipment rating must be between 1 and 5.')
+                return redirect('appointments:my_appointments')
+        # Validate room rating if provided
+        room_rating_int = None
+        if room_rating:
+            room_rating_int = int(room_rating)
+            if room_rating_int < 1 or room_rating_int > 5:
+                messages.error(request, 'Room rating must be between 1 and 5.')
+                return redirect('appointments:my_appointments')
         
         # Check if feedback already exists
         from .models import Feedback
@@ -1500,6 +1516,8 @@ def submit_feedback(request, appointment_id):
             patient=request.user,
             rating=rating,
             attendant_rating=attendant_rating_int,
+            equipment_rating=equipment_rating_int,
+            room_rating=room_rating_int,
             comment=comment
         )
         
