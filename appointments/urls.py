@@ -31,7 +31,8 @@ urlpatterns = [
     # Admin URLs
     path('admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('admin/maintenance/', admin_views.admin_maintenance, name='admin_maintenance'),
-    path('admin/backfill-transaction-ids/', admin_views.admin_backfill_transaction_ids, name='admin_backfill_transaction_ids'),
+    # Backfill endpoint temporarily disabled (commented out)
+    # path('admin/backfill-transaction-ids/', admin_views.admin_backfill_transaction_ids, name='admin_backfill_transaction_ids'),
     path('admin/manage-services/', admin_views.admin_manage_services, name='admin_manage_services'),
     path('admin/manage-packages/', admin_views.admin_manage_packages, name='admin_manage_packages'),
     path('admin/manage-products/', admin_views.admin_manage_products, name='admin_manage_products'),

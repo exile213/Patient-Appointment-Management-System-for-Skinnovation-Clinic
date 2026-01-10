@@ -886,8 +886,13 @@ def patient_history(request, patient_id):
 @user_passes_test(is_admin_or_owner)
 def service_history(request):
     """Admin view: list of rendered (completed) service transactions"""
-    # Only include appointments that are completed and are service (not product/package)
-    qs = Appointment.objects.filter(status='completed', service__isnull=False)
+    # Only include appointments that are service (not product/package)
+    qs = Appointment.objects.filter(service__isnull=False)
+
+    # Status filter: default to 'completed' for rendered services, 'all' to show all statuses
+    status = request.GET.get('status', 'completed')
+    if status and status != 'all':
+        qs = qs.filter(status=status)
 
     # Date range filter (YYYY-MM-DD expected from <input type="date">)
     start_date = request.GET.get('start_date')
@@ -917,12 +922,41 @@ def service_history(request):
     paginator = Paginator(qs, 20)  # 20 items per page
     page_obj = paginator.get_page(page_number)
 
+    # Provide status options to template
+    status_options = [
+        ('all', 'All'),
+        ('scheduled', 'Scheduled'),
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('completed', 'Completed'),
+        ('rescheduled', 'Rescheduled'),
+        ('cancelled', 'Cancelled'),
+        ('no_show', 'No-Show'),
+        ('approved', 'Approved'),
+    ]
+
+    # compute sliding page range (max 5 pages visible)
+    current = page_obj.number
+    total_pages = paginator.num_pages
+    window = 5
+    half = window // 2
+    start_page = max(1, current - half)
+    end_page = min(total_pages, start_page + window - 1)
+    # shift start if we are at the end and don't have full window
+    if end_page - start_page + 1 < window:
+        start_page = max(1, end_page - window + 1)
+
+    page_range_window = list(range(start_page, end_page + 1))
+
     context = {
         'service_history': page_obj,
         'page_obj': page_obj,
         'start_date': sd,
         'end_date': ed,
         'total_results': paginator.count,
+        'status': status,
+        'status_options': status_options,
+        'page_range_window': page_range_window,
     }
 
     return render(request, 'appointments/service_history.html', context)
