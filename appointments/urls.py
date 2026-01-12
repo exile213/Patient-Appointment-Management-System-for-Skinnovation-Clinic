@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('admin/maintenance/', admin_views.admin_maintenance, name='admin_maintenance'),
     path('admin/seed-diagnoses/', admin_views.admin_seed_diagnoses, name='admin_seed_diagnoses'),
+    path('admin/seed-diagnoses/undo-last/', admin_views.admin_undo_last_seed, name='admin_seed_diagnoses_undo_last'),
     # Backfill endpoint temporarily disabled (commented out)
     # path('admin/backfill-transaction-ids/', admin_views.admin_backfill_transaction_ids, name='admin_backfill_transaction_ids'),
     path('admin/manage-services/', admin_views.admin_manage_services, name='admin_manage_services'),

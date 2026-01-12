@@ -7,6 +7,9 @@ from django.db.models import Q, Sum, Count, Max
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db import transaction
+import json
+import os
+from django.conf import settings
 from .models import Appointment, Notification, ClosedDay
 from accounts.models import User, AttendantProfile
 from services.models import Service, ServiceImage, HistoryLog
@@ -1075,8 +1078,11 @@ def admin_seed_diagnoses(request):
                         diag_time = appt.appointment_time or timezone.now().time()
 
                         # Minimal realistic fields
+                        # Prefer appointment attendant as the diagnosing staff when available
+                        diagnosed_user = appt.attendant if getattr(appt, 'attendant', None) else request.user
+
                         defaults = {
-                            'diagnosed_by': request.user,
+                            'diagnosed_by': diagnosed_user,
                             'diagnosis_date': diag_date,
                             'diagnosis_time': diag_time,
                             'notes': diag_notes[idx],
@@ -1105,6 +1111,33 @@ def admin_seed_diagnoses(request):
         if dry_run:
             messages.info(request, f'Dry run: {total} appointments found; previewed {min(total, batch_size)} items.')
         else:
+            # Persist a run log (file-based) so admins can undo if needed without DB migrations
+            try:
+                log_dir = os.path.join(settings.BASE_DIR, 'backups')
+                os.makedirs(log_dir, exist_ok=True)
+                log_file = os.path.join(log_dir, 'seed_diagnoses_runs.json')
+                runs = []
+                if os.path.exists(log_file):
+                    try:
+                        with open(log_file, 'r', encoding='utf-8') as fh:
+                            runs = json.load(fh) or []
+                    except Exception:
+                        runs = []
+
+                run_entry = {
+                    'timestamp': timezone.now().isoformat(),
+                    'user_id': request.user.id,
+                    'user_name': request.user.get_full_name() or request.user.username,
+                    'batch_size': batch_size,
+                    'created_ids': created_ids,
+                }
+                runs.append(run_entry)
+                with open(log_file, 'w', encoding='utf-8') as fh:
+                    json.dump(runs, fh, indent=2)
+            except Exception:
+                # don't fail the whole operation if logging fails
+                pass
+        else:
             messages.success(request, f'Created {len(created_ids)} diagnoses (processed {processed}).')
 
         context = {
@@ -1123,6 +1156,63 @@ def admin_seed_diagnoses(request):
         'sample': sample,
     }
     return render(request, 'appointments/seed_diagnoses.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_undo_last_seed(request):
+    """Undo the last seed run by deleting Diagnosis records created in the last logged run.
+
+    POST only. Uses the backups/seed_diagnoses_runs.json file to get last run IDs.
+    """
+    from .models import Diagnosis
+
+    if request.method != 'POST':
+        messages.error(request, 'Invalid request method for undo.')
+        return redirect('appointments:admin_seed_diagnoses')
+
+    log_file = os.path.join(settings.BASE_DIR, 'backups', 'seed_diagnoses_runs.json')
+    if not os.path.exists(log_file):
+        messages.error(request, 'No seed run log found to undo.')
+        return redirect('appointments:admin_seed_diagnoses')
+
+    try:
+        with open(log_file, 'r', encoding='utf-8') as fh:
+            runs = json.load(fh) or []
+    except Exception as e:
+        messages.error(request, f'Could not read run log: {e}')
+        return redirect('appointments:admin_seed_diagnoses')
+
+    if not runs:
+        messages.error(request, 'No previous runs to undo.')
+        return redirect('appointments:admin_seed_diagnoses')
+
+    last = runs.pop()  # remove last
+    ids = last.get('created_ids', []) or []
+    deleted = 0
+    try:
+        qs = Diagnosis.objects.filter(id__in=ids)
+        deleted, _ = qs.delete()
+    except Exception as e:
+        messages.error(request, f'Error deleting diagnoses: {e}')
+        # Put the run back to avoid losing the log
+        runs.append(last)
+        try:
+            with open(log_file, 'w', encoding='utf-8') as fh:
+                json.dump(runs, fh, indent=2)
+        except Exception:
+            pass
+        return redirect('appointments:admin_seed_diagnoses')
+
+    # persist updated runs
+    try:
+        with open(log_file, 'w', encoding='utf-8') as fh:
+            json.dump(runs, fh, indent=2)
+    except Exception:
+        pass
+
+    messages.success(request, f'Undo completed: attempted to delete {len(ids)} diagnoses; deleted {deleted} objects.')
+    return redirect('appointments:admin_seed_diagnoses')
 
 
 @login_required
