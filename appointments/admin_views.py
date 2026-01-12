@@ -1137,7 +1137,6 @@ def admin_seed_diagnoses(request):
             except Exception:
                 # don't fail the whole operation if logging fails
                 pass
-        else:
             messages.success(request, f'Created {len(created_ids)} diagnoses (processed {processed}).')
 
         context = {
