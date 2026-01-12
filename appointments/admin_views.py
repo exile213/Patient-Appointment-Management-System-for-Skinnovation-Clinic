@@ -1010,10 +1010,17 @@ def admin_seed_diagnoses(request):
     """
     from .models import Diagnosis
 
-    # Query completed appointments that don't have a Diagnosis yet
-    qs = Appointment.objects.filter(status='completed', diagnosis__isnull=True).select_related(
-        'patient', 'service', 'product', 'package', 'attendant'
-    ).order_by('id')
+    # Query completed service/package appointments that don't have a Diagnosis yet
+    from django.db.models import Q as _Q
+    qs = (
+        Appointment.objects.filter(
+            status='completed',
+            diagnosis__isnull=True,
+        )
+        .filter(_Q(service__isnull=False) | _Q(package__isnull=False))
+        .select_related('patient', 'service', 'product', 'package', 'attendant')
+        .order_by('id')
+    )
 
     total = qs.count()
     sample = list(qs[:20])
