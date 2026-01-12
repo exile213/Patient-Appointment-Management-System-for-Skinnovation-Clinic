@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta, datetime
 from appointments.models import Appointment, SMSReminder
-from services.utils import send_appointment_sms
+from services.utils import send_appointment_sms, send_sms_notification
+from services.template_service import template_service
 
 class Command(BaseCommand):
     help = 'Send appointment reminders based on specified time filter (2days, 1day, 1hour)'
@@ -133,8 +134,39 @@ class Command(BaseCommand):
                 )
                 continue
             
-            # Send SMS reminder (same pattern as confirmation in admin_views.py)
-            sms_result = send_appointment_sms(appointment, reminder_type)
+            # Send SMS reminder - use same direct method as admin SMS test page
+            # But use template service to format the message properly
+            if reminder_type == 'two_day_reminder':
+                # Use template service method for 2-day reminder
+                sms_result = template_service.send_two_day_reminder(appointment)
+            else:
+                # Use template service method for regular reminder (1day or 1hour)
+                sms_result = template_service.send_appointment_reminder(appointment)
+            
+            # If template service fails, fall back to direct SMS (like admin test page)
+            if not sms_result.get('success'):
+                # Prepare simple message as fallback
+                context = template_service._prepare_appointment_context(appointment)
+                if reminder_type == 'two_day_reminder':
+                    message = (
+                        f"Hi {context.get('customer_name', 'Customer')}, reminder: You have an appointment on "
+                        f"{context.get('appointment_date', '')} at {context.get('appointment_time', '')} "
+                        f"for {context.get('service_name', 'service')}. Please log in to confirm or reschedule."
+                    )
+                else:
+                    message = (
+                        f"Hello {context.get('customer_name', 'Customer')}, reminder: Your appointment for "
+                        f"{context.get('service_name', 'service')} is on {context.get('appointment_date', '')} "
+                        f"at {context.get('appointment_time', '')}. Thank you! - Skinovation Beauty Clinic"
+                    )
+                
+                # Use the same SMS sending method as admin test page
+                sms_result = send_sms_notification(
+                    appointment.patient.phone,
+                    message,
+                    user=None
+                )
+            
             patient_sms_sent = sms_result.get('success', False)
             
             if patient_sms_sent:
