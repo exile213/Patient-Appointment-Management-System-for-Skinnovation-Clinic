@@ -265,24 +265,43 @@ def attendant_diagnose_appointment(request, appointment_id):
         form = DiagnosisForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
+                # Persist all submitted fields so diagnosis details are saved correctly
+                defaults = {
+                    'diagnosed_by': request.user,
+                    'diagnosis_date': appointment.appointment_date,
+                    'diagnosis_time': appointment.appointment_time,
+                    'blood_pressure': form.cleaned_data.get('blood_pressure'),
+                    'skin_type': form.cleaned_data.get('skin_type'),
+                    'lesion_type': form.cleaned_data.get('lesion_type'),
+                    'target_area': form.cleaned_data.get('target_area'),
+                    'keloid_risk': form.cleaned_data.get('keloid_risk'),
+                    'accutane_history': form.cleaned_data.get('accutane_history'),
+                    'notes': form.cleaned_data.get('notes'),
+                    'prescription': form.cleaned_data.get('prescription'),
+                    'follow_up_recommended': form.cleaned_data.get('follow_up_recommended')
+                }
+
                 diagnosis, created = Diagnosis.objects.get_or_create(
                     appointment=appointment,
-                    defaults={
-                        'diagnosed_by': request.user,
-                        'diagnosis_date': appointment.appointment_date,
-                        'diagnosis_time': appointment.appointment_time,
-                        'notes': form.cleaned_data.get('notes'),
-                        'prescription': form.cleaned_data.get('prescription'),
-                        'follow_up_recommended': form.cleaned_data.get('follow_up_recommended')
-                    }
+                    defaults=defaults
                 )
 
                 if not created:
-                    # Update existing
+                    # Update existing diagnosis with all fields from the form
+                    diagnosis.diagnosed_by = request.user
+                    diagnosis.blood_pressure = form.cleaned_data.get('blood_pressure')
+                    diagnosis.skin_type = form.cleaned_data.get('skin_type')
+                    diagnosis.lesion_type = form.cleaned_data.get('lesion_type')
+                    diagnosis.target_area = form.cleaned_data.get('target_area')
+                    diagnosis.keloid_risk = form.cleaned_data.get('keloid_risk')
+                    diagnosis.accutane_history = form.cleaned_data.get('accutane_history')
                     diagnosis.notes = form.cleaned_data.get('notes')
                     diagnosis.prescription = form.cleaned_data.get('prescription')
                     diagnosis.follow_up_recommended = form.cleaned_data.get('follow_up_recommended')
-                    diagnosis.diagnosed_by = request.user
+                    if not diagnosis.diagnosis_date:
+                        diagnosis.diagnosis_date = appointment.appointment_date
+                    if not diagnosis.diagnosis_time:
+                        diagnosis.diagnosis_time = appointment.appointment_time
                     diagnosis.save()
 
             messages.success(request, 'Diagnosis saved. Proceed to perform service.')

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Appointment, Request, CancellationRequest, Feedback, Notification, SMSTemplate, SMSHistory, Room
+from .models import Diagnosis, Treatment
 
 
 @admin.register(Room)
@@ -27,6 +28,8 @@ class AppointmentAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
 
+
+
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     """Admin for Request model"""
@@ -38,6 +41,8 @@ class RequestAdmin(admin.ModelAdmin):
 
 
 @admin.register(CancellationRequest)
+
+
 class CancellationRequestAdmin(admin.ModelAdmin):
     """Admin for CancellationRequest model"""
     list_display = ('patient', 'appointment_type', 'status', 'created_at')
