@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta, datetime
-from appointments.models import Appointment
+from appointments.models import Appointment, SMSReminder
 from services.utils import send_appointment_sms
 
 class Command(BaseCommand):
@@ -28,6 +28,7 @@ class Command(BaseCommand):
                 status__in=['confirmed', 'scheduled']
             )
             reminder_type = 'two_day_reminder'
+            reminder_type_db = 'two_day'
             message_suffix = "(2 days before)"
             
         elif filter_type == '1day':
@@ -37,12 +38,11 @@ class Command(BaseCommand):
                 status__in=['confirmed', 'scheduled']
             )
             reminder_type = 'reminder'
+            reminder_type_db = 'one_day'
             message_suffix = "(1 day before)"
             
         elif filter_type == '1hour':
             # For 1 hour before, check appointments happening in the next hour
-            one_hour_later = now + timedelta(hours=1)
-            
             appointments = Appointment.objects.filter(
                 appointment_date=now.date(),
                 status__in=['confirmed', 'scheduled']
@@ -63,11 +63,13 @@ class Command(BaseCommand):
             
             appointments = filtered_appointments
             reminder_type = 'reminder'
+            reminder_type_db = 'one_hour'
             message_suffix = "(1 hour before)"
         
         sent_count = 0
         failed_count = 0
         skipped_count = 0
+        already_sent_count = 0
         
         for appointment in appointments:
             # Check if patient has phone number
@@ -80,10 +82,37 @@ class Command(BaseCommand):
                 )
                 continue
             
+            # Check if reminder has already been sent (idempotency check)
+            existing_reminder = SMSReminder.objects.filter(
+                appointment=appointment,
+                reminder_type=reminder_type_db,
+                sent=True
+            ).first()
+            
+            if existing_reminder:
+                already_sent_count += 1
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'⊘ Reminder already sent to {appointment.patient.get_full_name()} '
+                        f'for {appointment.appointment_date} at {appointment.appointment_time} '
+                        f'{message_suffix} (sent at {existing_reminder.sent_at})'
+                    )
+                )
+                continue
+            
             # Send SMS reminder
             sms_result = send_appointment_sms(appointment, reminder_type)
             
             if sms_result['success']:
+                # Record that the reminder was sent
+                SMSReminder.objects.update_or_create(
+                    appointment=appointment,
+                    reminder_type=reminder_type_db,
+                    defaults={
+                        'sent': True,
+                        'sent_at': timezone.now()
+                    }
+                )
                 sent_count += 1
                 self.stdout.write(
                     self.style.SUCCESS(
@@ -102,7 +131,7 @@ class Command(BaseCommand):
                 )
         
         # Summary
-        total_processed = sent_count + failed_count + skipped_count
+        total_processed = sent_count + failed_count + skipped_count + already_sent_count
         self.stdout.write('\n' + '='*60)
         self.stdout.write(
             self.style.SUCCESS(
@@ -111,6 +140,8 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'  Total Processed: {total_processed}')
         self.stdout.write(self.style.SUCCESS(f'  ✓ Sent Successfully: {sent_count}'))
+        if already_sent_count > 0:
+            self.stdout.write(self.style.WARNING(f'  ⊘ Already Sent (Skipped): {already_sent_count}'))
         if failed_count > 0:
             self.stdout.write(self.style.ERROR(f'  ✗ Failed: {failed_count}'))
         if skipped_count > 0:

@@ -542,6 +542,7 @@ class SMSReminder(models.Model):
     REMINDER_TYPE_CHOICES = [
         ('one_day', 'One Day Before'),
         ('two_day', 'Two Days Before'),
+        ('one_hour', 'One Hour Before'),
         ('custom', 'Custom'),
     ]
     
