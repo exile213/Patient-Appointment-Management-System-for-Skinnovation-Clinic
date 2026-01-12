@@ -1053,6 +1053,10 @@ def admin_seed_diagnoses(request):
         ]
         skin_types = ['I', 'II', 'III', 'IV', 'V', 'VI']
         lesion_types = ['warts', 'moles', 'skin_tags', 'syringoma', 'milia', 'other']
+        blood_pressures = ['120/80', '118/76', '130/85', '110/70', '125/78']
+        target_areas = ['face', 'neck', 'chest', 'back', 'limbs']
+        keloid_choices = ['yes', 'no']
+        accutane_choices = ['yes_6m', 'no']
 
         created_ids = []
         errors = []
@@ -1079,6 +1083,10 @@ def admin_seed_diagnoses(request):
                             'prescription': prescriptions[idx % len(prescriptions)],
                             'skin_type': skin_types[idx % len(skin_types)],
                             'lesion_type': lesion_types[idx % len(lesion_types)],
+                            'blood_pressure': blood_pressures[idx % len(blood_pressures)],
+                            'target_area': target_areas[idx % len(target_areas)],
+                            'keloid_risk': keloid_choices[idx % len(keloid_choices)],
+                            'accutane_history': accutane_choices[idx % len(accutane_choices)],
                         }
 
                         if dry_run:
