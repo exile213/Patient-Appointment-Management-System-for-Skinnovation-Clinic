@@ -1024,7 +1024,8 @@ def admin_seed_diagnoses(request):
             status='completed',
             diagnosis__isnull=True,
         )
-        .filter(_Q(service__isnull=False) | _Q(package__isnull=False))
+        # include service, package, or product appointments (products now included)
+        .filter(_Q(service__isnull=False) | _Q(package__isnull=False) | _Q(product__isnull=False))
         .select_related('patient', 'service', 'product', 'package', 'attendant')
         .order_by('id')
     )

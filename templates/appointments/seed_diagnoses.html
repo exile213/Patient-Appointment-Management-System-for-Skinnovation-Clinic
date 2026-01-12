@@ -8,7 +8,7 @@
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">Seed Diagnoses (Temporary)</h4>
-      <p class="text-muted">This tool will create one minimal, realistic Diagnosis record for each completed <strong>service/package</strong> appointment that currently has no diagnosis. Product-only orders are excluded. Seeded fields include: <em>diagnosis_date, diagnosis_time, diagnosed_by (prefers appointment attendant), notes, prescription, skin_type, lesion_type, blood_pressure, target_area, keloid_risk, accutane_history</em>. This view is temporary — remove after use.</p>
+      <p class="text-muted">This tool will create one minimal, realistic Diagnosis record for each completed appointment (service, package, or product) that currently has no diagnosis. Seeded fields include: <em>diagnosis_date, diagnosis_time, diagnosed_by (prefers appointment attendant), notes, prescription, skin_type, lesion_type, blood_pressure, target_area, keloid_risk, accutane_history</em>. This view is temporary — remove after use.</p>
 
       <div class="mb-3">
         <strong>Total affected appointments:</strong> {{ total|default:0 }}
