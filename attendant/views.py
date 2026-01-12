@@ -156,7 +156,15 @@ def attendant_appointments(request):
         if appt_dt:
             start = appt_dt - timedelta(minutes=PRE)
             end = appt_dt + timedelta(minutes=POST)
-            appt.can_diagnose = (start <= now <= end) and (appt.attendant == request.user)
+            # Only allow diagnose if within window, owned by user, status is scheduled/confirmed,
+            # and no diagnosis already exists for this appointment (separate from timer logic).
+            try:
+                _ = appt.diagnosis
+                has_diag = True
+            except Diagnosis.DoesNotExist:
+                has_diag = False
+
+            appt.can_diagnose = (start <= now <= end) and (appt.attendant == request.user) and (appt.status in ['scheduled', 'confirmed']) and (not has_diag)
         else:
             appt.can_diagnose = False
 
@@ -219,7 +227,7 @@ def attendant_appointment_detail(request, appointment_id):
     if appt_dt:
         start = appt_dt - timedelta(minutes=PRE)
         end = appt_dt + timedelta(minutes=POST)
-        context['can_diagnose'] = (start <= now <= end) and (appointment.attendant == request.user)
+        context['can_diagnose'] = (start <= now <= end) and (appointment.attendant == request.user) and (appointment.status in ['scheduled', 'confirmed'])
     else:
         context['can_diagnose'] = False
     
@@ -237,7 +245,7 @@ def attendant_diagnose_appointment(request, appointment_id):
         messages.error(request, 'You can only diagnose appointments assigned to you.')
         return redirect('attendant:appointments')
 
-    # Time window enforcement
+    # Time window enforcement (only on GET). Allow POST to proceed to avoid tiny timing drift blocking submission.
     try:
         appt_dt = datetime.combine(appointment.appointment_date, appointment.appointment_time)
         appt_dt = timezone.make_aware(appt_dt, timezone.get_current_timezone())
@@ -247,9 +255,10 @@ def attendant_diagnose_appointment(request, appointment_id):
     PRE = getattr(settings, 'APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES', 0)
     POST = getattr(settings, 'APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES', 30)
     now = timezone.now()
-    if not appt_dt or not (appt_dt - timedelta(minutes=PRE) <= now <= appt_dt + timedelta(minutes=POST)):
-        messages.error(request, 'Diagnosis can only be started at the appointment time.')
-        return redirect('attendant:appointment_detail', appointment_id=appointment_id)
+    if request.method != 'POST':
+        if not appt_dt or not (appt_dt - timedelta(minutes=PRE) <= now <= appt_dt + timedelta(minutes=POST)):
+            messages.error(request, 'Diagnosis can only be started at the appointment time.')
+            return redirect('attendant:appointment_detail', appointment_id=appointment_id)
 
     # Prevent multiple diagnoses race
     if request.method == 'POST':

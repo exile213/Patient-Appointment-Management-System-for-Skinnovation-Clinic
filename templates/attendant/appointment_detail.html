@@ -483,6 +483,63 @@
     </div>
 </div>
 
+    <!-- Diagnosis Details (show when diagnosis exists) -->
+    {% if appointment.diagnosis %}
+    <div class="col-12">
+        <div class="detail-card actions-card">
+            <h3 class="section-title">
+                <i class="fas fa-notes-medical"></i>
+                Diagnosis Summary
+            </h3>
+            <div class="row">
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Blood Pressure:</span>
+                    <span class="info-value">{{ appointment.diagnosis.blood_pressure|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Skin Type:</span>
+                    <span class="info-value">{{ appointment.diagnosis.get_skin_type_display|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Lesion Type:</span>
+                    <span class="info-value">{{ appointment.diagnosis.get_lesion_type_display|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Target Area:</span>
+                    <span class="info-value">{{ appointment.diagnosis.get_target_area_display|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Keloid Risk:</span>
+                    <span class="info-value">{{ appointment.diagnosis.get_keloid_risk_display|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Accutane History:</span>
+                    <span class="info-value">{{ appointment.diagnosis.get_accutane_history_display|default:'—' }}</span>
+                </div>
+                <div class="col-12 info-item">
+                    <span class="info-label">Prescription:</span>
+                    <span class="info-value">{{ appointment.diagnosis.prescription|default:'—' }}</span>
+                </div>
+                <div class="col-12 info-item">
+                    <span class="info-label">Follow-up Recommended:</span>
+                    <span class="info-value">{% if appointment.diagnosis.follow_up_recommended %}{{ appointment.diagnosis.follow_up_recommended|date:'M d, Y' }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="col-12 info-item">
+                    <span class="info-label">Notes:</span>
+                    <span class="info-value">{{ appointment.diagnosis.notes|linebreaksbr|default:'—' }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Diagnosed By:</span>
+                    <span class="info-value">{{ appointment.diagnosis.diagnosed_by.get_full_name|default:appointment.diagnosis.diagnosed_by }}</span>
+                </div>
+                <div class="col-md-4 info-item">
+                    <span class="info-label">Diagnosed On:</span>
+                    <span class="info-value">{{ appointment.diagnosis.diagnosis_date|date:'M d, Y' }} {{ appointment.diagnosis.diagnosis_time|time:'g:i A' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 <!-- Action Buttons -->
 <div class="row mb-4">
     <div class="col-12">
@@ -538,17 +595,8 @@
                     <i class="fas fa-user"></i> View Patient Profile
                 </a>
                 
-                {% if can_diagnose %}
-                <a href="{% url 'attendant:diagnose_appointment' appointment.id %}" class="btn-action" style="background:linear-gradient(135deg,#ff7e5f 0%,#feb47b 100%);color:#fff;border-color:transparent;">
-                    <i class="fas fa-stethoscope"></i> Diagnose Patient
-                </a>
-                {% endif %}
-
-                {% if appointment.diagnosis %}
-                <a href="{% url 'attendant:perform_service' appointment.id %}" class="btn-action btn-confirm" style="background:#6f42c1;border-color:#6f42c1;color:#fff;">
-                    <i class="fas fa-play"></i> Perform Service
-                </a>
-                {% endif %}
+                {# Diagnose and Perform Service buttons are intentionally not shown on the detail view.
+                   Diagnosis details (if present) are shown below instead. #}
 
                 <a href="{% url 'attendant:appointments' %}" class="btn-action btn-back">
                     <i class="fas fa-list"></i> All Appointments
