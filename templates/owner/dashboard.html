@@ -543,16 +543,16 @@
 
                         <hr style="margin: 2rem 0; border-color: #e9ecef;">
 
-                        <!-- Analytics Section 3: Daily Count of Patients -->
+                        <!-- Analytics Section 3: Monthly Count of Patients -->
                         <div class="mb-4">
                             <h5 style="color: #667eea; margin-bottom: 0.3rem; font-weight: 700;">
-                                <i class="fas fa-users"></i> Daily Count of Patients
+                                <i class="fas fa-users"></i> Monthly Count of Patients
                             </h5>
-                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">Daily breakdown of unique patients and appointments</p>
+                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">Monthly breakdown of unique patients and appointments</p>
                             
                             <!-- Graph -->
                             <div class="chart-wrapper">
-                                <canvas id="dailyPatientChart" style="width: 100%; height: 300px;"></canvas>
+                                <canvas id="monthlyPatientChart" style="width: 100%; height: 300px;"></canvas>
                             </div>
                             
                             <!-- Related Table -->
@@ -560,22 +560,22 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Date</th>
+                                            <th>Month</th>
                                             <th>Unique Patients</th>
                                             <th>Total Appointments</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for day_data in daily_patient_data|slice:":15" %}
+                                        {% for month_data in monthly_patient_data %}
                                         <tr>
-                                            <td><strong>{{ day_data.date_display }}</strong></td>
-                                            <td><strong>{{ day_data.patient_count }}</strong></td>
-                                            <td>{{ day_data.appointment_count }}</td>
+                                            <td><strong>{{ month_data.date_display }}</strong></td>
+                                            <td><strong>{{ month_data.patient_count }}</strong></td>
+                                            <td>{{ month_data.appointment_count }}</td>
                                             <td>
-                                                {% if day_data.patient_count >= 10 %}
+                                                {% if month_data.patient_count >= 100 %}
                                                     <span class="badge bg-success">High</span>
-                                                {% elif day_data.patient_count >= 5 %}
+                                                {% elif month_data.patient_count >= 50 %}
                                                     <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
                                                 {% else %}
                                                     <span class="badge" style="background-color: #fd7e14;">Low</span>
@@ -591,21 +591,21 @@
                                 </table>
                             </div>
                             
-                            <!-- Dynamic Daily Patient Count Insight Card -->
+                            <!-- Dynamic Monthly Patient Count Insight Card -->
                             <div class="alert {% if analytics_insights.patient_flow_status == 'excellent' %}alert-success{% elif analytics_insights.patient_flow_status == 'good' %}alert-info{% elif analytics_insights.patient_flow_status == 'low' %}alert-warning{% else %}alert-secondary{% endif %}" style="background: {% if analytics_insights.patient_flow_status == 'excellent' %}#e7f9f0{% elif analytics_insights.patient_flow_status == 'good' %}#e7f3ff{% elif analytics_insights.patient_flow_status == 'low' %}#fff3cd{% else %}#f8f9fa{% endif %}; border-left: 4px solid {% if analytics_insights.patient_flow_status == 'excellent' %}#28a745{% elif analytics_insights.patient_flow_status == 'good' %}#0d6efd{% elif analytics_insights.patient_flow_status == 'low' %}#ffc107{% else %}#6c757d{% endif %}; margin-top: 1rem;">
                                 <h6 style="color: {% if analytics_insights.patient_flow_status == 'excellent' %}#28a745{% elif analytics_insights.patient_flow_status == 'good' %}#0d6efd{% elif analytics_insights.patient_flow_status == 'low' %}#856404{% else %}#6c757d{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
-                                    <i class="fas fa-{% if analytics_insights.patient_flow_status == 'excellent' %}check-circle{% elif analytics_insights.patient_flow_status == 'good' %}info-circle{% elif analytics_insights.patient_flow_status == 'low' %}exclamation-triangle{% else %}question-circle{% endif %}"></i> Daily Patient Flow Analysis
+                                    <i class="fas fa-{% if analytics_insights.patient_flow_status == 'excellent' %}check-circle{% elif analytics_insights.patient_flow_status == 'good' %}info-circle{% elif analytics_insights.patient_flow_status == 'low' %}exclamation-triangle{% else %}question-circle{% endif %}"></i> Monthly Patient Flow Analysis
                                 </h6>
                                 <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
                                     <li><strong>{{ analytics_insights.patient_flow_message }}</strong></li>
-                                    {% if max_patients_day %}
-                                    <li><strong>Peak Day:</strong> {{ max_patients_day.date_display }} with {{ max_patients_day.patient_count }} unique patients ({{ max_patients_day.appointment_count }} appointments)</li>
+                                    {% if max_patients_month %}
+                                    <li><strong>Peak Month:</strong> {{ max_patients_month.date_display }} with {{ max_patients_month.patient_count }} unique patients ({{ max_patients_month.appointment_count }} appointments)</li>
                                     {% endif %}
-                                    {% if min_patients_day and min_patients_day.patient_count != max_patients_day.patient_count %}
-                                    <li><strong>Lowest Day:</strong> {{ min_patients_day.date_display }} with {{ min_patients_day.patient_count }} unique patients ({{ min_patients_day.appointment_count }} appointments)</li>
+                                    {% if min_patients_month and min_patients_month.patient_count != max_patients_month.patient_count %}
+                                    <li><strong>Lowest Month:</strong> {{ min_patients_month.date_display }} with {{ min_patients_month.patient_count }} unique patients ({{ min_patients_month.appointment_count }} appointments)</li>
                                     {% endif %}
-                                    <li>{% if analytics_insights.avg_patients_per_day >= 10 %}Consistent high patient volume indicates strong demand and effective marketing{% elif analytics_insights.avg_patients_per_day >= 5 %}Moderate patient flow - consider promotional campaigns to boost daily visits{% else %}Low daily patient count suggests need for marketing initiatives and service promotion{% endif %}</li>
-                                    <li>{% if max_patients_day and max_patients_day.patient_count > analytics_insights.avg_patients_per_day|add:"5" %}Peak days show significant demand spikes - consider capacity planning for high-traffic periods{% elif max_patients_day %}Patient distribution is relatively even across days{% else %}Analyze patterns to identify optimal scheduling and resource allocation{% endif %}</li>
+                                    <li>{% if analytics_insights.avg_patients_per_month >= 100 %}Consistent high patient volume indicates strong demand and effective marketing{% elif analytics_insights.avg_patients_per_month >= 50 %}Moderate patient flow - consider promotional campaigns to boost monthly visits{% else %}Low monthly patient count suggests need for marketing initiatives and service promotion{% endif %}</li>
+                                    <li>{% if max_patients_month and max_patients_month.patient_count > analytics_insights.avg_patients_per_month|add:"50" %}Peak months show significant demand spikes - consider capacity planning for high-traffic periods{% elif max_patients_month %}Patient distribution is relatively even across months{% else %}Analyze patterns to identify optimal scheduling and resource allocation{% endif %}</li>
                                 </ul>
                             </div>
                         </div>
@@ -798,7 +798,7 @@ let lineChart = null;
 let serviceBarChart = null;
 let serviceQualityScatter = null;
 let patientDoughnutChart = null;
-let dailyPatientChart = null;
+let monthlyPatientChart = null;
 
 // Wait for Chart.js and DOM to be ready
 function waitForChartJS(callback, maxAttempts) {
@@ -839,7 +839,7 @@ waitForChartJS(function() {
     initializeServiceBarChart();
     initializeServiceQualityScatter();
     initializePatientDoughnutChart();
-    initializeDailyPatientChart();
+    initializeMonthlyPatientChart();
     
     // Add tab switching event listeners to redraw charts when tabs become visible
     const descriptiveTab = document.getElementById('descriptive-tab');
@@ -850,7 +850,7 @@ waitForChartJS(function() {
             console.log('Descriptive tab shown');
             if (lineChart) lineChart.resize();
             if (serviceBarChart) serviceBarChart.resize();
-            if (dailyPatientChart) dailyPatientChart.resize();
+            if (monthlyPatientChart) monthlyPatientChart.resize();
         });
     }
     
@@ -1326,45 +1326,45 @@ function initializePatientDoughnutChart() {
     console.log('Patient Doughnut Chart created successfully!');
 }
 
-// Daily Patient Count Chart (Descriptive Analytics)
-function initializeDailyPatientChart() {
-    console.log('Initializing Daily Patient Count Chart...');
-    const canvas = document.getElementById('dailyPatientChart');
+// Monthly Patient Count Chart (Descriptive Analytics)
+function initializeMonthlyPatientChart() {
+    console.log('Initializing Monthly Patient Count Chart...');
+    const canvas = document.getElementById('monthlyPatientChart');
     if (!canvas) {
-        console.error('Daily patient chart canvas not found');
+        console.error('Monthly patient chart canvas not found');
         return;
     }
     
-    // Get daily patient data from template
-    const dailyPatientData = [
-        {% for day_data in daily_patient_data %}
+    // Get monthly patient data from template
+    const monthlyPatientData = [
+        {% for month_data in monthly_patient_data %}
         {
-            date: '{{ day_data.date }}',
-            date_display: '{{ day_data.date_display }}',
-            patient_count: {{ day_data.patient_count }},
-            appointment_count: {{ day_data.appointment_count }}
+            date: '{{ month_data.date }}',
+            date_display: '{{ month_data.date_display }}',
+            patient_count: {{ month_data.patient_count }},
+            appointment_count: {{ month_data.appointment_count }}
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
     ];
     
-    if (dailyPatientData.length === 0) {
+    if (monthlyPatientData.length === 0) {
         canvas.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No patient data available for the selected period</div>';
         return;
     }
     
     // Prepare data for chart
-    const dailyLabels = dailyPatientData.map(d => {
-        // Format date for display (short format)
-        const date = new Date(d.date);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const monthlyLabels = monthlyPatientData.map(d => {
+        // Format date for display (month and year)
+        const date = new Date(d.date + '-01'); // Add day to make valid date
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     });
-    const patientCounts = dailyPatientData.map(d => d.patient_count);
-    const appointmentCounts = dailyPatientData.map(d => d.appointment_count);
+    const patientCounts = monthlyPatientData.map(d => d.patient_count);
+    const appointmentCounts = monthlyPatientData.map(d => d.appointment_count);
     
-    dailyPatientChart = new Chart(canvas, {
+    monthlyPatientChart = new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: dailyLabels,
+            labels: monthlyLabels,
             datasets: [
                 {
                     label: 'Unique Patients',
@@ -1411,7 +1411,7 @@ function initializeDailyPatientChart() {
                     callbacks: {
                         title: function(context) {
                             const index = context[0].dataIndex;
-                            return dailyPatientData[index].date_display;
+                            return monthlyPatientData[index].date_display;
                         },
                         label: function(context) {
                             let label = context.dataset.label || '';
@@ -1450,7 +1450,7 @@ function initializeDailyPatientChart() {
             }
         }
     });
-    console.log('Daily Patient Count Chart created successfully!');
+    console.log('Monthly Patient Count Chart created successfully!');
 }
 
 // Toggle Custom Date Range Panel

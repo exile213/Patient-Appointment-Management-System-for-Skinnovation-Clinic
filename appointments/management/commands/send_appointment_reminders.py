@@ -77,14 +77,39 @@ class Command(BaseCommand):
             all_today_appointments = Appointment.objects.filter(
                 appointment_date=now.date()
             )
+            self.stdout.write(f'\nDEBUG: ==========================================')
+            self.stdout.write(f'DEBUG: QUERY ANALYSIS')
+            self.stdout.write(f'DEBUG: ==========================================')
+            self.stdout.write(f'DEBUG: Current server time: {now}')
+            self.stdout.write(f'DEBUG: Current date: {now.date()}')
+            self.stdout.write(f'DEBUG: Current time: {now.time()}')
+            self.stdout.write(f'DEBUG: Timezone: {timezone.get_current_timezone()}')
             self.stdout.write(f'DEBUG: Total appointments for today (any status): {all_today_appointments.count()}')
             
             # Show all appointments for debugging
-            for apt in all_today_appointments:
+            if all_today_appointments.count() > 0:
+                self.stdout.write(f'\nDEBUG: All appointments for today:')
+                for apt in all_today_appointments:
+                    patient_name = apt.patient.get_full_name() if apt.patient else "NO PATIENT"
+                    self.stdout.write(
+                        f'  - Appointment #{apt.id}: '
+                        f'Status={apt.status}, '
+                        f'Date={apt.appointment_date}, '
+                        f'Time={apt.appointment_time}, '
+                        f'Patient={patient_name}, '
+                        f'Service={apt.get_service_name()}'
+                    )
+            else:
                 self.stdout.write(
-                    f'  - Appointment #{apt.id}: Status={apt.status}, Time={apt.appointment_time}, '
-                    f'Patient={apt.patient.get_full_name() if apt.patient else "None"}, '
-                    f'Service={apt.get_service_name()}'
+                    self.style.ERROR(
+                        f'\n⚠️  NO APPOINTMENTS FOUND FOR TODAY ({now.date()})'
+                    )
+                )
+                self.stdout.write(
+                    f'   → Check if appointment date matches today\'s date'
+                )
+                self.stdout.write(
+                    f'   → Check if appointment exists in database'
                 )
             
             # Now filter by status
@@ -95,15 +120,31 @@ class Command(BaseCommand):
             
             self.stdout.write(f'\nDEBUG: Appointments with status confirmed/scheduled: {appointments.count()}')
             
+            if appointments.count() == 0 and all_today_appointments.count() > 0:
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'\n⚠️  WARNING: Found {all_today_appointments.count()} appointments for today, '
+                        f'but NONE have status "confirmed" or "scheduled"'
+                    )
+                )
+                self.stdout.write(f'   → Check appointment statuses in the list above')
+            
             # Filter appointments that are approximately 1 hour away
             filtered_appointments = []
             for apt in appointments:
                 # Combine appointment date and time into datetime
-                appointment_datetime = timezone.make_aware(
-                    datetime.combine(apt.appointment_date, apt.appointment_time)
-                )
+                # Use the same timezone as 'now' to avoid timezone mismatches
+                naive_datetime = datetime.combine(apt.appointment_date, apt.appointment_time)
                 
-                # Check if appointment is between 55-65 minutes away (to avoid multiple sends)
+                # Check if 'now' is timezone-aware to determine how to make appointment datetime
+                if timezone.is_aware(now):
+                    # Use the same timezone as 'now'
+                    appointment_datetime = timezone.make_aware(naive_datetime, timezone.get_current_timezone())
+                else:
+                    # If now is naive, make appointment naive too
+                    appointment_datetime = naive_datetime
+                
+                # Check if appointment is between 50-70 minutes away (expanded window for 15-min cron)
                 time_diff = (appointment_datetime - now).total_seconds() / 60
                 self.stdout.write(
                     f'\nDEBUG: Appointment #{apt.id}:'
@@ -114,17 +155,20 @@ class Command(BaseCommand):
                 self.stdout.write(f'  - Current datetime: {now}')
                 self.stdout.write(f'  - Time difference: {time_diff:.1f} minutes')
                 
-                if 55 <= time_diff <= 65:
+                # Expanded window: 45-75 minutes (to account for 15-minute cron intervals)
+                # This ensures we catch appointments even if cron runs slightly early/late
+                # With 15-min intervals, this window ensures we catch appointments reliably
+                if 45 <= time_diff <= 75:
                     filtered_appointments.append(apt)
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f'  ✓ WITHIN WINDOW (55-65 min) - WILL PROCESS'
+                            f'  ✓ WITHIN WINDOW (45-75 min) - WILL PROCESS'
                         )
                     )
                 else:
                     self.stdout.write(
                         self.style.WARNING(
-                            f'  ✗ OUTSIDE WINDOW (needs 55-65 min, got {time_diff:.1f} min) - SKIPPED'
+                            f'  ✗ OUTSIDE WINDOW (needs 45-75 min, got {time_diff:.1f} min) - SKIPPED'
                         )
                     )
             
