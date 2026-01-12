@@ -10,7 +10,7 @@ from django.db import transaction
 import json
 import os
 from django.conf import settings
-from .models import Appointment, Notification, ClosedDay, Diagnosis
+from .models import Appointment, Notification, ClosedDay
 from accounts.models import User, AttendantProfile
 from services.models import Service, ServiceImage, HistoryLog
 from products.models import Product, ProductImage
@@ -66,8 +66,6 @@ def admin_dashboard(request):
     no_show_count = Appointment.objects.filter(status='no_show').count()
     pre_order_count = Appointment.objects.filter(product__isnull=False).count()
     total_patients = User.objects.filter(user_type='patient').count()
-    completed_count = Appointment.objects.filter(status='completed').count()
-    diagnoses_count = Diagnosis.objects.count()
     
     context = {
         'all_appointments': all_appointments,
@@ -79,8 +77,7 @@ def admin_dashboard(request):
         'no_show_count': no_show_count,
         'pre_order_count': pre_order_count,
         'total_patients': total_patients,
-        'completed_count': completed_count,
-        'diagnoses_count': diagnoses_count,
+        
         'today': today,
     }
     
