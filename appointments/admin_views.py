@@ -6,6 +6,7 @@ from datetime import datetime
 from django.db.models import Q, Sum, Count, Max
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.db import transaction
 from .models import Appointment, Notification, ClosedDay
 from accounts.models import User, AttendantProfile
 from services.models import Service, ServiceImage, HistoryLog
@@ -997,6 +998,116 @@ def get_attendant_display_name(user):
         return f"Attendant {number} - {name}"
     # Fallback if username doesn't match pattern
     return user.get_full_name() or user.username
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_seed_diagnoses(request):
+    """Preview and seed minimal, realistic Diagnosis records for completed appointments that lack one.
+
+    GET: show preview (count and sample). POST: create diagnoses (batch-limited).
+    This view is temporary — remove after use.
+    """
+    from .models import Diagnosis
+
+    # Query completed appointments that don't have a Diagnosis yet
+    qs = Appointment.objects.filter(status='completed', diagnosis__isnull=True).select_related(
+        'patient', 'service', 'product', 'package', 'attendant'
+    ).order_by('id')
+
+    total = qs.count()
+    sample = list(qs[:20])
+
+    if request.method == 'POST':
+        # Options: dry run and batch size
+        dry_run = request.POST.get('dry_run') == '1'
+        try:
+            batch_size = int(request.POST.get('batch_size') or 200)
+        except Exception:
+            batch_size = 200
+        batch_size = max(1, min(batch_size, 1000))
+
+        # Deterministic, small curated seed data for realism
+        diag_notes = [
+            'Mild acneiform eruption; advised topical cleanser and sunscreen.',
+            'Superficial pigmentation noted; recommend skin-lightening serum and sunscreen.',
+            'Localized wart; plan cryotherapy or topical salicylic acid treatment.',
+            'Skin tag observed; discuss removal options and consent.',
+            'Comedonal acne predominant; advised extraction and topical retinoid.',
+            'Post-inflammatory hyperpigmentation; advised topical regimen and sunscreen.'
+        ]
+        prescriptions = [
+            'Topical cleanser twice daily; sunscreen SPF30+; review in 4 weeks.',
+            'Hydroquinone 4% nightly; sunscreen daily; monitor for irritation.',
+            'Cryotherapy session recommended; paracetamol PRN for discomfort.',
+            'Removal procedure discussed; topical antibiotic if needed post-procedure.',
+            'Topical retinoid at night; gentle moisturizer AM/PM.',
+            'Azelaic acid 15% twice daily; sunscreen; follow-up in 6 weeks.'
+        ]
+        skin_types = ['I', 'II', 'III', 'IV', 'V', 'VI']
+        lesion_types = ['warts', 'moles', 'skin_tags', 'syringoma', 'milia', 'other']
+
+        created_ids = []
+        errors = []
+
+        # Process in a transaction; limit to batch_size to keep request short
+        processed = 0
+        try:
+            with transaction.atomic():
+                for appt in qs[:batch_size]:
+                    processed += 1
+                    try:
+                        # Build deterministic index from appointment id
+                        idx = appt.id % len(diag_notes)
+
+                        diag_date = appt.appointment_date or timezone.now().date()
+                        diag_time = appt.appointment_time or timezone.now().time()
+
+                        # Minimal realistic fields
+                        defaults = {
+                            'diagnosed_by': request.user,
+                            'diagnosis_date': diag_date,
+                            'diagnosis_time': diag_time,
+                            'notes': diag_notes[idx],
+                            'prescription': prescriptions[idx % len(prescriptions)],
+                            'skin_type': skin_types[idx % len(skin_types)],
+                            'lesion_type': lesion_types[idx % len(lesion_types)],
+                        }
+
+                        if dry_run:
+                            # Do not persist during dry run
+                            continue
+
+                        # Create Diagnosis (OneToOne with Appointment)
+                        diag = Diagnosis.objects.create(appointment=appt, **defaults)
+                        created_ids.append(diag.id)
+                    except Exception as e:
+                        errors.append(f'Appointment {appt.id}: {e}')
+        except Exception as e:
+            messages.error(request, f'Error during seeding: {e}')
+            return redirect('appointments:admin_maintenance')
+
+        if dry_run:
+            messages.info(request, f'Dry run: {total} appointments found; previewed {min(total, batch_size)} items.')
+        else:
+            messages.success(request, f'Created {len(created_ids)} diagnoses (processed {processed}).')
+
+        context = {
+            'total': total,
+            'sample': sample,
+            'created_ids': created_ids,
+            'errors': errors,
+            'dry_run': dry_run,
+            'batch_size': batch_size,
+        }
+        return render(request, 'appointments/seed_diagnoses.html', context)
+
+    # GET - preview
+    context = {
+        'total': total,
+        'sample': sample,
+    }
+    return render(request, 'appointments/seed_diagnoses.html', context)
 
 
 @login_required

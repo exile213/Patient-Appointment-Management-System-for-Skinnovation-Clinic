@@ -1,0 +1,75 @@
+{% extends 'appointments/admin_base.html' %}
+{% load static %}
+
+{% block title %}Seed Diagnoses - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Seed Diagnoses (Temporary)</h4>
+      <p class="text-muted">This tool will create one minimal, realistic Diagnosis record for each completed appointment that currently has no diagnosis. This view is temporary — remove after use.</p>
+
+      <div class="mb-3">
+        <strong>Total affected appointments:</strong> {{ total|default:0 }}
+      </div>
+
+      {% if created_ids %}
+      <div class="alert alert-success">Created diagnoses: {{ created_ids|length }}</div>
+      {% endif %}
+      {% if errors %}
+      <div class="alert alert-danger">Errors: <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+      {% endif %}
+
+      <h5>Preview (up to 20)</h5>
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in sample %}
+          <tr>
+            <td>{{ appt.id }}</td>
+            <td>{{ appt.patient.get_full_name }}</td>
+            <td>{{ appt.get_service_name }}</td>
+            <td>{{ appt.appointment_date }}</td>
+            <td>{{ appt.appointment_time }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5">No appointments found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <form method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="row g-2 align-items-center">
+          <div class="col-auto">
+            <label class="form-label">Batch size</label>
+            <input type="number" name="batch_size" class="form-control" value="200" min="1" max="1000">
+          </div>
+          <div class="col-auto pt-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="1" id="dry_run" name="dry_run" {% if dry_run %}checked{% endif %}>
+              <label class="form-check-label" for="dry_run">Dry run (do not persist)</label>
+            </div>
+          </div>
+          <div class="col-auto pt-4">
+            <button type="submit" class="btn btn-primary">Run Seed</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="mt-3">
+        <a href="{% url 'appointments:admin_maintenance' %}" class="btn btn-link">Back to maintenance</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
