@@ -299,13 +299,15 @@ class Command(BaseCommand):
                     message = (
                         f"Hi {context.get('customer_name', 'Customer')}, reminder: You have an appointment on "
                         f"{context.get('appointment_date', '')} at {context.get('appointment_time', '')} "
-                        f"for {context.get('service_name', 'service')}. Please log in to confirm or reschedule."
+                        f"for {context.get('service_name', 'service')}. Please log in to confirm or reschedule. "
+                        f"- Skinovation Beauty Clinic. This is an automated message please don't reply"
                     )
                 else:
                     message = (
                         f"Hello {context.get('customer_name', 'Customer')}, reminder: Your appointment for "
                         f"{context.get('service_name', 'service')} is on {context.get('appointment_date', '')} "
-                        f"at {context.get('appointment_time', '')}. Thank you! - Skinovation Beauty Clinic"
+                        f"at {context.get('appointment_time', '')}. Thank you! - Skinovation Beauty Clinic. "
+                        f"This is an automated message please don't reply"
                     )
                 
                 # Use the same SMS sending method as admin test page

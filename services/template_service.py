@@ -104,7 +104,7 @@ class SMSTemplateService:
         fallback_message = (
             "Hello [customer_name], your appointment for [service_name] is scheduled on "
             "[appointment_date] at [appointment_time] with [staff_name] in [room_name]. "
-            "Thank you! - Skinovation Beauty Clinic"
+            "Thank you! - Skinovation Beauty Clinic. This is an automated message please don't reply"
         )
 
         rendered_message = self.render_text(fallback_message, context)
@@ -132,7 +132,7 @@ class SMSTemplateService:
         fallback_message = (
             "Hello [customer_name], your appointment for [service_name] is confirmed on "
             "[appointment_date] at [appointment_time] with [staff_name] in [room_name]. "
-            "Thank you! - Skinovation Beauty Clinic"
+            "Thank you! - Skinovation Beauty Clinic. This is an automated message please don't reply"
         )
 
         rendered_message = self.render_text(fallback_message, context)
@@ -160,7 +160,7 @@ class SMSTemplateService:
         fallback_message = (
             "Hello [customer_name], reminder: Your appointment for [service_name] is on "
             "[appointment_date] at [appointment_time] with [staff_name] in [room_name]. "
-            "Thank you! - Skinovation Beauty Clinic"
+            "Thank you! - Skinovation Beauty Clinic. This is an automated message please don't reply"
         )
 
         rendered_message = self.render_text(fallback_message, context)
@@ -188,7 +188,7 @@ class SMSTemplateService:
         fallback_message = (
             "Hi [customer_name], reminder: You have an appointment on [appointment_date] at [appointment_time] "
             "for [service_name] with [staff_name]. Please log in to your account to confirm or reschedule. "
-            "Visit: skinovation.com"
+            "Visit: skinovation.com - Skinovation Beauty Clinic. This is an automated message please don't reply"
         )
 
         rendered_message = self.render_text(fallback_message, context)
@@ -216,7 +216,8 @@ class SMSTemplateService:
         
         fallback_message = (
             "Hi [customer_name], your appointment on [appointment_date] at [appointment_time] "
-            "for [service_name] with [staff_name] was cancelled."
+            "for [service_name] with [staff_name] was cancelled. - Skinovation Beauty Clinic. "
+            "This is an automated message please don't reply"
         )
 
         rendered_message = self.render_text(fallback_message, context)
@@ -261,12 +262,14 @@ class SMSTemplateService:
         if portal_link:
             fallback_message = (
                 "Hi [customer_name], your attendant is unavailable for your appointment on [appointment_date] at [appointment_time] "
-                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule: " + portal_link
+                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule: " + portal_link +
+                " - Skinovation Beauty Clinic. This is an automated message please don't reply"
             )
         else:
             fallback_message = (
                 "Hi [customer_name], your attendant is unavailable for your appointment on [appointment_date] at [appointment_time] "
-                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule."
+                "for [service_name]. Please log in to your portal to confirm your new attendant or reschedule. "
+                "- Skinovation Beauty Clinic. This is an automated message please don't reply"
             )
 
         from .sms_service import sms_service
