@@ -13,11 +13,6 @@
         </h1>
         <p class="text-muted mb-0">Manage appointments, orders, and patient profiles</p>
     </div>
-    <div class="ms-3 d-flex align-items-start">
-        <a href="{% url 'appointments:admin_seed_diagnoses' %}" class="btn btn-sm btn-warning" title="Seed missing diagnoses (temporary)">
-            <i class="fas fa-diagnoses"></i>&nbsp;Seed Diagnoses
-        </a>
-    </div>
     {% include 'appointments/includes/admin_notification_icon.html' %}
 </div>
 
@@ -57,6 +52,18 @@
         <div class="stats-card blue">
             <div class="stats-number">{{ total_patients }}</div>
             <div class="stats-label">Total Patients</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card teal">
+            <div class="stats-number">{{ completed_count }}</div>
+            <div class="stats-label">Completed Appointments</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stats-card indigo">
+            <div class="stats-number">{{ diagnoses_count }}</div>
+            <div class="stats-label">Diagnoses Done</div>
         </div>
     </div>
 </div>
