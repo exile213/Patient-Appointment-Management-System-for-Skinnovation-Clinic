@@ -26,9 +26,14 @@ class DiagnosisAdmin(admin.ModelAdmin):
     search_fields = ('appointment__patient__first_name', 'appointment__patient__last_name', 'notes', 'prescription')
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('-diagnosis_date', '-diagnosis_time')
+    raw_id_fields = ('appointment',)
+    list_select_related = ('appointment__patient', 'diagnosed_by')
 
     def get_patient(self, obj):
-        return obj.appointment.patient.get_full_name()
+        try:
+            return obj.appointment.patient.get_full_name()
+        except Exception:
+            return ''
     get_patient.short_description = 'Patient'
 
 
@@ -39,9 +44,14 @@ class TreatmentAdmin(admin.ModelAdmin):
     list_filter = ('treatment_date',)
     search_fields = ('appointment__patient__first_name', 'appointment__patient__last_name', 'notes')
     readonly_fields = ('created_at', 'updated_at')
+    raw_id_fields = ('appointment',)
+    list_select_related = ('appointment__patient',)
 
     def get_patient(self, obj):
-        return obj.appointment.patient.get_full_name()
+        try:
+            return obj.appointment.patient.get_full_name()
+        except Exception:
+            return ''
     get_patient.short_description = 'Patient'
 
 

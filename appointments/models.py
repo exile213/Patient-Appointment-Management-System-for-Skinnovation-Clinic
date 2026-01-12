@@ -70,7 +70,13 @@ class Appointment(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"Appointment {self.id} - {self.patient.get_full_name()}"
+        try:
+            patient_name = self.patient.get_full_name() if self.patient else None
+        except Exception:
+            patient_name = None
+        if patient_name:
+            return f"Appointment {self.id} - {patient_name}"
+        return f"Appointment {self.id}"
     
     def get_service_name(self):
         """Get the name of the service, product, or package"""
