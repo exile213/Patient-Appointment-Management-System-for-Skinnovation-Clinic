@@ -21,6 +21,13 @@ class Command(BaseCommand):
         filter_type = options['filter']
         now = timezone.now()
         
+        # Write initial debug message to confirm command is running
+        self.stdout.write('='*60)
+        self.stdout.write('APPOINTMENT REMINDER COMMAND STARTED')
+        self.stdout.write(f'Filter: {filter_type}')
+        self.stdout.write(f'Server Time: {now}')
+        self.stdout.write('='*60)
+        
         # Check SMS configuration
         from django.conf import settings
         sms_enabled = getattr(settings, 'SMS_ENABLED', False)
@@ -62,10 +69,31 @@ class Command(BaseCommand):
             
         elif filter_type == '1hour':
             # For 1 hour before, check appointments happening in the next hour
+            self.stdout.write(f'\nDEBUG: Current server time: {now}')
+            self.stdout.write(f'DEBUG: Current date: {now.date()}')
+            self.stdout.write(f'DEBUG: Current time: {now.time()}')
+            
+            # Get all appointments for today first (without status filter to see what exists)
+            all_today_appointments = Appointment.objects.filter(
+                appointment_date=now.date()
+            )
+            self.stdout.write(f'DEBUG: Total appointments for today (any status): {all_today_appointments.count()}')
+            
+            # Show all appointments for debugging
+            for apt in all_today_appointments:
+                self.stdout.write(
+                    f'  - Appointment #{apt.id}: Status={apt.status}, Time={apt.appointment_time}, '
+                    f'Patient={apt.patient.get_full_name() if apt.patient else "None"}, '
+                    f'Service={apt.get_service_name()}'
+                )
+            
+            # Now filter by status
             appointments = Appointment.objects.filter(
                 appointment_date=now.date(),
                 status__in=['confirmed', 'scheduled']
             )
+            
+            self.stdout.write(f'\nDEBUG: Appointments with status confirmed/scheduled: {appointments.count()}')
             
             # Filter appointments that are approximately 1 hour away
             filtered_appointments = []
@@ -78,24 +106,30 @@ class Command(BaseCommand):
                 # Check if appointment is between 55-65 minutes away (to avoid multiple sends)
                 time_diff = (appointment_datetime - now).total_seconds() / 60
                 self.stdout.write(
-                    f'DEBUG: Appointment #{apt.id} - {apt.patient.get_full_name()} at {apt.appointment_time} - '
-                    f'Time diff: {time_diff:.1f} minutes'
+                    f'\nDEBUG: Appointment #{apt.id}:'
                 )
+                self.stdout.write(f'  - Patient: {apt.patient.get_full_name() if apt.patient else "None"}')
+                self.stdout.write(f'  - Appointment time: {apt.appointment_time}')
+                self.stdout.write(f'  - Appointment datetime: {appointment_datetime}')
+                self.stdout.write(f'  - Current datetime: {now}')
+                self.stdout.write(f'  - Time difference: {time_diff:.1f} minutes')
+                
                 if 55 <= time_diff <= 65:
                     filtered_appointments.append(apt)
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f'  → Found appointment within window (55-65 min)'
+                            f'  ✓ WITHIN WINDOW (55-65 min) - WILL PROCESS'
                         )
                     )
                 else:
                     self.stdout.write(
                         self.style.WARNING(
-                            f'  → Outside window (needs 55-65 min, got {time_diff:.1f} min)'
+                            f'  ✗ OUTSIDE WINDOW (needs 55-65 min, got {time_diff:.1f} min) - SKIPPED'
                         )
                     )
             
             appointments = filtered_appointments
+            self.stdout.write(f'\nDEBUG: Final filtered appointments (within 55-65 min window): {len(appointments)}')
             reminder_type = 'reminder'
             reminder_type_db = 'one_hour'
             message_suffix = "(1 hour before)"
@@ -106,15 +140,52 @@ class Command(BaseCommand):
         already_sent_count = 0
         
         for appointment in appointments:
+            # Validate appointment has all required fields
+            if not appointment.patient:
+                skipped_count += 1
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'Appointment #{appointment.id} has no patient assigned - SKIPPED'
+                    )
+                )
+                continue
+            
+            if not appointment.attendant:
+                skipped_count += 1
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'Appointment #{appointment.id} has no attendant assigned - SKIPPED'
+                    )
+                )
+                continue
+            
             # Check if patient has phone number
             if not appointment.patient.phone:
                 skipped_count += 1
                 self.stdout.write(
                     self.style.WARNING(
-                        f'No phone number for {appointment.patient.get_full_name()} - Appointment #{appointment.id}'
+                        f'No phone number for {appointment.patient.get_full_name()} (Appointment #{appointment.id}) - SKIPPED'
                     )
                 )
                 continue
+            
+            # Check if appointment has at least one service/product/package
+            if not appointment.service and not appointment.product and not appointment.package:
+                skipped_count += 1
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'Appointment #{appointment.id} has no service/product/package assigned - SKIPPED'
+                    )
+                )
+                continue
+            
+            self.stdout.write(
+                f'DEBUG: Processing Appointment #{appointment.id} - '
+                f'Patient: {appointment.patient.get_full_name()}, '
+                f'Phone: {appointment.patient.phone}, '
+                f'Service: {appointment.get_service_name()}, '
+                f'Status: {appointment.status}'
+            )
             
             # Check if reminder has already been sent (idempotency check)
             existing_reminder = SMSReminder.objects.filter(
@@ -136,15 +207,36 @@ class Command(BaseCommand):
             
             # Send SMS reminder - use same direct method as admin SMS test page
             # But use template service to format the message properly
-            if reminder_type == 'two_day_reminder':
-                # Use template service method for 2-day reminder
-                sms_result = template_service.send_two_day_reminder(appointment)
-            else:
-                # Use template service method for regular reminder (1day or 1hour)
-                sms_result = template_service.send_appointment_reminder(appointment)
+            self.stdout.write(
+                f'DEBUG: Sending SMS to {appointment.patient.get_full_name()} '
+                f'({appointment.patient.phone}) - Reminder type: {reminder_type}'
+            )
+            
+            try:
+                if reminder_type == 'two_day_reminder':
+                    # Use template service method for 2-day reminder
+                    sms_result = template_service.send_two_day_reminder(appointment)
+                else:
+                    # Use template service method for regular reminder (1day or 1hour)
+                    sms_result = template_service.send_appointment_reminder(appointment)
+                
+                # Debug: Show SMS result
+                self.stdout.write(f'DEBUG: Template service SMS result: {sms_result}')
+            except Exception as e:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'Exception in template service: {str(e)}'
+                    )
+                )
+                sms_result = {'success': False, 'error': str(e)}
             
             # If template service fails, fall back to direct SMS (like admin test page)
             if not sms_result.get('success'):
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'  → Template service failed, trying fallback method...'
+                    )
+                )
                 # Prepare simple message as fallback
                 context = template_service._prepare_appointment_context(appointment)
                 if reminder_type == 'two_day_reminder':
@@ -166,8 +258,10 @@ class Command(BaseCommand):
                     message,
                     user=None
                 )
+                self.stdout.write(f'DEBUG: Fallback SMS result: {sms_result}')
             
             patient_sms_sent = sms_result.get('success', False)
+            self.stdout.write(f'DEBUG: Final SMS success status: {patient_sms_sent}')
             
             if patient_sms_sent:
                 # Record that the reminder was sent

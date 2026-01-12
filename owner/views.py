@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count, Sum, Avg, Q, Max, DecimalField
-from django.db.models.functions import TruncMonth, TruncWeek
+from django.db.models.functions import TruncMonth, TruncWeek, TruncDay
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta
 from accounts.models import User
@@ -280,6 +280,51 @@ def owner_dashboard(request):
         count=Count('id')
     ).order_by('-count')
     
+    # Daily Patient Count (filtered) - count unique patients per day
+    daily_patient_counts = appointments_qs.annotate(
+        day=TruncDay('appointment_date')
+    ).values('day').annotate(
+        patient_count=Count('patient', distinct=True),
+        appointment_count=Count('id')
+    ).order_by('day')
+    
+    # Format daily patient counts for template
+    daily_patient_data = []
+    for entry in daily_patient_counts:
+        daily_patient_data.append({
+            'date': entry['day'].strftime('%Y-%m-%d') if entry['day'] else '',
+            'date_display': entry['day'].strftime('%b %d, %Y') if entry['day'] else '',
+            'patient_count': entry['patient_count'],
+            'appointment_count': entry['appointment_count']
+        })
+    
+    # Calculate daily patient count insights
+    if daily_patient_data:
+        total_days = len(daily_patient_data)
+        total_unique_patients = sum(d['patient_count'] for d in daily_patient_data)
+        avg_patients_per_day = total_unique_patients / total_days if total_days > 0 else 0
+        max_patients_day = max(daily_patient_data, key=lambda x: x['patient_count'])
+        min_patients_day = min(daily_patient_data, key=lambda x: x['patient_count'])
+        
+        # Determine patient flow health
+        if avg_patients_per_day >= 10:
+            patient_flow_status = 'excellent'
+            patient_flow_message = f'Strong daily patient flow - averaging {avg_patients_per_day:.1f} unique patients per day'
+        elif avg_patients_per_day >= 5:
+            patient_flow_status = 'good'
+            patient_flow_message = f'Moderate daily patient flow - averaging {avg_patients_per_day:.1f} unique patients per day'
+        else:
+            patient_flow_status = 'low'
+            patient_flow_message = f'Low daily patient flow - averaging {avg_patients_per_day:.1f} unique patients per day'
+    else:
+        total_days = 0
+        total_unique_patients = 0
+        avg_patients_per_day = 0
+        max_patients_day = None
+        min_patients_day = None
+        patient_flow_status = 'none'
+        patient_flow_message = 'No patient data available for the selected period'
+    
     # Treatment correlations - limit and optimize
     try:
         correlations = TreatmentCorrelation.objects.select_related(
@@ -472,6 +517,11 @@ def owner_dashboard(request):
         'revenue_message': revenue_message,
         'performance_status': performance_status,
         'performance_message': performance_message,
+        # Daily patient count insights
+        'patient_flow_status': patient_flow_status,
+        'patient_flow_message': patient_flow_message,
+        'avg_patients_per_day': round(avg_patients_per_day, 1),
+        'total_unique_patients': total_unique_patients,
     }
     
     context = {
@@ -491,6 +541,9 @@ def owner_dashboard(request):
         'attendants': attendants,
         'notification_count': notification_count,
         'analytics_insights': analytics_insights,
+        'daily_patient_data': daily_patient_data,
+        'max_patients_day': max_patients_day,
+        'min_patients_day': min_patients_day,
         # Filter values for template
         'time_period': time_period,
         'from_month': from_month,

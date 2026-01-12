@@ -541,6 +541,75 @@
                             </div>
                         </div>
 
+                        <hr style="margin: 2rem 0; border-color: #e9ecef;">
+
+                        <!-- Analytics Section 3: Daily Count of Patients -->
+                        <div class="mb-4">
+                            <h5 style="color: #667eea; margin-bottom: 0.3rem; font-weight: 700;">
+                                <i class="fas fa-users"></i> Daily Count of Patients
+                            </h5>
+                            <p style="color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">Daily breakdown of unique patients and appointments</p>
+                            
+                            <!-- Graph -->
+                            <div class="chart-wrapper">
+                                <canvas id="dailyPatientChart" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                            
+                            <!-- Related Table -->
+                            <div class="table-responsive mt-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Unique Patients</th>
+                                            <th>Total Appointments</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for day_data in daily_patient_data|slice:":15" %}
+                                        <tr>
+                                            <td><strong>{{ day_data.date_display }}</strong></td>
+                                            <td><strong>{{ day_data.patient_count }}</strong></td>
+                                            <td>{{ day_data.appointment_count }}</td>
+                                            <td>
+                                                {% if day_data.patient_count >= 10 %}
+                                                    <span class="badge bg-success">High</span>
+                                                {% elif day_data.patient_count >= 5 %}
+                                                    <span class="badge" style="background-color: #ffc107; color: #000;">Moderate</span>
+                                                {% else %}
+                                                    <span class="badge" style="background-color: #fd7e14;">Low</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No patient data available for the selected period</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Dynamic Daily Patient Count Insight Card -->
+                            <div class="alert {% if analytics_insights.patient_flow_status == 'excellent' %}alert-success{% elif analytics_insights.patient_flow_status == 'good' %}alert-info{% elif analytics_insights.patient_flow_status == 'low' %}alert-warning{% else %}alert-secondary{% endif %}" style="background: {% if analytics_insights.patient_flow_status == 'excellent' %}#e7f9f0{% elif analytics_insights.patient_flow_status == 'good' %}#e7f3ff{% elif analytics_insights.patient_flow_status == 'low' %}#fff3cd{% else %}#f8f9fa{% endif %}; border-left: 4px solid {% if analytics_insights.patient_flow_status == 'excellent' %}#28a745{% elif analytics_insights.patient_flow_status == 'good' %}#0d6efd{% elif analytics_insights.patient_flow_status == 'low' %}#ffc107{% else %}#6c757d{% endif %}; margin-top: 1rem;">
+                                <h6 style="color: {% if analytics_insights.patient_flow_status == 'excellent' %}#28a745{% elif analytics_insights.patient_flow_status == 'good' %}#0d6efd{% elif analytics_insights.patient_flow_status == 'low' %}#856404{% else %}#6c757d{% endif %}; font-weight: 700; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-{% if analytics_insights.patient_flow_status == 'excellent' %}check-circle{% elif analytics_insights.patient_flow_status == 'good' %}info-circle{% elif analytics_insights.patient_flow_status == 'low' %}exclamation-triangle{% else %}question-circle{% endif %}"></i> Daily Patient Flow Analysis
+                                </h6>
+                                <ul style="margin-bottom: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                                    <li><strong>{{ analytics_insights.patient_flow_message }}</strong></li>
+                                    {% if max_patients_day %}
+                                    <li><strong>Peak Day:</strong> {{ max_patients_day.date_display }} with {{ max_patients_day.patient_count }} unique patients ({{ max_patients_day.appointment_count }} appointments)</li>
+                                    {% endif %}
+                                    {% if min_patients_day and min_patients_day.patient_count != max_patients_day.patient_count %}
+                                    <li><strong>Lowest Day:</strong> {{ min_patients_day.date_display }} with {{ min_patients_day.patient_count }} unique patients ({{ min_patients_day.appointment_count }} appointments)</li>
+                                    {% endif %}
+                                    <li>{% if analytics_insights.avg_patients_per_day >= 10 %}Consistent high patient volume indicates strong demand and effective marketing{% elif analytics_insights.avg_patients_per_day >= 5 %}Moderate patient flow - consider promotional campaigns to boost daily visits{% else %}Low daily patient count suggests need for marketing initiatives and service promotion{% endif %}</li>
+                                    <li>{% if max_patients_day and max_patients_day.patient_count > analytics_insights.avg_patients_per_day|add:"5" %}Peak days show significant demand spikes - consider capacity planning for high-traffic periods{% elif max_patients_day %}Patient distribution is relatively even across days{% else %}Analyze patterns to identify optimal scheduling and resource allocation{% endif %}</li>
+                                </ul>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- DIAGNOSTIC ANALYTICS TAB -->
@@ -729,6 +798,7 @@ let lineChart = null;
 let serviceBarChart = null;
 let serviceQualityScatter = null;
 let patientDoughnutChart = null;
+let dailyPatientChart = null;
 
 // Wait for Chart.js and DOM to be ready
 function waitForChartJS(callback, maxAttempts) {
@@ -769,6 +839,7 @@ waitForChartJS(function() {
     initializeServiceBarChart();
     initializeServiceQualityScatter();
     initializePatientDoughnutChart();
+    initializeDailyPatientChart();
     
     // Add tab switching event listeners to redraw charts when tabs become visible
     const descriptiveTab = document.getElementById('descriptive-tab');
@@ -779,6 +850,7 @@ waitForChartJS(function() {
             console.log('Descriptive tab shown');
             if (lineChart) lineChart.resize();
             if (serviceBarChart) serviceBarChart.resize();
+            if (dailyPatientChart) dailyPatientChart.resize();
         });
     }
     
@@ -1017,16 +1089,16 @@ function initializeServiceBarChart() {
         return;
     }
 
-    const labels = serviceData.map(s => s.name);
-    const data = serviceData.map(s => s.bookings);
+    const serviceLabels = serviceData.map(s => s.name);
+    const serviceBookings = serviceData.map(s => s.bookings);
 
     serviceBarChart = new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: serviceLabels,
             datasets: [{
                 label: 'Total Bookings',
-                data: data,
+                data: serviceBookings,
                 backgroundColor: 'rgba(102, 126, 234, 0.7)',
                 borderColor: '#667eea',
                 borderWidth: 2,
@@ -1116,7 +1188,7 @@ function initializeServiceQualityScatter() {
     }));
 
     // Color coding based on performance quadrants
-    const colors = scatterData.map(point => {
+    const scatterColors = scatterData.map(point => {
         if (point.x >= 4.5 && point.y >= 60) return '#28a745';  // Green: High rating, high retention
         else if (point.x >= 4.0 && point.y >= 40) return '#0dcaf0';  // Blue: Good performance
         else if (point.x < 3.5 && point.y < 30) return '#dc3545';  // Red: Poor rating, low retention
@@ -1130,8 +1202,8 @@ function initializeServiceQualityScatter() {
             datasets: [{
                 label: 'Service Quality',
                 data: scatterData,
-                backgroundColor: colors,
-                borderColor: colors,
+                backgroundColor: scatterColors,
+                borderColor: scatterColors,
                 borderWidth: 1
             }]
         },
@@ -1208,17 +1280,17 @@ function initializePatientDoughnutChart() {
     
     console.log('Churn pattern data:', { oneTimeCustomers, earlyDropoff, lostRegulars, activeRegulars });
 
-    const data = [oneTimeCustomers, earlyDropoff, lostRegulars, activeRegulars];
-    const labels = ['One-Time Customers', 'Early Dropoff (2-3 visits)', 'Lost Regulars (4+ visits)', 'Active Regulars'];
-    const colors = ['#dc3545', '#fd7e14', '#ffc107', '#28a745'];  // Red (Poor), Orange (Low), Yellow (Moderate), Green (High)
+    const doughnutData = [oneTimeCustomers, earlyDropoff, lostRegulars, activeRegulars];
+    const doughnutLabels = ['One-Time Customers', 'Early Dropoff (2-3 visits)', 'Lost Regulars (4+ visits)', 'Active Regulars'];
+    const doughnutColors = ['#dc3545', '#fd7e14', '#ffc107', '#28a745'];  // Red (Poor), Orange (Low), Yellow (Moderate), Green (High)
 
     patientDoughnutChart = new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: labels,
+            labels: doughnutLabels,
             datasets: [{
-                data: data,
-                backgroundColor: colors,
+                data: doughnutData,
+                backgroundColor: doughnutColors,
                 borderColor: '#fff',
                 borderWidth: 3
             }]
@@ -1252,6 +1324,133 @@ function initializePatientDoughnutChart() {
         }
     });
     console.log('Patient Doughnut Chart created successfully!');
+}
+
+// Daily Patient Count Chart (Descriptive Analytics)
+function initializeDailyPatientChart() {
+    console.log('Initializing Daily Patient Count Chart...');
+    const canvas = document.getElementById('dailyPatientChart');
+    if (!canvas) {
+        console.error('Daily patient chart canvas not found');
+        return;
+    }
+    
+    // Get daily patient data from template
+    const dailyPatientData = [
+        {% for day_data in daily_patient_data %}
+        {
+            date: '{{ day_data.date }}',
+            date_display: '{{ day_data.date_display }}',
+            patient_count: {{ day_data.patient_count }},
+            appointment_count: {{ day_data.appointment_count }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    if (dailyPatientData.length === 0) {
+        canvas.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No patient data available for the selected period</div>';
+        return;
+    }
+    
+    // Prepare data for chart
+    const dailyLabels = dailyPatientData.map(d => {
+        // Format date for display (short format)
+        const date = new Date(d.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    const patientCounts = dailyPatientData.map(d => d.patient_count);
+    const appointmentCounts = dailyPatientData.map(d => d.appointment_count);
+    
+    dailyPatientChart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: dailyLabels,
+            datasets: [
+                {
+                    label: 'Unique Patients',
+                    data: patientCounts,
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Total Appointments',
+                    data: appointmentCounts,
+                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                    borderColor: '#28a745',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    yAxisID: 'y'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        title: function(context) {
+                            const index = context[0].dataIndex;
+                            return dailyPatientData[index].date_display;
+                        },
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += context.parsed.y;
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Count'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        font: {
+                            size: 10
+                        }
+                    }
+                }
+            }
+        }
+    });
+    console.log('Daily Patient Count Chart created successfully!');
 }
 
 // Toggle Custom Date Range Panel
