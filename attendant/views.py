@@ -9,6 +9,11 @@ from django.views.decorators.http import require_http_methods
 from accounts.models import User
 from appointments.models import Appointment, Notification
 import json
+from django.conf import settings
+from datetime import datetime, timedelta
+from django.db import transaction
+from appointments.models import Diagnosis
+from .forms import DiagnosisForm
 
 
 def is_attendant(user):
@@ -137,7 +142,24 @@ def attendant_appointments(request):
     paginator = Paginator(appointments, 25)  # 25 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+    # compute diagnose window flags for appointments in the current page for UX
+    now = timezone.now()
+    PRE = getattr(settings, 'APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES', 0)
+    POST = getattr(settings, 'APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES', 30)
+    for appt in page_obj.object_list:
+        try:
+            appt_dt = datetime.combine(appt.appointment_date, appt.appointment_time)
+            appt_dt = timezone.make_aware(appt_dt, timezone.get_current_timezone())
+        except Exception:
+            appt_dt = None
+
+        if appt_dt:
+            start = appt_dt - timedelta(minutes=PRE)
+            end = appt_dt + timedelta(minutes=POST)
+            appt.can_diagnose = (start <= now <= end) and (appt.attendant == request.user)
+        else:
+            appt.can_diagnose = False
+
     context = {
         'appointments': page_obj,
         'page_obj': page_obj,
@@ -184,8 +206,115 @@ def attendant_appointment_detail(request, appointment_id):
         'feedback': feedback,
         'attendant_feedback': attendant_feedback,
     }
+    # compute whether Diagnose action should be available for this appointment
+    try:
+        appt_dt = datetime.combine(appointment.appointment_date, appointment.appointment_time)
+        appt_dt = timezone.make_aware(appt_dt, timezone.get_current_timezone())
+    except Exception:
+        appt_dt = None
+
+    PRE = getattr(settings, 'APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES', 0)
+    POST = getattr(settings, 'APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES', 30)
+    now = timezone.now()
+    if appt_dt:
+        start = appt_dt - timedelta(minutes=PRE)
+        end = appt_dt + timedelta(minutes=POST)
+        context['can_diagnose'] = (start <= now <= end) and (appointment.attendant == request.user)
+    else:
+        context['can_diagnose'] = False
     
     return render(request, 'attendant/appointment_detail.html', context)
+
+
+@login_required(login_url='/accounts/login/attendant/')
+@user_passes_test(is_attendant, login_url='/accounts/login/attendant/')
+def attendant_diagnose_appointment(request, appointment_id):
+    """Render and handle diagnosis form for an appointment."""
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    # Verify attendant ownership
+    if appointment.attendant != request.user:
+        messages.error(request, 'You can only diagnose appointments assigned to you.')
+        return redirect('attendant:appointments')
+
+    # Time window enforcement
+    try:
+        appt_dt = datetime.combine(appointment.appointment_date, appointment.appointment_time)
+        appt_dt = timezone.make_aware(appt_dt, timezone.get_current_timezone())
+    except Exception:
+        appt_dt = None
+
+    PRE = getattr(settings, 'APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES', 0)
+    POST = getattr(settings, 'APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES', 30)
+    now = timezone.now()
+    if not appt_dt or not (appt_dt - timedelta(minutes=PRE) <= now <= appt_dt + timedelta(minutes=POST)):
+        messages.error(request, 'Diagnosis can only be started at the appointment time.')
+        return redirect('attendant:appointment_detail', appointment_id=appointment_id)
+
+    # Prevent multiple diagnoses race
+    if request.method == 'POST':
+        form = DiagnosisForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                diagnosis, created = Diagnosis.objects.get_or_create(
+                    appointment=appointment,
+                    defaults={
+                        'diagnosed_by': request.user,
+                        'diagnosis_date': appointment.appointment_date,
+                        'diagnosis_time': appointment.appointment_time,
+                        'notes': form.cleaned_data.get('notes'),
+                        'prescription': form.cleaned_data.get('prescription'),
+                        'follow_up_recommended': form.cleaned_data.get('follow_up_recommended')
+                    }
+                )
+
+                if not created:
+                    # Update existing
+                    diagnosis.notes = form.cleaned_data.get('notes')
+                    diagnosis.prescription = form.cleaned_data.get('prescription')
+                    diagnosis.follow_up_recommended = form.cleaned_data.get('follow_up_recommended')
+                    diagnosis.diagnosed_by = request.user
+                    diagnosis.save()
+
+            messages.success(request, 'Diagnosis saved. Proceed to perform service.')
+            return redirect('attendant:perform_service', appointment_id=appointment.id)
+    else:
+        # Prepopulate form if diagnosis exists
+        try:
+            existing = appointment.diagnosis
+            form = DiagnosisForm(instance=existing)
+        except Diagnosis.DoesNotExist:
+            form = DiagnosisForm()
+
+    context = {
+        'appointment': appointment,
+        'form': form,
+    }
+    return render(request, 'attendant/diagnose_form.html', context)
+
+
+@login_required(login_url='/accounts/login/attendant/')
+@user_passes_test(is_attendant, login_url='/accounts/login/attendant/')
+def attendant_perform_service(request, appointment_id):
+    """Waiting/perform service page. 'Done' button finalizes the appointment."""
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    # Verify attendant
+    if appointment.attendant != request.user:
+        messages.error(request, 'You can only perform services for appointments assigned to you.')
+        return redirect('attendant:appointments')
+
+    if request.method == 'POST':
+        # Finalize: mark appointment completed and redirect
+        appointment.status = 'completed'
+        appointment.save()
+        messages.success(request, 'Service marked as done.')
+        return redirect('attendant:appointment_detail', appointment_id=appointment_id)
+
+    context = {
+        'appointment': appointment,
+    }
+    return render(request, 'attendant/perform_service.html', context)
 
 
 @login_required(login_url='/accounts/login/attendant/')

@@ -538,6 +538,18 @@
                     <i class="fas fa-user"></i> View Patient Profile
                 </a>
                 
+                {% if can_diagnose %}
+                <a href="{% url 'attendant:diagnose_appointment' appointment.id %}" class="btn-action" style="background:linear-gradient(135deg,#ff7e5f 0%,#feb47b 100%);color:#fff;border-color:transparent;">
+                    <i class="fas fa-stethoscope"></i> Diagnose Patient
+                </a>
+                {% endif %}
+
+                {% if appointment.diagnosis %}
+                <a href="{% url 'attendant:perform_service' appointment.id %}" class="btn-action btn-confirm" style="background:#6f42c1;border-color:#6f42c1;color:#fff;">
+                    <i class="fas fa-play"></i> Perform Service
+                </a>
+                {% endif %}
+
                 <a href="{% url 'attendant:appointments' %}" class="btn-action btn-back">
                     <i class="fas fa-list"></i> All Appointments
                 </a>

@@ -427,6 +427,28 @@ class HistoryLog(models.Model):
         return f"{self.get_action_type_display()} {self.get_item_type_display()} - {self.item_name} by {self.performed_by.get_full_name() if self.performed_by else 'System'}"
 
 
+class Diagnosis(models.Model):
+    """Model to store diagnosis details created by an attendant for an appointment"""
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='diagnosis')
+    diagnosed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='diagnoses')
+    diagnosis_date = models.DateField()
+    diagnosis_time = models.TimeField()
+    notes = models.TextField(blank=True, null=True, help_text="Clinical findings / diagnosis notes")
+    prescription = models.TextField(blank=True, null=True, help_text="Prescribed products or instructions")
+    follow_up_recommended = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'diagnoses'
+        ordering = ['-diagnosis_date', '-diagnosis_time']
+        verbose_name = 'Diagnosis'
+        verbose_name_plural = 'Diagnoses'
+
+    def __str__(self):
+        return f"Diagnosis for {self.appointment.patient.get_full_name()} - {self.diagnosis_date}"
+
+
 class Treatment(models.Model):
     """Model for storing treatment details when appointments are completed"""
     appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='treatment')

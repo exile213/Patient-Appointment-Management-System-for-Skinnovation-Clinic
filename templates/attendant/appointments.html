@@ -307,6 +307,11 @@
                         <a href="{% url 'attendant:patient_profile' appointment.patient.id %}" class="btn-action btn-profile">
                             <i class="fas fa-user"></i> Patient Profile
                         </a>
+                        {% if appointment.can_diagnose %}
+                        <a href="{% url 'attendant:diagnose_appointment' appointment.id %}" class="btn-action btn-details" style="background:linear-gradient(135deg,#ff7e5f 0%,#feb47b 100%);color:#fff;">
+                            <i class="fas fa-stethoscope"></i> Diagnose Patient
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

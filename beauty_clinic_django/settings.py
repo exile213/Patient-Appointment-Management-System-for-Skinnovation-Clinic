@@ -256,6 +256,12 @@ MAILTRAP_API_TOKEN = config('MAILTRAP_API_TOKEN', default='')
 # Password Reset Settings
 PASSWORD_RESET_TIMEOUT = 3600  # 1 hour
 
+# Diagnose button timing window (minutes)
+# APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES: minutes before appointment when diagnose can start (default 0)
+# APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES: minutes after appointment when diagnose is still allowed (default 30)
+APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES = config('APPOINTMENT_DIAGNOSE_PRE_WINDOW_MINUTES', default=0, cast=int)
+APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES = config('APPOINTMENT_DIAGNOSE_POST_WINDOW_MINUTES', default=30, cast=int)
+
 # Jazzmin UI Configuration for Django Admin
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)

@@ -1,0 +1,42 @@
+{% extends 'attendant/base.html' %}
+
+{% block title %}Diagnose - {{ appointment.patient.full_name }}{% endblock %}
+
+{% block page_title %}Diagnose Patient{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-4 p-4">
+        <h4>Diagnose Patient: {{ appointment.patient.full_name }}</h4>
+        <p class="text-muted">Appointment: {{ appointment.appointment_date|date:"M d, Y" }} at {{ appointment.appointment_time|time:"g:i A" }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.notes.label_tag }}
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                    <div class="text-danger">{{ form.notes.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.prescription.label_tag }}
+                {{ form.prescription }}
+                {% if form.prescription.errors %}
+                    <div class="text-danger">{{ form.prescription.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.follow_up_recommended.label_tag }}
+                {{ form.follow_up_recommended }}
+                {% if form.follow_up_recommended.errors %}
+                    <div class="text-danger">{{ form.follow_up_recommended.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Diagnosis & Continue</button>
+                <a href="{% url 'attendant:appointment_detail' appointment.id %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
