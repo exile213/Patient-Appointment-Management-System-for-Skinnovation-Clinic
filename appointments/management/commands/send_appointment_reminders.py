@@ -42,7 +42,6 @@ class Command(BaseCommand):
         self.stdout.write('='*60)
         
         # Check SMS configuration
-        from django.conf import settings
         sms_enabled = getattr(settings, 'SMS_ENABLED', False)
         sms_api_key = getattr(settings, 'SKYSMS_API_KEY', '')
         
