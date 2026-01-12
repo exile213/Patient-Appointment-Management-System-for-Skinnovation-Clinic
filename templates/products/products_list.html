@@ -320,6 +320,25 @@
         transform: scale(1.02);
         filter: grayscale(50%);
     }
+    
+    .filter-section {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .form-control {
+        border-radius: 15px;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: white;
+    }
 </style>
 {% endblock %}
 
@@ -333,6 +352,43 @@
 </div>
 
 <div class="container">
+    <!-- Filter Section -->
+    <div class="filter-section" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1.5rem; margin-bottom: 2rem; margin-top: 2rem;">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="search" class="form-label"><strong>Search:</strong></label>
+                <input type="text" name="search" id="search" class="form-control" placeholder="Search products..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <label for="price" class="form-label"><strong>Filter by Price:</strong></label>
+                <select name="price" id="price" class="form-select">
+                    <option value="">All Prices</option>
+                    <option value="under_200" {% if price_filter == 'under_200' %}selected{% endif %}>Under ₱200</option>
+                    <option value="200_500" {% if price_filter == '200_500' %}selected{% endif %}>₱200 - ₱500</option>
+                    <option value="500_1000" {% if price_filter == '500_1000' %}selected{% endif %}>₱500 - ₱1,000</option>
+                    <option value="over_1000" {% if price_filter == 'over_1000' %}selected{% endif %}>Over ₱1,000</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="stock" class="form-label"><strong>Filter by Stock:</strong></label>
+                <select name="stock" id="stock" class="form-select">
+                    <option value="">All Stock Status</option>
+                    <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>In Stock</option>
+                    <option value="low_stock" {% if stock_filter == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                    <option value="out_of_stock" {% if stock_filter == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-purple me-2 w-100 mb-2">
+                    <i class="fas fa-filter me-1"></i>Filter
+                </button>
+                <a href="{% url 'products:list' %}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-times me-1"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+    
     <!-- Products Grid -->
     <div class="row g-4 my-4">
         {% if products %}
@@ -409,24 +465,24 @@
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     <i class="bi bi-info-circle me-2"></i>
-                    No products found.
+                    No products found{% if price_filter or stock_filter or search_query %} matching your filters{% endif %}.
                 </div>
             </div>
         {% endif %}
     </div>
     
     <!-- Pagination -->
-    {% if page_obj.has_other_pages %}
+    {% if page_obj and page_obj.has_other_pages %}
     <nav aria-label="Products pagination">
         <ul class="pagination justify-content-center flex-wrap">
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page=1" aria-label="First">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page=1" aria-label="First">
                         <span aria-hidden="true">&laquo;&laquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -446,19 +502,19 @@
                     </li>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
             
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}" aria-label="Last">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>

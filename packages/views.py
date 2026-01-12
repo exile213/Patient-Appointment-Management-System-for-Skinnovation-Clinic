@@ -9,6 +9,7 @@ def packages_list(request):
     # Get filter parameters
     price_filter = request.GET.get('price', '')
     category_filter = request.GET.get('category', '')
+    sessions_filter = request.GET.get('sessions', '')
     
     packages = Package.objects.filter(archived=False).order_by('package_name')
     
@@ -38,19 +39,37 @@ def packages_list(request):
         elif category_filter == 'infusion':
             packages = packages.filter(package_name__icontains='infusion')
     
+    # Apply sessions filter
+    if sessions_filter:
+        if sessions_filter == '1_3':
+            packages = packages.filter(sessions__gte=1, sessions__lte=3)
+        elif sessions_filter == '4_6':
+            packages = packages.filter(sessions__gte=4, sessions__lte=6)
+        elif sessions_filter == '7_10':
+            packages = packages.filter(sessions__gte=7, sessions__lte=10)
+        elif sessions_filter == 'over_10':
+            packages = packages.filter(sessions__gt=10)
+    
     # Pagination - only for unfiltered results
     page_obj = None
-    if not price_filter and not category_filter:
+    if not price_filter and not category_filter and not sessions_filter:
         paginator = Paginator(packages, 12)  # 12 items per page (4 rows of 3 columns)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         packages = page_obj  # Use page_obj for template
+    
+    # Get query parameters for pagination
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
     
     context = {
         'packages': packages,
         'page_obj': page_obj,
         'price_filter': price_filter,
         'category_filter': category_filter,
+        'sessions_filter': sessions_filter,
+        'query_params': query_params,
     }
     
     return render(request, 'packages/packages_list.html', context)

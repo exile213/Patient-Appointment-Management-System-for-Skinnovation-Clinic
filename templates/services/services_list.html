@@ -330,31 +330,54 @@
     </div>
 </div>
 
-<!-- Category Filter -->
+<!-- Filters -->
 <div class="container">
     <div class="filter-section">
-        <div class="row align-items-end">
-            <div class="col-md-8">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
                 <label for="category" class="form-label">
                     <i class="fas fa-filter me-2"></i>
                     <strong>Filter by Category</strong>
                 </label>
-                <select id="category" class="form-select" onchange="location = this.value;">
-                    <option value="{% url 'services:list' %}" {% if not selected_category %}selected{% endif %}>All Services</option>
+                <select name="category" id="category" class="form-select">
+                    <option value="">All Categories</option>
                     {% for category in categories %}
-                    <option value="{% url 'services:list' %}?category={{ category.id }}" 
+                    <option value="{{ category.id }}" 
                             {% if selected_category and selected_category.id == category.id %}selected{% endif %}>
                         {{ category.name }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4 text-end">
-                <a href="{% url 'services:list' %}" class="btn btn-outline-secondary">
-                    <i class="fas fa-redo me-2"></i>Reset Filter
+            <div class="col-md-3">
+                <label for="price" class="form-label"><strong>Filter by Price:</strong></label>
+                <select name="price" id="price" class="form-select">
+                    <option value="">All Prices</option>
+                    <option value="under_500" {% if price_filter == 'under_500' %}selected{% endif %}>Under ₱500</option>
+                    <option value="500_1000" {% if price_filter == '500_1000' %}selected{% endif %}>₱500 - ₱1,000</option>
+                    <option value="1000_2000" {% if price_filter == '1000_2000' %}selected{% endif %}>₱1,000 - ₱2,000</option>
+                    <option value="over_2000" {% if price_filter == 'over_2000' %}selected{% endif %}>Over ₱2,000</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="duration" class="form-label"><strong>Filter by Duration:</strong></label>
+                <select name="duration" id="duration" class="form-select">
+                    <option value="">All Durations</option>
+                    <option value="under_30" {% if duration_filter == 'under_30' %}selected{% endif %}>Under 30 min</option>
+                    <option value="30_60" {% if duration_filter == '30_60' %}selected{% endif %}>30-60 min</option>
+                    <option value="60_90" {% if duration_filter == '60_90' %}selected{% endif %}>60-90 min</option>
+                    <option value="over_90" {% if duration_filter == 'over_90' %}selected{% endif %}>Over 90 min</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-purple me-2 w-100 mb-2">
+                    <i class="fas fa-filter me-1"></i>Filter
+                </button>
+                <a href="{% url 'services:list' %}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-times me-1"></i>Clear
                 </a>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -496,7 +519,7 @@
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     <i class="bi bi-info-circle me-2"></i>
-                    No services found in this category.
+                    No services found{% if selected_category or price_filter or duration_filter %} matching your filters{% endif %}.
                 </div>
             </div>
         {% endif %}
@@ -508,12 +531,12 @@
         <ul class="pagination justify-content-center flex-wrap">
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page=1" aria-label="First">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page=1" aria-label="First">
                         <span aria-hidden="true">&laquo;&laquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -533,19 +556,19 @@
                     </li>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
             
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}" aria-label="Last">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>
