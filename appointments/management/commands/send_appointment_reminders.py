@@ -173,7 +173,7 @@ class Command(BaseCommand):
                     )
             
             appointments = filtered_appointments
-            self.stdout.write(f'\nDEBUG: Final filtered appointments (within 55-65 min window): {len(appointments)}')
+            self.stdout.write(f'\nDEBUG: Final filtered appointments (within 45-75 min window): {len(appointments)}')
             reminder_type = 'reminder'
             reminder_type_db = 'one_hour'
             message_suffix = "(1 hour before)"
