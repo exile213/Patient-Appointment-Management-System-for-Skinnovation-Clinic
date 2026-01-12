@@ -4,6 +4,7 @@ from datetime import timedelta, datetime
 from appointments.models import Appointment, SMSReminder
 from services.utils import send_appointment_sms, send_sms_notification
 from services.template_service import template_service
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Send appointment reminders based on specified time filter (2days, 1day, 1hour)'
@@ -19,7 +20,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         filter_type = options['filter']
-        now = timezone.now()
+        # Get current time in local timezone (Asia/Manila) for date comparisons
+        # This ensures appointment_date comparisons use the same timezone as appointments are stored
+        # Django stores dates in local timezone, so we need to convert UTC now to local timezone
+        now_utc = timezone.now()
+        # Use Django's timezone utilities (works with USE_TZ=True)
+        # timezone.get_current_timezone() returns the timezone from settings.TIME_ZONE
+        now = timezone.localtime(now_utc)
+        
+        # Debug: Show both UTC and local time for troubleshooting
+        self.stdout.write(f'DEBUG: UTC time: {now_utc}')
+        self.stdout.write(f'DEBUG: Local timezone: {settings.TIME_ZONE}')
+        self.stdout.write(f'DEBUG: Local time: {now}')
+        self.stdout.write(f'DEBUG: UTC date: {now_utc.date()}, Local date: {now.date()}')
         
         # Write initial debug message to confirm command is running
         self.stdout.write('='*60)
