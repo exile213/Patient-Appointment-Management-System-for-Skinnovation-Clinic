@@ -1019,13 +1019,9 @@ def admin_seed_diagnoses(request):
 
     # Query completed service/package appointments that don't have a Diagnosis yet
     from django.db.models import Q as _Q
+    # Only check that appointment is completed and missing a diagnosis
     qs = (
-        Appointment.objects.filter(
-            status='completed',
-            diagnosis__isnull=True,
-        )
-        # include service, package, or product appointments (products now included)
-        .filter(_Q(service__isnull=False) | _Q(package__isnull=False) | _Q(product__isnull=False))
+        Appointment.objects.filter(status='completed', diagnosis__isnull=True)
         .select_related('patient', 'service', 'product', 'package', 'attendant')
         .order_by('id')
     )
