@@ -494,31 +494,31 @@
             <div class="row">
                 <div class="col-md-4 info-item">
                     <span class="info-label">Blood Pressure:</span>
-                    <span class="info-value">{{ appointment.diagnosis.blood_pressure|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.blood_pressure %}{{ appointment.diagnosis.blood_pressure }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Skin Type:</span>
-                    <span class="info-value">{{ appointment.diagnosis.get_skin_type_display|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.skin_type %}{{ appointment.diagnosis.get_skin_type_display }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Lesion Type:</span>
-                    <span class="info-value">{{ appointment.diagnosis.get_lesion_type_display|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.lesion_type %}{{ appointment.diagnosis.get_lesion_type_display }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Target Area:</span>
-                    <span class="info-value">{{ appointment.diagnosis.get_target_area_display|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.target_area %}{{ appointment.diagnosis.get_target_area_display }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Keloid Risk:</span>
-                    <span class="info-value">{{ appointment.diagnosis.get_keloid_risk_display|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.keloid_risk %}{{ appointment.diagnosis.get_keloid_risk_display }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Accutane History:</span>
-                    <span class="info-value">{{ appointment.diagnosis.get_accutane_history_display|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.accutane_history %}{{ appointment.diagnosis.get_accutane_history_display }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-12 info-item">
                     <span class="info-label">Prescription:</span>
-                    <span class="info-value">{{ appointment.diagnosis.prescription|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.prescription %}{{ appointment.diagnosis.prescription }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-12 info-item">
                     <span class="info-label">Follow-up Recommended:</span>
@@ -526,15 +526,15 @@
                 </div>
                 <div class="col-12 info-item">
                     <span class="info-label">Notes:</span>
-                    <span class="info-value">{{ appointment.diagnosis.notes|linebreaksbr|default:'—' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.notes %}{{ appointment.diagnosis.notes|linebreaksbr }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Diagnosed By:</span>
-                    <span class="info-value">{{ appointment.diagnosis.diagnosed_by.get_full_name|default:appointment.diagnosis.diagnosed_by }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.diagnosed_by %}{{ appointment.diagnosis.diagnosed_by.get_full_name }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="col-md-4 info-item">
                     <span class="info-label">Diagnosed On:</span>
-                    <span class="info-value">{{ appointment.diagnosis.diagnosis_date|date:'M d, Y' }} {{ appointment.diagnosis.diagnosis_time|time:'g:i A' }}</span>
+                    <span class="info-value">{% if appointment.diagnosis.diagnosis_date %}{{ appointment.diagnosis.diagnosis_date|date:'M d, Y' }}{% else %}—{% endif %} {% if appointment.diagnosis.diagnosis_time %}{{ appointment.diagnosis.diagnosis_time|time:'g:i A' }}{% endif %}</span>
                 </div>
             </div>
         </div>
