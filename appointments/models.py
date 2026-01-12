@@ -433,6 +433,49 @@ class Diagnosis(models.Model):
     diagnosed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='diagnoses')
     diagnosis_date = models.DateField()
     diagnosis_time = models.TimeField()
+    # Clinical fields
+    blood_pressure = models.CharField(max_length=20, blank=True, null=True, help_text="Format: 120/80")
+
+    SKIN_TYPE_CHOICES = [
+        ('I', 'Type I (Very Fair)'),
+        ('II', 'Type II (Fair)'),
+        ('III', 'Type III (Medium)'),
+        ('IV', 'Type IV (Olive)'),
+        ('V', 'Type V (Brown)'),
+        ('VI', 'Type VI (Black)'),
+    ]
+    skin_type = models.CharField(max_length=3, choices=SKIN_TYPE_CHOICES, blank=True, null=True)
+
+    LESION_TYPE_CHOICES = [
+        ('warts', 'Warts'),
+        ('moles', 'Moles'),
+        ('skin_tags', 'Skin Tags'),
+        ('syringoma', 'Syringoma'),
+        ('milia', 'Milia'),
+        ('other', 'Other'),
+    ]
+    lesion_type = models.CharField(max_length=20, choices=LESION_TYPE_CHOICES, blank=True, null=True)
+
+    TARGET_AREA_CHOICES = [
+        ('face', 'Face'),
+        ('neck', 'Neck'),
+        ('chest', 'Chest/Torso'),
+        ('back', 'Back'),
+        ('limbs', 'Arms/Legs'),
+    ]
+    target_area = models.CharField(max_length=20, choices=TARGET_AREA_CHOICES, blank=True, null=True)
+
+    Keloid_CHOICES = [
+        ('yes', 'Yes'),
+        ('no', 'No'),
+    ]
+    keloid_risk = models.CharField(max_length=3, choices=Keloid_CHOICES, blank=True, null=True)
+
+    ACCUTANE_CHOICES = [
+        ('yes_6m', 'Yes (Last 6 months)'),
+        ('no', 'No'),
+    ]
+    accutane_history = models.CharField(max_length=10, choices=ACCUTANE_CHOICES, blank=True, null=True)
     notes = models.TextField(blank=True, null=True, help_text="Clinical findings / diagnosis notes")
     prescription = models.TextField(blank=True, null=True, help_text="Prescribed products or instructions")
     follow_up_recommended = models.DateField(blank=True, null=True)

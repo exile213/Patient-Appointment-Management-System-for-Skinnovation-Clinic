@@ -11,26 +11,73 @@
         <p class="text-muted">Appointment: {{ appointment.appointment_date|date:"M d, Y" }} at {{ appointment.appointment_time|time:"g:i A" }}</p>
         <form method="post">
             {% csrf_token %}
-            <div class="mb-3">
-                {{ form.notes.label_tag }}
-                {{ form.notes }}
-                {% if form.notes.errors %}
-                    <div class="text-danger">{{ form.notes.errors }}</div>
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                {{ form.prescription.label_tag }}
-                {{ form.prescription }}
-                {% if form.prescription.errors %}
-                    <div class="text-danger">{{ form.prescription.errors }}</div>
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                {{ form.follow_up_recommended.label_tag }}
-                {{ form.follow_up_recommended }}
-                {% if form.follow_up_recommended.errors %}
-                    <div class="text-danger">{{ form.follow_up_recommended.errors }}</div>
-                {% endif %}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.blood_pressure.label }}</label>
+                    {{ form.blood_pressure }}
+                    {% if form.blood_pressure.errors %}
+                        <div class="text-danger">{{ form.blood_pressure.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.skin_type.label }}</label>
+                    {{ form.skin_type }}
+                    {% if form.skin_type.errors %}
+                        <div class="text-danger">{{ form.skin_type.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.lesion_type.label }}</label>
+                    {{ form.lesion_type }}
+                    {% if form.lesion_type.errors %}
+                        <div class="text-danger">{{ form.lesion_type.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.target_area.label }}</label>
+                    {{ form.target_area }}
+                    {% if form.target_area.errors %}
+                        <div class="text-danger">{{ form.target_area.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.keloid_risk.label }}</label>
+                    {{ form.keloid_risk }}
+                    {% if form.keloid_risk.errors %}
+                        <div class="text-danger">{{ form.keloid_risk.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ form.accutane_history.label }}</label>
+                    {{ form.accutane_history }}
+                    {% if form.accutane_history.errors %}
+                        <div class="text-danger">{{ form.accutane_history.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">{{ form.prescription.label }}</label>
+                    {{ form.prescription }}
+                    {% if form.prescription.errors %}
+                        <div class="text-danger">{{ form.prescription.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">{{ form.follow_up_recommended.label }}</label>
+                    {{ form.follow_up_recommended }}
+                    {% if form.follow_up_recommended.errors %}
+                        <div class="text-danger">{{ form.follow_up_recommended.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">{{ form.notes.label }}</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="text-danger">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Save Diagnosis & Continue</button>
