@@ -18,6 +18,33 @@ class RoomAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(Diagnosis)
+class DiagnosisAdmin(admin.ModelAdmin):
+    """Admin for Diagnosis model"""
+    list_display = ('appointment', 'get_patient', 'diagnosed_by', 'diagnosis_date', 'diagnosis_time')
+    list_filter = ('diagnosis_date', 'diagnosed_by', 'skin_type')
+    search_fields = ('appointment__patient__first_name', 'appointment__patient__last_name', 'notes', 'prescription')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-diagnosis_date', '-diagnosis_time')
+
+    def get_patient(self, obj):
+        return obj.appointment.patient.get_full_name()
+    get_patient.short_description = 'Patient'
+
+
+@admin.register(Treatment)
+class TreatmentAdmin(admin.ModelAdmin):
+    """Admin for Treatment model"""
+    list_display = ('appointment', 'get_patient', 'treatment_date', 'treatment_time')
+    list_filter = ('treatment_date',)
+    search_fields = ('appointment__patient__first_name', 'appointment__patient__last_name', 'notes')
+    readonly_fields = ('created_at', 'updated_at')
+
+    def get_patient(self, obj):
+        return obj.appointment.patient.get_full_name()
+    get_patient.short_description = 'Patient'
+
+
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
     """Admin for Appointment model"""
