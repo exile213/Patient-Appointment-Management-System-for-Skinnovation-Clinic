@@ -20,6 +20,24 @@ class Command(BaseCommand):
         filter_type = options['filter']
         now = timezone.now()
         
+        # Check SMS configuration
+        from django.conf import settings
+        sms_enabled = getattr(settings, 'SMS_ENABLED', False)
+        sms_api_key = getattr(settings, 'SKYSMS_API_KEY', '')
+        
+        if not sms_enabled:
+            self.stdout.write(
+                self.style.ERROR(
+                    '⚠️  WARNING: SMS_ENABLED is False. SMS reminders will not be sent!'
+                )
+            )
+        if not sms_api_key:
+            self.stdout.write(
+                self.style.ERROR(
+                    '⚠️  WARNING: SKYSMS_API_KEY is not set. SMS reminders will fail!'
+                )
+            )
+        
         # Determine target appointments based on filter
         if filter_type == '2days':
             target_date = (now + timedelta(days=2)).date()
@@ -58,8 +76,23 @@ class Command(BaseCommand):
                 
                 # Check if appointment is between 55-65 minutes away (to avoid multiple sends)
                 time_diff = (appointment_datetime - now).total_seconds() / 60
+                self.stdout.write(
+                    f'DEBUG: Appointment #{apt.id} - {apt.patient.get_full_name()} at {apt.appointment_time} - '
+                    f'Time diff: {time_diff:.1f} minutes'
+                )
                 if 55 <= time_diff <= 65:
                     filtered_appointments.append(apt)
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f'  → Found appointment within window (55-65 min)'
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f'  → Outside window (needs 55-65 min, got {time_diff:.1f} min)'
+                        )
+                    )
             
             appointments = filtered_appointments
             reminder_type = 'reminder'
@@ -100,10 +133,11 @@ class Command(BaseCommand):
                 )
                 continue
             
-            # Send SMS reminder
+            # Send SMS reminder (same pattern as confirmation in admin_views.py)
             sms_result = send_appointment_sms(appointment, reminder_type)
+            patient_sms_sent = sms_result.get('success', False)
             
-            if sms_result['success']:
+            if patient_sms_sent:
                 # Record that the reminder was sent
                 SMSReminder.objects.update_or_create(
                     appointment=appointment,
@@ -117,18 +151,25 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.SUCCESS(
                         f'✓ Reminder sent to {appointment.patient.get_full_name()} '
-                        f'for {appointment.appointment_date} at {appointment.appointment_time} '
+                        f'({appointment.patient.phone}) for {appointment.appointment_date} at {appointment.appointment_time} '
                         f'{message_suffix}'
                     )
                 )
             else:
                 failed_count += 1
-                error_msg = sms_result.get('error', 'Unknown error')
+                error_msg = sms_result.get('error') or sms_result.get('message', 'Unknown error')
                 self.stdout.write(
                     self.style.ERROR(
-                        f'✗ Failed to send to {appointment.patient.get_full_name()}: {error_msg}'
+                        f'✗ Failed to send to {appointment.patient.get_full_name()} ({appointment.patient.phone}): {error_msg}'
                     )
                 )
+                # Log additional debug info
+                if 'SMS notifications are disabled' in str(error_msg):
+                    self.stdout.write(
+                        self.style.ERROR(
+                            '  → SMS_ENABLED is False or SKYSMS_API_KEY is missing in settings'
+                        )
+                    )
         
         # Summary
         total_processed = sent_count + failed_count + skipped_count + already_sent_count

@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 from appointments.views import get_notifications_api, update_notifications_api
-from appointments.cron_views import trigger_appointment_reminders, cron_health_check
+from appointments.cron_views import trigger_appointment_reminders, cron_health_check, cron_debug_appointments
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,6 +44,7 @@ urlpatterns = [
     # Cron API endpoints for external cron service (cron-job.org)
     path('api/cron/reminders/', trigger_appointment_reminders, name='cron_reminders'),
     path('api/cron/health/', cron_health_check, name='cron_health'),
+    path('api/cron/debug-appointments/', cron_debug_appointments, name='cron_debug_appointments'),
     
     # Global notification API endpoints (for pages that don't have their own)
     path('notifications/get_notifications.php', get_notifications_api, name='global_get_notifications'),
