@@ -148,39 +148,7 @@ class ClosedDates(models.Model):
         verbose_name_plural = 'Closed Dates'
 
 
-class AttendantLeaveRequest(models.Model):
-    """
-    Model for attendant sick leave/day-off requests (one day at a time).
-    When owner approves, triggers AttendantUnavailabilityRequest for all appointments on that day.
-    """
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
-    
-    attendant_profile = models.ForeignKey(AttendantProfile, on_delete=models.CASCADE, related_name='leave_requests')
-    leave_date = models.DateField(help_text="Single day for which leave is requested")
-    reason = models.TextField(help_text="Reason for leave request (e.g., sick leave, personal emergency)")
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-    created_at = models.DateTimeField(auto_now_add=True)
-    reviewed_at = models.DateTimeField(blank=True, null=True, help_text="When the leave request was approved/rejected")
-    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_leave_requests', help_text="Owner who approved/rejected the request")
-    rejection_reason = models.TextField(blank=True, null=True, help_text="Reason for rejection, if rejected")
-    
-    class Meta:
-        db_table = 'attendant_leave_requests'
-        unique_together = ['attendant_profile', 'leave_date']  # One request per day per attendant
-        ordering = ['-leave_date']
-    
-    def __str__(self):
-        return f"Leave Request - {self.attendant_profile.user.get_full_name()} - {self.leave_date} ({self.get_status_display()})"
-    
-    @property
-    def is_future_date(self):
-        """Check if leave date is in the future"""
-        from django.utils import timezone
-        return self.leave_date > timezone.now().date()
+# AttendantLeaveRequest removed: feature deprecated — model intentionally deleted.
 
 
 class MedicalHistory(models.Model):

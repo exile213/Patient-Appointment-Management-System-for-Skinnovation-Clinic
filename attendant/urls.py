@@ -18,8 +18,7 @@ urlpatterns = [
     path('feedback/', views.attendant_feedback, name='feedback'),
     path('schedule/', views.attendant_schedule, name='schedule'),
     path('manage-profile/', views.attendant_manage_profile, name='manage_profile'),
-    path('leave/request/', views.request_leave, name='request_leave'),
-    path('leave/requests/', views.view_leave_requests, name='view_leave_requests'),
+    # leave request feature removed; attendants should contact staff directly
     # API endpoints
     path('api/notifications/', views.get_notifications_api, name='get_notifications_api'),
     path('api/notifications/update/', views.update_notifications_api, name='update_notifications_api'),

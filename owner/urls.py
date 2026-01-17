@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from . import sms_views
-from . import leave_views
+# leave_views removed; leave management is deprecated
 from appointments import admin_views as appointment_admin_views
 
 app_name = 'owner'
@@ -55,11 +55,7 @@ urlpatterns = [
     path('manage/attendants/timeslots/<int:timeslot_id>/toggle/', views.owner_toggle_timeslot, name='toggle_timeslot'),
     path('manage/attendants/timeslots/<int:timeslot_id>/delete/', views.owner_delete_timeslot, name='delete_timeslot'),
     
-    # Leave Request Management
-    path('leave-requests/', leave_views.list_leave_requests, name='list_leave_requests'),
-    path('leave-requests/<int:leave_request_id>/', leave_views.leave_request_detail, name='leave_request_detail'),
-    path('leave-requests/<int:leave_request_id>/approve/', leave_views.approve_leave_request, name='approve_leave_request'),
-    path('leave-requests/<int:leave_request_id>/reject/', leave_views.reject_leave_request, name='reject_leave_request'),
+    # Leave Request Management removed (deprecated)
     
     # Notifications and Settings
     path('notifications/', views.owner_notifications, name='notifications'),

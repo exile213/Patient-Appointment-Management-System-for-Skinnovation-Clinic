@@ -1,43 +1,8 @@
+{# Leave request detail removed #}
 {% extends 'owner/base.html' %}
-{% load static %}
-
-{% block title %}Leave Request Detail - Owner{% endblock %}
-
-{% block page_title %}Leave Request Details{% endblock %}
-
 {% block content %}
-
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Request Information</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Attendant:</strong> {{ leave_request.attendant_profile.user.get_full_name }}</p>
-                <p><strong>Leave Date:</strong> {{ leave_request.leave_date|date:"l, F d, Y" }}</p>
-                <p><strong>Reason:</strong></p>
-                <p class="bg-light p-2">{{ leave_request.reason }}</p>
-                <p><strong>Status:</strong> 
-                    {% if leave_request.status == 'pending' %}
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    {% elif leave_request.status == 'approved' %}
-                        <span class="badge bg-success">Approved</span>
-                    {% else %}
-                        <span class="badge bg-danger">Rejected</span>
-                    {% endif %}
-                </p>
-                <p><strong>Submitted:</strong> {{ leave_request.created_at|date:"M d, Y g:i A" }}</p>
-                {% if leave_request.reviewed_at %}
-                <p><strong>Reviewed:</strong> {{ leave_request.reviewed_at|date:"M d, Y g:i A" }}</p>
-                <p><strong>Reviewed By:</strong> {{ leave_request.reviewed_by.get_full_name }}</p>
-                {% endif %}
-                {% if leave_request.rejection_reason %}
-                <p><strong>Rejection Reason:</strong></p>
-                <p class="bg-light p-2">{{ leave_request.rejection_reason }}</p>
-                {% endif %}
-            </div>
+<div class="alert alert-info mt-4">This detail page has been removed. Leave requests are no longer managed through the app.</div>
+{% endblock %}
         </div>
 
         {% if leave_request.status == 'pending' %}
