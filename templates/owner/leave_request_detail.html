@@ -1,61 +1,7 @@
-{# Leave request detail removed #}
 {% extends 'owner/base.html' %}
+
+{% block title %}Leave Request - Removed{% endblock %}
+
 {% block content %}
-<div class="alert alert-info mt-4">This detail page has been removed. Leave requests are no longer managed through the app.</div>
-{% endblock %}
-        </div>
-
-        {% if leave_request.status == 'pending' %}
-        <div class="card bg-light">
-            <div class="card-body">
-                <p class="mb-3"><strong>Actions:</strong></p>
-                <a href="{% url 'owner:approve_leave_request' leave_request.id %}" class="btn btn-success btn-sm w-100 mb-2" onclick="return confirm('Approve leave? Affected patients will be notified.')">
-                    <i class="fas fa-check me-2"></i>Approve Request
-                </a>
-                <a href="{% url 'owner:reject_leave_request' leave_request.id %}" class="btn btn-danger btn-sm w-100">
-                    <i class="fas fa-times me-2"></i>Reject Request
-                </a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    {% if affected_appointments %}
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Affected Appointments ({{ affected_appointments.count }})</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Patient</th>
-                                <th>Service</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for apt in affected_appointments %}
-                            <tr>
-                                <td>{{ apt.appointment_time|time:"g:i A" }}</td>
-                                <td>{{ apt.patient.get_full_name }}</td>
-                                <td>{{ apt.get_service_name }}</td>
-                                <td>
-                                    <span class="badge bg-{% if apt.status == 'confirmed' %}success{% else %}warning{% endif %}">
-                                        {{ apt.get_status_display }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-</div>
+<div class="alert alert-info mt-4">Leave request detail page removed. Leave requests are no longer managed through the app.</div>
 {% endblock %}
