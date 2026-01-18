@@ -555,7 +555,7 @@ def attendant_feedback(request):
     search_query = request.GET.get('search', '')
     
     feedbacks = Feedback.objects.filter(
-        appointment__attendant=attendant_obj,
+        appointment__attendant=request.user,
         attendant_rating__isnull=False
     ).select_related('patient', 'appointment', 'appointment__attendant')
     

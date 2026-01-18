@@ -606,6 +606,15 @@ def book_product(request, product_id):
             appointment_datetime = datetime.strptime(f"{appointment_date} {appointment_time}", "%Y-%m-%d %H:%M")
             appointment_time_obj = datetime.strptime(appointment_time, "%H:%M").time()
             
+            # Get the default attendant for product orders (first active attendant user)
+            attendant = User.objects.filter(user_type='attendant', is_active=True).first()
+            if not attendant:
+                messages.error(request, 'No attendants available. Please contact the clinic.')
+                context = {
+                    'product': product,
+                }
+                return render(request, 'appointments/book_product.html', context)
+
             # Check if there's an appointment within 1 hour before or after
             conflicting_appointments = Appointment.objects.filter(
                 appointment_date=appointment_date,
