@@ -804,6 +804,7 @@ def book_package(request, package_id):
         appointment_date = request.POST.get('appointment_date')
         appointment_time = request.POST.get('appointment_time')
         attendant_id = request.POST.get('attendant', '')
+        room_id = request.POST.get('room', '')
         
         if appointment_date and appointment_time:
             # Validate that date and time are not in the past
@@ -1019,6 +1020,61 @@ def book_package(request, package_id):
                     }
                     return render(request, 'appointments/book_package.html', context)
             
+            # Handle room selection
+            from .models import Room
+            available_rooms = Room.objects.filter(is_available=True)
+            
+            if room_id:
+                try:
+                    room = Room.objects.get(id=int(room_id), is_available=True)
+                except (Room.DoesNotExist, ValueError, TypeError):
+                    # If room doesn't exist or is unavailable, get the first available room
+                    if available_rooms.exists():
+                        room = available_rooms.first()
+                    else:
+                        messages.error(request, 'No rooms available. Please contact the clinic.')
+                        context = {
+                            'package': package,
+                            'attendants': available_attendants,
+                            'rooms': available_rooms,
+                            'selected_date': appointment_date,
+                            'selected_time': appointment_time,
+                        }
+                        return render(request, 'appointments/book_package.html', context)
+            else:
+                # If no room selected, get the first available
+                if available_rooms.exists():
+                    room = available_rooms.first()
+                else:
+                    messages.error(request, 'No rooms available. Please contact the clinic.')
+                    context = {
+                        'package': package,
+                        'attendants': available_attendants,
+                        'rooms': available_rooms,
+                        'selected_date': appointment_date,
+                        'selected_time': appointment_time,
+                    }
+                    return render(request, 'appointments/book_package.html', context)
+            
+            # Check if room is already booked at this time
+            room_conflicts = Appointment.objects.filter(
+                appointment_date=appointment_date,
+                appointment_time=appointment_time,
+                room=room,
+                status__in=['scheduled', 'confirmed']
+            ).count()
+            
+            if room_conflicts >= 1:
+                messages.error(request, f'Room {room.name} is already booked at this time. Please select another room or time.')
+                context = {
+                    'package': package,
+                    'attendants': available_attendants,
+                    'rooms': available_rooms,
+                    'selected_date': appointment_date,
+                    'selected_time': appointment_time,
+                }
+                return render(request, 'appointments/book_package.html', context)
+
             # Generate transaction ID
             import uuid
             transaction_id = str(uuid.uuid4())[:8].upper()
@@ -1030,6 +1086,7 @@ def book_package(request, package_id):
                 patient=request.user,
                 package=package,
                 attendant=attendant,
+                room=room,
                 appointment_date=appointment_date,
                 appointment_time=appointment_time,
                 status=initial_status,
@@ -1118,9 +1175,14 @@ def book_package(request, package_id):
     
     booked_slots_json = json.dumps(booked_slots)
     
+    # Get available rooms
+    from .models import Room
+    rooms = Room.objects.filter(is_available=True).order_by('name')
+    
     context = {
         'package': package,
         'attendants': available_attendants,
+        'rooms': rooms,
         'selected_date': selected_date,
         'selected_time': selected_time,
         'closed_days': closed_days_json,
