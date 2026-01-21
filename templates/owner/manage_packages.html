@@ -76,6 +76,16 @@
                 </label>
                 <small class="text-muted d-block mb-3">Select at least one service. Click "Add Service" to include multiple services.</small>
                 
+                <!-- Select All Checkbox -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAllServices" onclick="toggleSelectAllServices()">
+                        <label class="form-check-label" for="selectAllServices">
+                            <strong>Select All Services</strong>
+                        </label>
+                    </div>
+                </div>
+                
                 <div id="addServicesContainer">
                     <div class="service-row mb-2" data-row-index="0">
                         <div class="input-group">
@@ -483,6 +493,90 @@
 </style>
 
 <script>
+
+// Select All Services Function
+function toggleSelectAllServices() {
+    const selectAllCheckbox = document.getElementById('selectAllServices');
+    const servicesContainer = document.getElementById('addServicesContainer');
+    
+    if (!selectAllCheckbox || !servicesContainer) return;
+    
+    const allServices = document.querySelectorAll('#all_services_list option[value]:not([value=""])');
+    
+    if (selectAllCheckbox.checked) {
+        // Get all service options
+        const allServiceIds = Array.from(allServices).map(opt => opt.value);
+        
+        // Clear existing rows
+        servicesContainer.innerHTML = '';
+        
+        // Create a row for each service
+        allServiceIds.forEach((serviceId, index) => {
+            const service = Array.from(allServices).find(opt => opt.value === serviceId);
+            if (service) {
+                const newRow = document.createElement('div');
+                newRow.className = 'service-row mb-2';
+                newRow.setAttribute('data-row-index', index);
+                newRow.innerHTML = `
+                    <div class="input-group">
+                        <select class="form-control service-select" name="service_ids" required>
+                            <option value="">-- Select a Service --</option>
+                            {% for svc in all_services %}<option value="{{ svc.id }}" ${serviceId === '{{ svc.id }}' ? 'selected' : ''}>{{ svc.service_name }} (₱{{ svc.price|default:"N/A" }})</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-danger remove-service-btn" ${index === 0 ? 'style="display:none;"' : ''}>
+                            <i class="fas fa-trash me-1"></i>Remove
+                        </button>
+                    </div>
+                `;
+                servicesContainer.appendChild(newRow);
+            }
+        });
+        
+        // Attach remove listeners
+        document.querySelectorAll('#addServicesContainer .remove-service-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = document.getElementById('addServicesContainer');
+                if (container.querySelectorAll('.service-row').length > 1) {
+                    btn.closest('.service-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+        });
+    } else {
+        // Reset to single empty row
+        servicesContainer.innerHTML = `
+            <div class="service-row mb-2" data-row-index="0">
+                <div class="input-group">
+                    <select class="form-control service-select" name="service_ids" required>
+                        <option value="">-- Select a Service --</option>
+                        {% for service in all_services %}
+                            <option value="{{ service.id }}">{{ service.service_name }} (₱{{ service.price|default:"N/A" }})</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="btn btn-outline-danger remove-service-btn" style="display: none;">
+                        <i class="fas fa-trash me-1"></i>Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function updateRemoveButtons() {
+        const rows = servicesContainer.querySelectorAll('.service-row');
+        rows.forEach(row => {
+            const removeBtn = row.querySelector('.remove-service-btn');
+            if (rows.length === 1) {
+                removeBtn.style.display = 'none';
+            } else {
+                removeBtn.style.display = 'inline-block';
+            }
+        });
+    }
+    
+    updateRemoveButtons();
+}
+
 function showEditForm(packageId) {
     // Hide all other edit forms
     document.querySelectorAll('.edit-form-row').forEach(row => {

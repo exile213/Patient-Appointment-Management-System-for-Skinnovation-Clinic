@@ -34,40 +34,40 @@ def login_selection(request):
 @never_cache
 @csrf_protect
 def patient_login(request):
-    """Patient login view"""
+    """Patient login view - Email-based authentication"""
     if request.user.is_authenticated:
         return redirect_to_dashboard(request.user)
     
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').lower().strip()
+        password = request.POST.get('password', '')
         
-        if username and password:
-            # First try Django's authenticate
-            user = authenticate(request, username=username, password=password)
-            
-            # If authentication fails but user exists, check if it's a patient
-            if user is None:
-                from django.contrib.auth import get_user_model
-                User_model = get_user_model()
-                # Try to find a patient user with this username
-                patient_user = User_model.objects.filter(username=username, user_type='patient').first()
-                if patient_user and patient_user.check_password(password):
-                    user = patient_user
-            
-            if user is not None and user.user_type == 'patient':
-                login(request, user)
-                messages.success(request, f'Welcome back, {user.first_name}!')
-                response = redirect('accounts:profile')
-                # Prevent caching of login page
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response['Pragma'] = 'no-cache'
-                response['Expires'] = '0'
-                return response
-            else:
-                messages.error(request, 'Invalid credentials for patient login.')
+        if email and password:
+            try:
+                # Find user by email (case-insensitive)
+                user = User.objects.get(email__iexact=email, user_type='patient')
+                
+                # Check password
+                if user.check_password(password) and user.is_active:
+                    login(request, user)
+                    messages.success(request, f'Welcome back, {user.first_name}!')
+                    response = redirect('accounts:profile')
+                    # Prevent caching of login page
+                    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                    response['Pragma'] = 'no-cache'
+                    response['Expires'] = '0'
+                    return response
+                else:
+                    if not user.is_active:
+                        messages.error(request, 'Your account is inactive. Please contact support.')
+                    else:
+                        messages.error(request, 'Invalid email or password.')
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid email or password.')
+            except User.MultipleObjectsReturned:
+                messages.error(request, 'Multiple accounts found. Please contact support.')
         else:
-            messages.error(request, 'Please enter both username and password.')
+            messages.error(request, 'Please enter both email and password.')
     
     response = render(request, 'accounts/patient_login.html')
     # Prevent caching of login page
@@ -80,28 +80,39 @@ def patient_login(request):
 @never_cache
 @csrf_protect
 def admin_login(request):
-    """Staff login view (legacy name retained for routing)"""
+    """Staff login view - Email-based authentication"""
     if request.user.is_authenticated:
         return redirect_to_dashboard(request.user)
     
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').lower().strip()
+        password = request.POST.get('password', '')
         
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-            if user is not None and user.user_type == 'admin':
-                login(request, user)
-                messages.success(request, f'Welcome back, {user.first_name}!')
-                response = redirect('appointments:admin_dashboard')
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response['Pragma'] = 'no-cache'
-                response['Expires'] = '0'
-                return response
-            else:
-                messages.error(request, 'Invalid credentials for staff login.')
+        if email and password:
+            try:
+                # Find user by email (case-insensitive)
+                user = User.objects.get(email__iexact=email, user_type='admin')
+                
+                # Check password
+                if user.check_password(password) and user.is_active:
+                    login(request, user)
+                    messages.success(request, f'Welcome back, {user.first_name}!')
+                    response = redirect('appointments:admin_dashboard')
+                    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                    response['Pragma'] = 'no-cache'
+                    response['Expires'] = '0'
+                    return response
+                else:
+                    if not user.is_active:
+                        messages.error(request, 'Your account is inactive. Please contact the owner.')
+                    else:
+                        messages.error(request, 'Invalid email or password.')
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid email or password.')
+            except User.MultipleObjectsReturned:
+                messages.error(request, 'Multiple accounts found. Please contact the owner.')
         else:
-            messages.error(request, 'Please enter both username and password.')
+            messages.error(request, 'Please enter both email and password.')
     
     response = render(request, 'accounts/admin_login.html')
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -113,7 +124,7 @@ def admin_login(request):
 @never_cache
 @csrf_protect
 def owner_login(request):
-    """Owner login view"""
+    """Owner login view - Email-based authentication"""
     if request.user.is_authenticated:
         return redirect_to_dashboard(request.user)
     
@@ -121,27 +132,38 @@ def owner_login(request):
     next_url = request.GET.get('next', None)
     
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').lower().strip()
+        password = request.POST.get('password', '')
         
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-            if user is not None and user.user_type == 'owner':
-                login(request, user)
-                messages.success(request, 'Welcome Back Ma\'am Kranchy')
-                # Redirect to next URL if provided, otherwise to owner dashboard
-                if next_url:
-                    response = redirect(next_url)
+        if email and password:
+            try:
+                # Find user by email (case-insensitive)
+                user = User.objects.get(email__iexact=email, user_type='owner')
+                
+                # Check password
+                if user.check_password(password) and user.is_active:
+                    login(request, user)
+                    messages.success(request, 'Welcome back to Skinnovation Beauty Clinic!')
+                    # Redirect to next URL if provided, otherwise to owner dashboard
+                    if next_url:
+                        response = redirect(next_url)
+                    else:
+                        response = redirect('owner:dashboard')
+                    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                    response['Pragma'] = 'no-cache'
+                    response['Expires'] = '0'
+                    return response
                 else:
-                    response = redirect('owner:dashboard')
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response['Pragma'] = 'no-cache'
-                response['Expires'] = '0'
-                return response
-            else:
-                messages.error(request, 'Invalid credentials for owner login.')
+                    if not user.is_active:
+                        messages.error(request, 'Your account is inactive.')
+                    else:
+                        messages.error(request, 'Invalid email or password.')
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid email or password.')
+            except User.MultipleObjectsReturned:
+                messages.error(request, 'Multiple accounts found.')
         else:
-            messages.error(request, 'Please enter both username and password.')
+            messages.error(request, 'Please enter both email and password.')
     
     context = {'next': next_url} if next_url else {}
     response = render(request, 'accounts/owner_login.html', context)
@@ -154,7 +176,7 @@ def owner_login(request):
 @never_cache
 @csrf_protect
 def attendant_login(request):
-    """Attendant login view"""
+    """Attendant login view - Email-based authentication"""
     if request.user.is_authenticated:
         return redirect_to_dashboard(request.user)
     
@@ -162,41 +184,38 @@ def attendant_login(request):
     next_url = request.GET.get('next', None)
     
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').lower().strip()
+        password = request.POST.get('password', '')
         
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-            if user is not None and user.user_type == 'attendant':
-                login(request, user)
-                messages.success(request, f'Welcome back, {user.first_name}!')
-                # Redirect to next URL if provided, otherwise to attendant dashboard
-                if next_url:
-                    response = redirect(next_url)
+        if email and password:
+            try:
+                # Find user by email (case-insensitive)
+                user = User.objects.get(email__iexact=email, user_type='attendant')
+                
+                # Check password
+                if user.check_password(password) and user.is_active:
+                    login(request, user)
+                    messages.success(request, f'Welcome back, {user.first_name}!')
+                    # Redirect to next URL if provided, otherwise to attendant dashboard
+                    if next_url:
+                        response = redirect(next_url)
+                    else:
+                        response = redirect('attendant:dashboard')
+                    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                    response['Pragma'] = 'no-cache'
+                    response['Expires'] = '0'
+                    return response
                 else:
-                    response = redirect('attendant:dashboard')
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                response['Pragma'] = 'no-cache'
-                response['Expires'] = '0'
-                return response
-            else:
-                # Provide more specific error message
-                if user is None:
-                    # Check if user exists but password is wrong
-                    try:
-                        existing_user = User.objects.get(username=username)
-                        if existing_user.user_type != 'attendant':
-                            messages.error(request, f'User "{username}" exists but is not an attendant. User type: {existing_user.user_type}.')
-                        elif not existing_user.is_active:
-                            messages.error(request, f'User "{username}" exists but is inactive. Please contact administrator.')
-                        else:
-                            messages.error(request, 'Invalid password for attendant login.')
-                    except User.DoesNotExist:
-                        messages.error(request, f'User "{username}" does not exist. Please create the attendant account first by running: python manage.py create_owner_attendant')
-                else:
-                    messages.error(request, f'User exists but user type is "{user.user_type}" instead of "attendant". Please contact administrator.')
+                    if not user.is_active:
+                        messages.error(request, 'Your account is inactive. Please contact the owner.')
+                    else:
+                        messages.error(request, 'Invalid email or password.')
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid email or password.')
+            except User.MultipleObjectsReturned:
+                messages.error(request, 'Multiple accounts found. Please contact the owner.')
         else:
-            messages.error(request, 'Please enter both username and password.')
+            messages.error(request, 'Please enter both email and password.')
     
     context = {'next': next_url} if next_url else {}
     response = render(request, 'accounts/attendant_login.html', context)
@@ -246,6 +265,25 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            # Send welcome email
+            try:
+                email_service = MailtrapEmailService()
+                email_result = email_service.send_welcome_email(user)
+                print(f"Welcome email result: {email_result}")
+            except Exception as e:
+                print(f"Error sending welcome email: {str(e)}")
+            
+            # Send welcome SMS
+            try:
+                if user.phone:
+                    from services.utils import send_sms_notification
+                    welcome_message = f"Welcome to Skinnovation Beauty Clinic! Hi {user.first_name}, thank you for registering. Browse our services and book your first appointment now!"
+                    sms_result = send_sms_notification(user.phone, welcome_message)
+                    print(f"Welcome SMS result: {sms_result}")
+            except Exception as e:
+                print(f"Error sending welcome SMS: {str(e)}")
+            
             # Auto-login the user after registration
             # Authenticate the user to set the backend attribute properly
             # This is required when multiple authentication backends are configured

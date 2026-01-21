@@ -1,8 +1,62 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from .models import User
 import re
+
+
+class EmailAuthenticationForm(AuthenticationForm):
+    """Custom authentication form using email instead of username"""
+    username = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Email Address',
+            'autocomplete': 'email',
+            'autofocus': True
+        }),
+        label='Email Address'
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Password',
+            'autocomplete': 'current-password'
+        })
+    )
+    
+    def clean_username(self):
+        """Validate email and get user by email"""
+        email = self.cleaned_data.get('username', '').lower().strip()
+        try:
+            # Find user by email (case-insensitive)
+            user = User.objects.get(email__iexact=email)
+            self.user_cache = user
+            return email
+        except User.DoesNotExist:
+            raise ValidationError('No account found with this email address.')
+        except User.MultipleObjectsReturned:
+            raise ValidationError('Multiple accounts found. Please contact support.')
+    
+    def clean(self):
+        """Override to authenticate with email"""
+        username = self.cleaned_data.get('username', '')
+        password = self.cleaned_data.get('password', '')
+        
+        if username and password:
+            # Authenticate using email
+            from django.contrib.auth import authenticate
+            self.user_cache = authenticate(
+                request=self.request,
+                username=username,
+                password=password
+            )
+            
+            if self.user_cache is None:
+                raise ValidationError('Invalid email or password.')
+            else:
+                self.confirm_login_allowed(self.user_cache)
+        
+        return self.cleaned_data
 
 
 class CustomUserCreationForm(UserCreationForm):

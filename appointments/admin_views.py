@@ -9,12 +9,15 @@ from django.core.paginator import Paginator
 from django.db import transaction
 import json
 import os
+import logging
 from django.conf import settings
 from .models import Appointment, Notification, ClosedDay
 from accounts.models import User, AttendantProfile
 from services.models import Service, ServiceImage, HistoryLog
 from products.models import Product, ProductImage
 from services.utils import send_appointment_sms
+
+logger = logging.getLogger(__name__)
 
 def is_admin(user):
     """Check if user is staff/admin"""
@@ -407,6 +410,16 @@ def admin_confirm_appointment(request, appointment_id):
         patient_sms_sent = sms_result['success']
         patient_sms_error = sms_result.get('error', '') if not patient_sms_sent else ''
         
+        # Send EMAIL confirmation to patient
+        try:
+            from utils.notifications import send_appointment_email
+            email_result = send_appointment_email(appointment, 'confirmation')
+            patient_email_sent = email_result.get('success', False)
+            logger.info(f"Appointment confirmation email sent: {patient_email_sent}")
+        except Exception as e:
+            logger.error(f"Error sending confirmation email: {str(e)}")
+            patient_email_sent = False
+        
         # Send SMS notification to attendant (only for service/package appointments)
         attendant_sms_sent = False
         attendant_notified = False
@@ -437,12 +450,14 @@ def admin_confirm_appointment(request, appointment_id):
                 pass
         
         # Consolidated success message
-        if patient_sms_sent and attendant_sms_sent:
-            messages.success(request, f'Appointment confirmed successfully. Notifications sent to patient and attendant.')
-        elif patient_sms_sent:
-            messages.success(request, f'Appointment confirmed. Patient notified via SMS.')
+        if patient_sms_sent and patient_email_sent and attendant_sms_sent:
+            messages.success(request, f'Appointment confirmed successfully. Notifications sent to patient (Email & SMS) and attendant.')
+        elif patient_sms_sent and patient_email_sent:
+            messages.success(request, f'Appointment confirmed. Patient notified via Email & SMS.')
+        elif patient_sms_sent or patient_email_sent:
+            messages.success(request, f'Appointment confirmed. Patient notified.')
         else:
-            # Appointment confirmed but SMS had issues
+            # Appointment confirmed but SMS/Email had issues
             messages.success(request, f'Appointment confirmed successfully.')
         
         # Log appointment confirmation

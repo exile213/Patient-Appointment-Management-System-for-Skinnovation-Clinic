@@ -1259,7 +1259,7 @@ def owner_maintenance(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_services(request):
     """Owner manage services"""
-    services = Service.objects.filter(archived=False).order_by('service_name')
+    services = Service.objects.filter(archived=False).order_by('-created_at')
     
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -1340,7 +1340,7 @@ def owner_manage_packages(request):
     from services.models import Service
     from packages.models import PackageService
     
-    packages = Package.objects.filter(archived=False).order_by('package_name')
+    packages = Package.objects.filter(archived=False).order_by('-created_at')
     all_services = Service.objects.filter(archived=False).order_by('service_name')
     
     if request.method == 'POST':
@@ -1456,7 +1456,7 @@ def owner_manage_packages(request):
 @user_passes_test(is_owner, login_url='/accounts/login/owner/')
 def owner_manage_products(request):
     """Owner manage products"""
-    products = Product.objects.filter(archived=False).order_by('product_name')
+    products = Product.objects.filter(archived=False).order_by('-created_at')
     
     if request.method == 'POST':
         action = request.POST.get('action')
