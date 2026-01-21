@@ -14,8 +14,10 @@ class SkySMSService:
         self.api_key = raw_key.strip() if isinstance(raw_key, str) else raw_key
         self.base_url = "https://skysms.skyio.site"
         
+        # Allow SMS service to be optional - will fail gracefully when sending if not configured
         if not self.api_key:
-            raise ImproperlyConfigured("SKYSMS_API_KEY not found in settings")
+            print("[SMS] WARNING: SKYSMS_API_KEY not configured. SMS notifications will fail when attempting to send.")
+            self.api_key = None
     
     def send_sms(self, phone, message, sender_id="BEAUTY"):
         """
@@ -29,6 +31,14 @@ class SkySMSService:
         Returns:
             dict: API response
         """
+        # Check if API key is configured
+        if not self.api_key:
+            return {
+                'success': False,
+                'error': 'SKYSMS_API_KEY not configured',
+                'message': 'SMS service is not properly configured. Please set SKYSMS_API_KEY in settings.'
+            }
+        
         # Format phone number to international format
         formatted_number = self._format_phone(phone)
         

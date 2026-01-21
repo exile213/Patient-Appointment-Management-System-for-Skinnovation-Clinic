@@ -267,22 +267,36 @@ def register_view(request):
             user = form.save()
             
             # Send welcome email
+            email_sent = False
             try:
                 email_service = MailtrapEmailService()
                 email_result = email_service.send_welcome_email(user)
-                print(f"Welcome email result: {email_result}")
+                if email_result.get('success'):
+                    email_sent = True
+                    print(f"Welcome email sent successfully to {user.email}")
+                else:
+                    print(f"Welcome email failed: {email_result.get('message')}")
             except Exception as e:
-                print(f"Error sending welcome email: {str(e)}")
+                print(f"Exception during welcome email: {str(e)}")
+                import traceback
+                traceback.print_exc()
             
             # Send welcome SMS
+            sms_sent = False
             try:
                 if user.phone:
                     from services.utils import send_sms_notification
                     welcome_message = f"Welcome to Skinnovation Beauty Clinic! Hi {user.first_name}, thank you for registering. Browse our services and book your first appointment now!"
                     sms_result = send_sms_notification(user.phone, welcome_message)
-                    print(f"Welcome SMS result: {sms_result}")
+                    if sms_result and sms_result.get('success'):
+                        sms_sent = True
+                        print(f"Welcome SMS sent successfully to {user.phone}")
+                    else:
+                        print(f"Welcome SMS failed: {sms_result}")
             except Exception as e:
-                print(f"Error sending welcome SMS: {str(e)}")
+                print(f"Exception during welcome SMS: {str(e)}")
+                import traceback
+                traceback.print_exc()
             
             # Auto-login the user after registration
             # Authenticate the user to set the backend attribute properly

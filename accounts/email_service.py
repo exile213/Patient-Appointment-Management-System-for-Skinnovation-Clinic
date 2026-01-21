@@ -12,6 +12,12 @@ class MailtrapEmailService:
     
     def __init__(self):
         self.api_token = settings.MAILTRAP_API_TOKEN
+        if not self.api_token:
+            raise ValueError(
+                "MAILTRAP_API_TOKEN is not configured. "
+                "Please set MAILTRAP_API_TOKEN in your .env file.\n"
+                "Get your token from: https://mailtrap.io/api-tokens"
+            )
         self.client = mt.MailtrapClient(token=self.api_token)
     
     def send_password_reset_email(self, user, reset_url):
@@ -162,15 +168,21 @@ class MailtrapEmailService:
         )
         
         try:
+            print(f"[EMAIL] Attempting to send welcome email to {user.email}")
+            print(f"[EMAIL] API Token configured: {bool(self.api_token)}")
             response = self.client.send(mail)
-            print(f"Welcome Email Response: {response}")
+            print(f"[EMAIL] Welcome Email Response: {response}")
             return {
                 'success': True,
                 'response': response,
                 'message': 'Welcome email sent successfully!'
             }
         except Exception as e:
-            print(f"Welcome Email Error: {str(e)}")
+            import traceback
+            error_msg = f"Welcome Email Error: {str(e)}"
+            print(f"[EMAIL] {error_msg}")
+            print(f"[EMAIL] Error type: {type(e).__name__}")
+            traceback.print_exc()
             return {
                 'success': False,
                 'error': str(e),
