@@ -67,10 +67,14 @@ Register a new patient:
 - Email: `owner@skinovation.com`
 - Password: `owner@123456`
 
+**✅ Note:** Use email (not username) in the login form
+
 ### Admin Login:
 - URL: http://localhost:8000/accounts/login/admin/
 - Email: `admin@skinovation.com`
 - Password: `admin@123456`
+
+**✅ Note:** Use email (not username) in the login form
 
 ---
 
