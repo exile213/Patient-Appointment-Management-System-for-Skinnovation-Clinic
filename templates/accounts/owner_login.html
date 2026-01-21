@@ -296,11 +296,11 @@
                         <form method="post" action="">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label for="username" class="form-label">Owner Username</label>
+                                <label for="email" class="form-label">Owner Email</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-crown"></i></span>
-                                    <input type="text" class="form-control" id="username" name="username"
-                                        maxlength="50" placeholder="Enter owner username" required>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        maxlength="100" placeholder="Enter owner email" required>
                                 </div>
                             </div>
 

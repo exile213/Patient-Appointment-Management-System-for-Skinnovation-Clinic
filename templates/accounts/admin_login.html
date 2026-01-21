@@ -277,11 +277,11 @@
                         <form method="post" action="">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label for="username" class="form-label">Staff Username</label>
+                                <label for="email" class="form-label">Staff Email</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
-                                    <input type="text" class="form-control" id="username" name="username"
-                                        maxlength="50" placeholder="Enter staff username" required>
+                                    <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        maxlength="100" placeholder="Enter staff email" required>
                                 </div>
                             </div>
 
