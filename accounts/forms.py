@@ -103,14 +103,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control', 
-                'placeholder': 'Username',
-                'style': 'text-transform: capitalize;'
-            }),
-        }
+        fields = ('first_name', 'last_name', 'middle_name', 'email', 'phone', 'password1', 'password2')
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -184,6 +177,17 @@ class CustomUserCreationForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         user.phone = self.cleaned_data['phone']
         user.user_type = 'patient'  # Default to patient
+        
+        # Auto-generate username from email (part before @)
+        email = self.cleaned_data['email']
+        base_username = email.split('@')[0].lower()
+        username = base_username
+        counter = 1
+        # Ensure username is unique
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        user.username = username
         
         if commit:
             user.save()

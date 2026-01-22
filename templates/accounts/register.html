@@ -189,17 +189,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    {{ form.username }}
-                                </div>
-                                {% if form.username.errors %}
-                                    <div class="text-danger small">{{ form.username.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="{{ form.email.id_for_label }}" class="form-label">Email <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
@@ -210,7 +200,7 @@
                                     <div class="text-danger small">{{ form.email.errors }}</div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="{{ form.phone.id_for_label }}" class="form-label">
                                     <i class="fas fa-phone me-1"></i>Phone Number <span class="text-danger">*</span>
                                 </label>
@@ -335,11 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return googleEmailRegex.test(email);
     }
     
-    // Auto-capitalize first letter of First Name, Last Name, and Username
+    // Auto-capitalize first letter of First Name and Last Name
     const firstNameInput = document.getElementById('id_first_name');
     const lastNameInput = document.getElementById('id_last_name');
     const middleNameInput = document.getElementById('id_middle_name');
-    const usernameInput = document.getElementById('id_username');
     const emailInput = document.getElementById('id_email');
     
     function capitalizeFirstLetter(input) {
@@ -473,22 +462,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (usernameInput) {
-        usernameInput.addEventListener('input', function(e) {
-            if (e.target.value.length === 1) {
-                e.target.value = e.target.value.toUpperCase();
-            } else if (e.target.value.length > 1) {
-                const firstChar = e.target.value.charAt(0).toUpperCase();
-                const rest = e.target.value.slice(1);
-                e.target.value = firstChar + rest;
-            }
-        });
-        
-        // Ensure first letter is capitalized on blur
-        usernameInput.addEventListener('blur', function(e) {
-            capitalizeFirstLetter(e.target);
-        });
-    }
     
     const phoneInput = document.getElementById('id_phone');
     const phoneError = document.getElementById('phoneError');

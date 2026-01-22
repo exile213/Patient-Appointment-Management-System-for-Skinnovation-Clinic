@@ -49,6 +49,8 @@ def patient_login(request):
                 
                 # Check password
                 if user.check_password(password) and user.is_active:
+                    # Set backend attribute for multiple authentication backends
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
                     login(request, user)
                     messages.success(request, f'Welcome back, {user.first_name}!')
                     response = redirect('accounts:profile')
@@ -95,6 +97,8 @@ def admin_login(request):
                 
                 # Check password
                 if user.check_password(password) and user.is_active:
+                    # Set backend attribute for multiple authentication backends
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
                     login(request, user)
                     messages.success(request, f'Welcome back, {user.first_name}!')
                     response = redirect('appointments:admin_dashboard')
@@ -142,6 +146,8 @@ def owner_login(request):
                 
                 # Check password
                 if user.check_password(password) and user.is_active:
+                    # Set backend attribute for multiple authentication backends
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
                     login(request, user)
                     messages.success(request, 'Welcome back to Skinnovation Beauty Clinic!')
                     # Redirect to next URL if provided, otherwise to owner dashboard
@@ -194,6 +200,8 @@ def attendant_login(request):
                 
                 # Check password
                 if user.check_password(password) and user.is_active:
+                    # Set backend attribute for multiple authentication backends
+                    user.backend = 'django.contrib.auth.backends.ModelBackend'
                     login(request, user)
                     messages.success(request, f'Welcome back, {user.first_name}!')
                     # Redirect to next URL if provided, otherwise to attendant dashboard

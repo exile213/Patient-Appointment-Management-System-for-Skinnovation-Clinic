@@ -12,8 +12,15 @@ class Command(BaseCommand):
         try:
             created_users = []
             
-            # Create default Owner
-            if not User.objects.filter(email='owner@skinovation.com').exists():
+            # Create or reset default Owner
+            # Check by email first, then by username
+            owner = User.objects.filter(email='owner@skinovation.com').first()
+            if not owner:
+                # Check if username exists
+                owner = User.objects.filter(username='owner').first()
+            
+            if not owner:
+                # Create new user
                 owner = User.objects.create_user(
                     username='owner',
                     email='owner@skinovation.com',
@@ -27,15 +34,34 @@ class Command(BaseCommand):
                 )
                 created_users.append(('Owner', 'owner@skinovation.com', 'owner@123456'))
                 self.stdout.write(
-                    self.style.SUCCESS(f'✓ Owner user created successfully')
+                    self.style.SUCCESS('Owner user created successfully')
                 )
             else:
+                # Reset password and ensure account is active
+                owner.set_password('owner@123456')
+                owner.is_active = True
+                owner.is_staff = True
+                owner.user_type = 'owner'
+                owner.first_name = 'Skinnovation'
+                owner.last_name = 'Owner'
+                owner.email = 'owner@skinovation.com'
+                owner.phone = '09123456789'
+                owner.username = 'owner'
+                owner.save()
+                created_users.append(('Owner', 'owner@skinovation.com', 'owner@123456'))
                 self.stdout.write(
-                    self.style.WARNING('✓ Owner user already exists (owner@skinovation.com)')
+                    self.style.SUCCESS('Owner user password reset and account activated')
                 )
             
-            # Create default Admin/Staff
-            if not User.objects.filter(email='admin@skinovation.com').exists():
+            # Create or reset default Admin/Staff
+            # Check by email first, then by username
+            admin = User.objects.filter(email='admin@skinovation.com').first()
+            if not admin:
+                # Check if username exists
+                admin = User.objects.filter(username='admin').first()
+            
+            if not admin:
+                # Create new user
                 admin = User.objects.create_user(
                     username='admin',
                     email='admin@skinovation.com',
@@ -49,29 +75,45 @@ class Command(BaseCommand):
                 )
                 created_users.append(('Admin', 'admin@skinovation.com', 'admin@123456'))
                 self.stdout.write(
-                    self.style.SUCCESS(f'✓ Admin user created successfully')
+                    self.style.SUCCESS('Admin user created successfully')
                 )
             else:
+                # Reset password and ensure account is active
+                admin.set_password('admin@123456')
+                admin.is_active = True
+                admin.is_staff = True
+                admin.user_type = 'admin'
+                admin.first_name = 'Admin'
+                admin.last_name = 'Staff'
+                admin.email = 'admin@skinovation.com'
+                admin.phone = '09123456790'
+                admin.username = 'admin'
+                admin.save()
+                created_users.append(('Admin', 'admin@skinovation.com', 'admin@123456'))
                 self.stdout.write(
-                    self.style.WARNING('✓ Admin user already exists (admin@skinovation.com)')
+                    self.style.SUCCESS('Admin user password reset and account activated')
                 )
             
-            # Print credentials for newly created users
+            # Print credentials for all users
             if created_users:
                 self.stdout.write('\n' + '='*60)
-                self.stdout.write(self.style.SUCCESS('NEW USER CREDENTIALS'))
+                self.stdout.write(self.style.SUCCESS('USER CREDENTIALS'))
                 self.stdout.write('='*60)
                 for role, email, password in created_users:
                     self.stdout.write(f'\nRole: {role}')
                     self.stdout.write(f'Email: {email}')
                     self.stdout.write(f'Password: {password}')
+                    if role == 'Owner':
+                        self.stdout.write(f'Login URL: /accounts/login/owner/')
+                    elif role == 'Admin':
+                        self.stdout.write(f'Login URL: /accounts/login/admin/')
                 self.stdout.write('='*60 + '\n')
             
-            self.stdout.write(self.style.SUCCESS('\n✓ Admin and Owner seeding completed successfully!'))
+            self.stdout.write(self.style.SUCCESS('\nAdmin and Owner seeding completed successfully!'))
             
         except Exception as e:
             self.stdout.write(
-                self.style.ERROR(f'✗ Error during seeding: {str(e)}')
+                self.style.ERROR(f'Error during seeding: {str(e)}')
             )
             import traceback
             traceback.print_exc()
