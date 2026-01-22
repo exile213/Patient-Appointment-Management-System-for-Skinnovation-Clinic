@@ -127,13 +127,6 @@
                         <small class="form-text text-muted">11-digit Philippine phone number starting with 09</small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="username" name="username" 
-                               value="{{ user.username }}" required>
-                        <small class="form-text text-muted">This is your login username.</small>
-                    </div>
-
                     <hr class="my-4">
 
                     <!-- Password Change Section -->
@@ -201,10 +194,6 @@
                     <tr>
                         <th>Account Type:</th>
                         <td><span class="badge bg-success">{{ user.user_type|capfirst }}</span></td>
-                    </tr>
-                    <tr>
-                        <th>Username:</th>
-                        <td>{{ user.username }}</td>
                     </tr>
                     <tr>
                         <th>Date Joined:</th>

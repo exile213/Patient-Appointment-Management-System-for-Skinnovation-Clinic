@@ -152,14 +152,22 @@
 // Password visibility toggle function
 function togglePasswordVisibility(inputId, buttonId) {
     const input = document.getElementById(inputId);
-    const button = document.getElementById(buttonId);
-    let icon;
+    if (!input) return;
     
-    if (inputId === 'new_password') {
+    // Find the icon within the button
+    const button = document.querySelector(`button[onclick*="${inputId}"]`);
+    let icon = null;
+    
+    if (button) {
+        icon = button.querySelector('i');
+    }
+    
+    // Fallback: try to find icon by ID
+    if (!icon && inputId === 'new_password') {
         icon = document.getElementById('iconNewPassword');
     }
     
-    if (input && button && icon) {
+    if (input && icon) {
         if (input.type === 'password') {
             input.type = 'text';
             icon.classList.remove('fa-eye');

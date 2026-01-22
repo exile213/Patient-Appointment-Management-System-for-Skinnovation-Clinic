@@ -685,7 +685,7 @@ def attendant_schedule(request):
 @login_required(login_url='/accounts/login/attendant/')
 @user_passes_test(is_attendant, login_url='/accounts/login/attendant/')
 def attendant_manage_profile(request):
-    """Attendant manage their own profile (edit name, username, password, profile picture)"""
+    """Attendant manage their own profile (edit name, email, phone, password, profile picture)"""
     import re
     from django.contrib.auth import update_session_auth_hash
     user = request.user
@@ -694,7 +694,6 @@ def attendant_manage_profile(request):
         email = request.POST.get('email', '').strip()
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
-        username = request.POST.get('username', '').strip()
         middle_name = request.POST.get('middle_name', '').strip()
         phone = request.POST.get('phone', '').strip()
         current_password = request.POST.get('current_password', '').strip()
@@ -703,8 +702,8 @@ def attendant_manage_profile(request):
         profile_picture = request.FILES.get('profile_picture')
         
         # Validate required fields
-        if not all([first_name, last_name, username, email]):
-            messages.error(request, 'First name, last name, username, and email are required.')
+        if not all([first_name, last_name, email]):
+            messages.error(request, 'First name, last name, and email are required.')
             return redirect('attendant:manage_profile')
         
         # Validate email
@@ -777,7 +776,6 @@ def attendant_manage_profile(request):
         user.email = email
         user.first_name = first_name
         user.last_name = last_name
-        user.username = username
         user.middle_name = middle_name if middle_name else ''
         user.phone = phone if phone else ''
         
