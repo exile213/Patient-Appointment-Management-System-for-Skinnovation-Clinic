@@ -691,34 +691,56 @@ def attendant_manage_profile(request):
     user = request.user
     
     if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         username = request.POST.get('username', '').strip()
         middle_name = request.POST.get('middle_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
         current_password = request.POST.get('current_password', '').strip()
         new_password = request.POST.get('new_password', '').strip()
         confirm_password = request.POST.get('confirm_password', '').strip()
         profile_picture = request.FILES.get('profile_picture')
         
         # Validate required fields
-        if not all([first_name, last_name, username]):
-            messages.error(request, 'First name, last name, and username are required.')
+        if not all([first_name, last_name, username, email]):
+            messages.error(request, 'First name, last name, username, and email are required.')
             return redirect('attendant:manage_profile')
         
-        # Validate that names contain only letters and spaces
+        # Validate email
+        if not email or '@' not in email:
+            messages.error(request, 'Please enter a valid email address.')
+            return redirect('attendant:manage_profile')
+        
+        # Check if email is already taken by another user
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            messages.error(request, 'This email is already in use by another account.')
+            return redirect('attendant:manage_profile')
+        
+        # Validate that names contain only letters and spaces (no numbers, symbols, or hyphens)
         name_pattern = re.compile(r'^[A-Za-z\s]+$')
         
         if not name_pattern.match(first_name):
-            messages.error(request, 'First name can only contain letters and spaces.')
+            messages.error(request, 'First name can only contain letters and spaces. No numbers, symbols, or hyphens allowed.')
             return redirect('attendant:manage_profile')
         
         if not name_pattern.match(last_name):
-            messages.error(request, 'Last name can only contain letters and spaces.')
+            messages.error(request, 'Last name can only contain letters and spaces. No numbers, symbols, or hyphens allowed.')
             return redirect('attendant:manage_profile')
         
         if middle_name and not name_pattern.match(middle_name):
-            messages.error(request, 'Middle name can only contain letters and spaces.')
+            messages.error(request, 'Middle name can only contain letters and spaces. No numbers, symbols, or hyphens allowed.')
             return redirect('attendant:manage_profile')
+        
+        # Validate phone number (if provided)
+        if phone:
+            # Remove any non-digit characters
+            phone_digits = re.sub(r'\D', '', phone)
+            # Check if it's exactly 11 digits and starts with 09
+            if len(phone_digits) != 11 or not phone_digits.startswith('09'):
+                messages.error(request, 'Please enter a valid 11-digit Philippine phone number starting with 09 (e.g., 09123456789)')
+                return redirect('attendant:manage_profile')
+            phone = phone_digits
         
         # Check if username is already taken by another user
         if User.objects.filter(username=username).exclude(id=user.id).exists():
@@ -752,10 +774,12 @@ def attendant_manage_profile(request):
             messages.success(request, 'Password changed successfully.')
         
         # Update user fields
+        user.email = email
         user.first_name = first_name
         user.last_name = last_name
         user.username = username
         user.middle_name = middle_name if middle_name else ''
+        user.phone = phone if phone else ''
         
         # Handle profile picture upload
         if profile_picture:

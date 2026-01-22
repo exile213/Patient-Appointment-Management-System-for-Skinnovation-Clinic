@@ -22,156 +22,235 @@
         transform: scale(1.05);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+    .password-toggle-btn {
+        border-left: none;
+        background: white;
+        border-color: #ced4da;
+        cursor: pointer;
+        z-index: 10;
+        min-width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .password-toggle-btn:hover {
+        background: #f8f9fa;
+        border-color: #ced4da;
+    }
+    .password-toggle-btn:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+    .input-group .form-control:focus ~ .password-toggle-btn {
+        border-color: #86b7fe;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>
-        <i class="fas fa-user-edit me-2"></i>Edit Your Profile
-    </h3>
-    <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-    </a>
-</div>
-
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">
-            <i class="fas fa-user me-2"></i>Profile Information
-        </h5>
-    </div>
-    <div class="card-body">
-        <form method="post" action="{% url 'attendant:manage_profile' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <!-- Profile Picture Section -->
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <label class="form-label fw-bold">
-                        <i class="fas fa-image me-2"></i>Profile Picture
-                    </label>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="profile-picture-preview">
-                            {% if user.profile_picture %}
-                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
-                                     class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #dee2e6;">
-                            {% else %}
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
-                                     style="width: 100px; height: 100px; border: 3px solid #dee2e6;">
-                                    <i class="fas fa-user fa-3x text-white"></i>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="flex-grow-1">
-                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" 
-                                   accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
-                            <small class="form-text text-muted">
-                                Upload a new profile picture (JPEG, PNG, GIF, or WebP). Maximum size: 5MB.
-                            </small>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Edit Your Profile: {{ user.get_full_name }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'attendant:manage_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Profile Picture Section -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-image me-2"></i>Profile Picture
+                        </label>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="profile-picture-preview">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                                         class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #dee2e6;">
+                                {% else %}
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
+                                         style="width: 100px; height: 100px; border: 3px solid #dee2e6;">
+                                        <i class="fas fa-user fa-3x text-white"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="file" class="form-control" id="profile_picture" name="profile_picture" 
+                                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                                <small class="form-text text-muted">
+                                    Upload a new profile picture (JPEG, PNG, GIF, or WebP). Maximum size: 5MB.
+                                </small>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    <hr class="my-4">
+
+                    <!-- Personal Information Section -->
+                    <h5 class="mb-3"><i class="fas fa-user me-2"></i>Personal Information</h5>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email|default:'' }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" 
+                                   value="{{ user.first_name }}" required style="text-transform: capitalize;">
+                            <small class="form-text text-muted">Letters only, no numbers, symbols, or hyphens</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="middle_name" class="form-label">Middle Name (Optional)</label>
+                            <input type="text" class="form-control" id="middle_name" name="middle_name" 
+                                   value="{{ user.middle_name|default:'' }}" style="text-transform: capitalize;">
+                            <small class="form-text text-muted">Letters only, no numbers, symbols, or hyphens</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" 
+                                   value="{{ user.last_name }}" required style="text-transform: capitalize;">
+                            <small class="form-text text-muted">Letters only, no numbers, symbols, or hyphens</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               value="{{ user.phone|default:'' }}" placeholder="09123456789" maxlength="11">
+                        <small class="form-text text-muted">11-digit Philippine phone number starting with 09</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               value="{{ user.username }}" required>
+                        <small class="form-text text-muted">This is your login username.</small>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Password Change Section -->
+                    <h5 class="mb-3"><i class="fas fa-lock me-2"></i>Change Password</h5>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Leave password fields blank if you don't want to change your password.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="current_password" name="current_password" 
+                                   placeholder="Enter your current password">
+                            <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('current_password', 'toggleCurrentPassword')">
+                                <i class="fas fa-eye" id="iconCurrentPassword"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Required only if you want to change your password.</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="new_password" class="form-label">New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="new_password" name="new_password" 
+                                       placeholder="Enter new password (min. 8 characters)" minlength="8">
+                                <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('new_password', 'toggleNewPassword')">
+                                    <i class="fas fa-eye" id="iconNewPassword"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">Minimum 8 characters.</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                       placeholder="Confirm new password" minlength="8">
+                                <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('confirm_password', 'toggleConfirmPassword')">
+                                    <i class="fas fa-eye" id="iconConfirmPassword"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">Re-enter your new password.</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
-            
-            <hr class="my-4">
-            
-            <!-- Personal Information Section -->
-            <h5 class="mb-3"><i class="fas fa-user me-2"></i>Personal Information</h5>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="first_name" class="form-label fw-bold">
-                        <i class="fas fa-user me-2"></i>First Name <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="first_name" name="first_name" 
-                           value="{{ user.first_name }}" required pattern="[A-Za-z\s]+" 
-                           title="Only letters and spaces are allowed">
-                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
-                </div>
-                <div class="col-md-4">
-                    <label for="middle_name" class="form-label fw-bold">
-                        <i class="fas fa-user me-2"></i>Middle Name <small class="text-muted">(Optional)</small>
-                    </label>
-                    <input type="text" class="form-control" id="middle_name" name="middle_name" 
-                           value="{{ user.middle_name|default:'' }}" pattern="[A-Za-z\s]*" 
-                           title="Only letters and spaces are allowed">
-                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
-                </div>
-                <div class="col-md-4">
-                    <label for="last_name" class="form-label fw-bold">
-                        <i class="fas fa-user me-2"></i>Last Name <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" 
-                           value="{{ user.last_name }}" required pattern="[A-Za-z\s]+" 
-                           title="Only letters and spaces are allowed">
-                    <small class="form-text text-muted">Letters only, no numbers or symbols</small>
-                </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">Account Information</h6>
             </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label for="username" class="form-label fw-bold">
-                        <i class="fas fa-at me-2"></i>Username <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="username" name="username" 
-                           value="{{ user.username }}" required>
-                    <small class="form-text text-muted">This is your login username.</small>
-                </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <th>Account Type:</th>
+                        <td><span class="badge bg-success">{{ user.user_type|capfirst }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Username:</th>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date Joined:</th>
+                        <td>{{ user.date_joined|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Login:</th>
+                        <td>{{ user.last_login|date:"F d, Y g:i A"|default:"Never" }}</td>
+                    </tr>
+                </table>
             </div>
-            
-            <hr class="my-4">
-            
-            <!-- Password Change Section -->
-            <h5 class="mb-3"><i class="fas fa-lock me-2"></i>Change Password</h5>
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                <strong>Note:</strong> Leave password fields blank if you don't want to change your password.
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label for="current_password" class="form-label fw-bold">
-                        <i class="fas fa-key me-2"></i>Current Password
-                    </label>
-                    <input type="password" class="form-control" id="current_password" name="current_password" 
-                           placeholder="Enter your current password">
-                    <small class="form-text text-muted">Required only if you want to change your password.</small>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="new_password" class="form-label fw-bold">
-                        <i class="fas fa-lock me-2"></i>New Password
-                    </label>
-                    <input type="password" class="form-control" id="new_password" name="new_password" 
-                           placeholder="Enter new password (min. 8 characters)" minlength="8">
-                    <small class="form-text text-muted">Minimum 8 characters.</small>
-                </div>
-                <div class="col-md-6">
-                    <label for="confirm_password" class="form-label fw-bold">
-                        <i class="fas fa-lock me-2"></i>Confirm New Password
-                    </label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
-                           placeholder="Confirm new password" minlength="8">
-                    <small class="form-text text-muted">Re-enter your new password.</small>
-                </div>
-            </div>
-            
-            <div class="d-flex justify-content-end gap-2 mt-4">
-                <a href="{% url 'attendant:dashboard' %}" class="btn btn-secondary">
-                    <i class="fas fa-times me-2"></i>Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i>Save Changes
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Real-time validation for name fields
+// Password visibility toggle function
+function togglePasswordVisibility(inputId, buttonId) {
+    const input = document.getElementById(inputId);
+    const button = document.getElementById(buttonId);
+    let icon;
+    
+    if (inputId === 'current_password') {
+        icon = document.getElementById('iconCurrentPassword');
+    } else if (inputId === 'new_password') {
+        icon = document.getElementById('iconNewPassword');
+    } else if (inputId === 'confirm_password') {
+        icon = document.getElementById('iconConfirmPassword');
+    }
+    
+    if (input && button && icon) {
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+
+// Real-time validation for name fields - no numbers, symbols, or hyphens
 document.addEventListener('DOMContentLoaded', function() {
     const nameFields = ['first_name', 'middle_name', 'last_name'];
     
@@ -180,12 +259,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (field) {
             field.addEventListener('input', function(e) {
                 const value = e.target.value;
-                // Remove any numbers or symbols as user types
+                // Remove any numbers, symbols, or hyphens - only allow letters and spaces
                 const cleaned = value.replace(/[^A-Za-z\s]/g, '');
                 
                 if (value !== cleaned) {
                     e.target.value = cleaned;
-                    // Optional: Show brief warning
                     e.target.classList.add('invalid');
                     setTimeout(() => {
                         e.target.classList.remove('invalid');
@@ -206,8 +284,57 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.target.value = capitalized;
                 }
             });
+            
+            // Prevent typing numbers, symbols, or hyphens
+            field.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.which);
+                if (!/[a-zA-Z\s]/.test(char) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                }
+            });
         }
     });
+    
+    // Phone number validation - only numbers, 11 digits starting with 09
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limit to 11 digits
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            // Update the input value
+            e.target.value = value;
+            
+            // Validate format
+            if (value.length > 0 && (value.length !== 11 || !value.startsWith('09'))) {
+                e.target.classList.add('invalid');
+            } else {
+                e.target.classList.remove('invalid');
+            }
+        });
+        
+        // Prevent non-numeric input
+        phoneInput.addEventListener('keypress', function(e) {
+            // Allow backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    }
     
     // Form validation before submit
     const form = document.querySelector('form');
@@ -215,18 +342,30 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             let hasError = false;
             
+            // Validate names - no numbers, symbols, or hyphens
             nameFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (field && field.value) {
-                    // Check if contains any numbers or symbols
+                    // Check if contains any numbers, symbols, or hyphens
                     if (/[^A-Za-z\s]/.test(field.value)) {
                         e.preventDefault();
                         field.classList.add('invalid');
-                        alert('Name fields can only contain letters and spaces.');
+                        alert('Name fields can only contain letters and spaces. No numbers, symbols, or hyphens allowed.');
                         hasError = true;
                     }
                 }
             });
+            
+            // Validate phone number
+            if (phoneInput && phoneInput.value) {
+                const phoneValue = phoneInput.value;
+                if (phoneValue.length !== 11 || !phoneValue.startsWith('09')) {
+                    e.preventDefault();
+                    phoneInput.classList.add('invalid');
+                    alert('Please enter a valid 11-digit Philippine phone number starting with 09.');
+                    hasError = true;
+                }
+            }
             
             // Validate password change
             const currentPassword = document.getElementById('current_password').value;
@@ -325,4 +464,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-

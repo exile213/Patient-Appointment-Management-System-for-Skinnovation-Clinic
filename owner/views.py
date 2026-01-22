@@ -2594,6 +2594,28 @@ def owner_edit_account(request, user_id):
             messages.error(request, 'This email is already in use by another account.')
             return redirect('owner:edit_account', user_id=user_id)
         
+        # Validate names - no numbers, symbols, or hyphens (only letters and spaces)
+        import re
+        name_pattern = re.compile(r'^[A-Za-z\s]+$')
+        
+        if not name_pattern.match(first_name):
+            messages.error(request, 'First name can only contain letters and spaces. No numbers, symbols, or hyphens allowed.')
+            return redirect('owner:edit_account', user_id=user_id)
+        
+        if not name_pattern.match(last_name):
+            messages.error(request, 'Last name can only contain letters and spaces. No numbers, symbols, or hyphens allowed.')
+            return redirect('owner:edit_account', user_id=user_id)
+        
+        # Validate phone number (if provided)
+        if phone:
+            # Remove any non-digit characters
+            phone_digits = re.sub(r'\D', '', phone)
+            # Check if it's exactly 11 digits and starts with 09
+            if len(phone_digits) != 11 or not phone_digits.startswith('09'):
+                messages.error(request, 'Please enter a valid 11-digit Philippine phone number starting with 09 (e.g., 09123456789)')
+                return redirect('owner:edit_account', user_id=user_id)
+            phone = phone_digits
+        
         # Update user fields
         user.email = email
         user.first_name = first_name
