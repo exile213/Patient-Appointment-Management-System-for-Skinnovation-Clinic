@@ -2544,3 +2544,88 @@ def owner_download_backup(request, filename):
     )
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
+
+
+@login_required(login_url='/accounts/login/owner/')
+@user_passes_test(is_owner, login_url='/accounts/login/owner/')
+def owner_manage_accounts(request):
+    """Owner view to manage all system accounts (Owner, Admin, Attendant)"""
+    # Get all accounts by type
+    owner_accounts = User.objects.filter(user_type='owner').order_by('id')
+    admin_accounts = User.objects.filter(user_type='admin').order_by('id')
+    attendant_accounts = User.objects.filter(user_type='attendant').order_by('id')
+    
+    context = {
+        'owner_accounts': owner_accounts,
+        'admin_accounts': admin_accounts,
+        'attendant_accounts': attendant_accounts,
+    }
+    
+    return render(request, 'owner/manage_accounts.html', context)
+
+
+@login_required(login_url='/accounts/login/owner/')
+@user_passes_test(is_owner, login_url='/accounts/login/owner/')
+def owner_edit_account(request, user_id):
+    """Edit a system account (Owner, Admin, or Attendant)"""
+    user = get_object_or_404(User, id=user_id)
+    
+    # Only allow editing owner, admin, and attendant accounts
+    if user.user_type not in ['owner', 'admin', 'attendant']:
+        messages.error(request, 'You can only edit Owner, Admin, and Attendant accounts.')
+        return redirect('owner:manage_accounts')
+    
+    if request.method == 'POST':
+        # Get form data
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
+        is_active = request.POST.get('is_active') == 'on'
+        
+        # Validate email
+        if not email:
+            messages.error(request, 'Email is required.')
+            return redirect('owner:edit_account', user_id=user_id)
+        
+        # Check if email is already taken by another user
+        if User.objects.filter(email=email).exclude(id=user_id).exists():
+            messages.error(request, 'This email is already in use by another account.')
+            return redirect('owner:edit_account', user_id=user_id)
+        
+        # Update user fields
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.phone = phone
+        user.is_active = is_active
+        
+        # Update password if provided
+        if new_password:
+            if len(new_password) < 6:
+                messages.error(request, 'Password must be at least 6 characters long.')
+                return redirect('owner:edit_account', user_id=user_id)
+            user.set_password(new_password)
+            messages.success(request, f'Password updated for {user.get_full_name()}.')
+        
+        user.save()
+        
+        # Log the action
+        log_history(
+            item_type='Account',
+            item_name=f'{user.user_type.capitalize()} - {user.get_full_name()}',
+            action='Updated',
+            performed_by=request.user.get_full_name(),
+            details=f'Updated account details for {user.email}',
+            related_id=user_id
+        )
+        
+        messages.success(request, f'Account updated successfully for {user.get_full_name()}.')
+        return redirect('owner:manage_accounts')
+    
+    context = {
+        'account': user,
+    }
+    
+    return render(request, 'owner/edit_account.html', context)

@@ -109,7 +109,65 @@ class Command(BaseCommand):
                         self.stdout.write(f'Login URL: /accounts/login/admin/')
                 self.stdout.write('='*60 + '\n')
             
-            self.stdout.write(self.style.SUCCESS('\nAdmin and Owner seeding completed successfully!'))
+            # Create or reset default Attendant
+            # Check by email first, then by username
+            attendant = User.objects.filter(email='attendant@skinovation.com').first()
+            if not attendant:
+                # Check if username exists
+                attendant = User.objects.filter(username='attendant').first()
+            
+            if not attendant:
+                # Create new user
+                attendant = User.objects.create_user(
+                    username='attendant',
+                    email='attendant@skinovation.com',
+                    first_name='Attendant',
+                    last_name='Staff',
+                    password='attendant@123456',
+                    user_type='attendant',
+                    phone='09123456791',
+                    is_staff=True,
+                    is_active=True
+                )
+                created_users.append(('Attendant', 'attendant@skinovation.com', 'attendant@123456'))
+                self.stdout.write(
+                    self.style.SUCCESS('Attendant user created successfully')
+                )
+            else:
+                # Reset password and ensure account is active
+                attendant.set_password('attendant@123456')
+                attendant.is_active = True
+                attendant.is_staff = True
+                attendant.user_type = 'attendant'
+                attendant.first_name = 'Attendant'
+                attendant.last_name = 'Staff'
+                attendant.email = 'attendant@skinovation.com'
+                attendant.phone = '09123456791'
+                attendant.username = 'attendant'
+                attendant.save()
+                created_users.append(('Attendant', 'attendant@skinovation.com', 'attendant@123456'))
+                self.stdout.write(
+                    self.style.SUCCESS('Attendant user password reset and account activated')
+                )
+            
+            # Print credentials for all users
+            if created_users:
+                self.stdout.write('\n' + '='*60)
+                self.stdout.write(self.style.SUCCESS('USER CREDENTIALS'))
+                self.stdout.write('='*60)
+                for role, email, password in created_users:
+                    self.stdout.write(f'\nRole: {role}')
+                    self.stdout.write(f'Email: {email}')
+                    self.stdout.write(f'Password: {password}')
+                    if role == 'Owner':
+                        self.stdout.write(f'Login URL: /accounts/login/owner/')
+                    elif role == 'Admin':
+                        self.stdout.write(f'Login URL: /accounts/login/admin/')
+                    elif role == 'Attendant':
+                        self.stdout.write(f'Login URL: /accounts/login/attendant/')
+                self.stdout.write('='*60 + '\n')
+            
+            self.stdout.write(self.style.SUCCESS('\nAdmin, Owner, and Attendant seeding completed successfully!'))
             
         except Exception as e:
             self.stdout.write(

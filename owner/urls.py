@@ -71,4 +71,8 @@ urlpatterns = [
     # Rendered service history (owner access)
     path('service-history/', appointment_admin_views.service_history, name='service_history'),
     path('service-history/<int:pk>/', appointment_admin_views.service_history_detail, name='service_history_detail'),
+    
+    # Account Management
+    path('manage/accounts/', views.owner_manage_accounts, name='manage_accounts'),
+    path('manage/accounts/edit/<int:user_id>/', views.owner_edit_account, name='edit_account'),
 ]
