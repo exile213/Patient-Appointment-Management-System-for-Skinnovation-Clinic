@@ -1869,12 +1869,22 @@ def owner_create_attendant_user(request):
         last_name = request.POST.get('last_name', '').strip()
         email = request.POST.get('email', '').strip()
         
-        if not all([username, password, first_name, last_name]):
-            messages.error(request, 'Username, password, first name, and last name are required.')
+        if not all([username, password, first_name, last_name, email]):
+            messages.error(request, 'Username, password, first name, last name, and email are required.')
+            return redirect('owner:manage_attendants')
+        
+        # Validate Gmail only for attendant accounts
+        import re
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@gmail\.com$', email, re.IGNORECASE):
+            messages.error(request, 'Only Gmail addresses are allowed for Attendant accounts. Please use a valid Gmail address (e.g., yourname@gmail.com)')
             return redirect('owner:manage_attendants')
         
         if User.objects.filter(username=username).exists():
             messages.error(request, 'That username is already taken. Please choose another one.')
+            return redirect('owner:manage_attendants')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'That email is already in use. Please choose another one.')
             return redirect('owner:manage_attendants')
         
         user = User.objects.create(
@@ -2589,13 +2599,18 @@ def owner_edit_account(request, user_id):
             messages.error(request, 'Email is required.')
             return redirect('owner:edit_account', user_id=user_id)
         
+        # Validate Gmail only for owner, admin, and attendant accounts
+        import re
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@gmail\.com$', email, re.IGNORECASE):
+            messages.error(request, 'Only Gmail addresses are allowed for Owner, Admin, and Attendant accounts. Please use a valid Gmail address (e.g., yourname@gmail.com)')
+            return redirect('owner:edit_account', user_id=user_id)
+        
         # Check if email is already taken by another user
         if User.objects.filter(email=email).exclude(id=user_id).exists():
             messages.error(request, 'This email is already in use by another account.')
             return redirect('owner:edit_account', user_id=user_id)
         
         # Validate names - no numbers, symbols, or hyphens (only letters and spaces)
-        import re
         name_pattern = re.compile(r'^[A-Za-z\s]+$')
         
         if not name_pattern.match(first_name):

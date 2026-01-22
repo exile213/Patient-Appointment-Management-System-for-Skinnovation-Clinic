@@ -22,29 +22,6 @@
         transform: scale(1.05);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    .password-toggle-btn {
-        border-left: none;
-        background: white;
-        border-color: #ced4da;
-        cursor: pointer;
-        z-index: 10;
-        min-width: 45px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .password-toggle-btn:hover {
-        background: #f8f9fa;
-        border-color: #ced4da;
-    }
-    .password-toggle-btn:focus {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        outline: none;
-    }
-    .input-group .form-control:focus ~ .password-toggle-btn {
-        border-color: #86b7fe;
-    }
 </style>
 {% endblock %}
 
@@ -97,6 +74,7 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ user.email|default:'' }}" required>
+                        <small class="form-text text-muted">Gmail addresses only for Attendant accounts</small>
                     </div>
 
                     <div class="row">
@@ -125,52 +103,6 @@
                         <input type="text" class="form-control" id="phone" name="phone" 
                                value="{{ user.phone|default:'' }}" placeholder="09123456789" maxlength="11">
                         <small class="form-text text-muted">11-digit Philippine phone number starting with 09</small>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <!-- Password Change Section -->
-                    <h5 class="mb-3"><i class="fas fa-lock me-2"></i>Change Password</h5>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Note:</strong> Leave password fields blank if you don't want to change your password.
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="current_password" class="form-label">Current Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="current_password" name="current_password" 
-                                   placeholder="Enter your current password">
-                            <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('current_password', 'toggleCurrentPassword')">
-                                <i class="fas fa-eye" id="iconCurrentPassword"></i>
-                            </button>
-                        </div>
-                        <small class="form-text text-muted">Required only if you want to change your password.</small>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="new_password" class="form-label">New Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="new_password" name="new_password" 
-                                       placeholder="Enter new password (min. 8 characters)" minlength="8">
-                                <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('new_password', 'toggleNewPassword')">
-                                    <i class="fas fa-eye" id="iconNewPassword"></i>
-                                </button>
-                            </div>
-                            <small class="form-text text-muted">Minimum 8 characters.</small>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="confirm_password" class="form-label">Confirm New Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
-                                       placeholder="Confirm new password" minlength="8">
-                                <button class="btn password-toggle-btn" type="button" onclick="togglePasswordVisibility('confirm_password', 'toggleConfirmPassword')">
-                                    <i class="fas fa-eye" id="iconConfirmPassword"></i>
-                                </button>
-                            </div>
-                            <small class="form-text text-muted">Re-enter your new password.</small>
-                        </div>
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">
@@ -212,33 +144,6 @@
 
 {% block extra_js %}
 <script>
-// Password visibility toggle function
-function togglePasswordVisibility(inputId, buttonId) {
-    const input = document.getElementById(inputId);
-    const button = document.getElementById(buttonId);
-    let icon;
-    
-    if (inputId === 'current_password') {
-        icon = document.getElementById('iconCurrentPassword');
-    } else if (inputId === 'new_password') {
-        icon = document.getElementById('iconNewPassword');
-    } else if (inputId === 'confirm_password') {
-        icon = document.getElementById('iconConfirmPassword');
-    }
-    
-    if (input && button && icon) {
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    }
-}
-
 // Real-time validation for name fields - no numbers, symbols, or hyphens
 document.addEventListener('DOMContentLoaded', function() {
     const nameFields = ['first_name', 'middle_name', 'last_name'];
@@ -353,46 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     phoneInput.classList.add('invalid');
                     alert('Please enter a valid 11-digit Philippine phone number starting with 09.');
                     hasError = true;
-                }
-            }
-            
-            // Validate password change
-            const currentPassword = document.getElementById('current_password').value;
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            
-            if (newPassword || confirmPassword || currentPassword) {
-                // If any password field is filled, all must be filled
-                if (!currentPassword) {
-                    e.preventDefault();
-                    alert('Please enter your current password to change it.');
-                    document.getElementById('current_password').focus();
-                    hasError = true;
-                    return;
-                }
-                
-                if (!newPassword) {
-                    e.preventDefault();
-                    alert('Please enter a new password.');
-                    document.getElementById('new_password').focus();
-                    hasError = true;
-                    return;
-                }
-                
-                if (newPassword.length < 8) {
-                    e.preventDefault();
-                    alert('New password must be at least 8 characters long.');
-                    document.getElementById('new_password').focus();
-                    hasError = true;
-                    return;
-                }
-                
-                if (newPassword !== confirmPassword) {
-                    e.preventDefault();
-                    alert('New password and confirmation do not match.');
-                    document.getElementById('confirm_password').focus();
-                    hasError = true;
-                    return;
                 }
             }
             

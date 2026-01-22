@@ -685,9 +685,8 @@ def attendant_schedule(request):
 @login_required(login_url='/accounts/login/attendant/')
 @user_passes_test(is_attendant, login_url='/accounts/login/attendant/')
 def attendant_manage_profile(request):
-    """Attendant manage their own profile (edit name, email, phone, password, profile picture)"""
+    """Attendant manage their own profile (edit name, email, phone, profile picture)"""
     import re
-    from django.contrib.auth import update_session_auth_hash
     user = request.user
     
     if request.method == 'POST':
@@ -696,9 +695,6 @@ def attendant_manage_profile(request):
         last_name = request.POST.get('last_name', '').strip()
         middle_name = request.POST.get('middle_name', '').strip()
         phone = request.POST.get('phone', '').strip()
-        current_password = request.POST.get('current_password', '').strip()
-        new_password = request.POST.get('new_password', '').strip()
-        confirm_password = request.POST.get('confirm_password', '').strip()
         profile_picture = request.FILES.get('profile_picture')
         
         # Validate required fields
@@ -709,6 +705,11 @@ def attendant_manage_profile(request):
         # Validate email
         if not email or '@' not in email:
             messages.error(request, 'Please enter a valid email address.')
+            return redirect('attendant:manage_profile')
+        
+        # Validate Gmail only for attendant accounts
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@gmail\.com$', email, re.IGNORECASE):
+            messages.error(request, 'Only Gmail addresses are allowed for Attendant accounts. Please use a valid Gmail address (e.g., yourname@gmail.com)')
             return redirect('attendant:manage_profile')
         
         # Check if email is already taken by another user
@@ -741,32 +742,6 @@ def attendant_manage_profile(request):
                 return redirect('attendant:manage_profile')
             phone = phone_digits
         
-        # Handle password change if provided
-        password_changed = False
-        if new_password:
-            if not current_password:
-                messages.error(request, 'Please enter your current password to change it.')
-                return redirect('attendant:manage_profile')
-            
-            # Verify current password
-            if not user.check_password(current_password):
-                messages.error(request, 'Current password is incorrect.')
-                return redirect('attendant:manage_profile')
-            
-            # Validate new password
-            if len(new_password) < 8:
-                messages.error(request, 'New password must be at least 8 characters long.')
-                return redirect('attendant:manage_profile')
-            
-            if new_password != confirm_password:
-                messages.error(request, 'New password and confirmation do not match.')
-                return redirect('attendant:manage_profile')
-            
-            # Set new password
-            user.set_password(new_password)
-            password_changed = True
-            messages.success(request, 'Password changed successfully.')
-        
         # Update user fields
         user.email = email
         user.first_name = first_name
@@ -791,10 +766,6 @@ def attendant_manage_profile(request):
             messages.success(request, 'Profile picture updated successfully.')
         
         user.save()
-        
-        # Update session if password was changed to prevent logout
-        if password_changed:
-            update_session_auth_hash(request, user)
         
         messages.success(request, 'Your profile has been updated successfully.')
         return redirect('attendant:manage_profile')
