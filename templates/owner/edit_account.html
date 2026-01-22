@@ -154,17 +154,18 @@ function togglePasswordVisibility(inputId, buttonId) {
     const input = document.getElementById(inputId);
     if (!input) return;
     
-    // Find the icon within the button
-    const button = document.querySelector(`button[onclick*="${inputId}"]`);
+    // Find the icon by ID (more reliable)
     let icon = null;
-    
-    if (button) {
-        icon = button.querySelector('i');
+    if (inputId === 'new_password') {
+        icon = document.getElementById('iconNewPassword');
     }
     
-    // Fallback: try to find icon by ID
-    if (!icon && inputId === 'new_password') {
-        icon = document.getElementById('iconNewPassword');
+    // If icon not found by ID, try to find it in the button
+    if (!icon) {
+        const button = document.querySelector(`button[onclick*="${inputId}"]`);
+        if (button) {
+            icon = button.querySelector('i');
+        }
     }
     
     if (input && icon) {
