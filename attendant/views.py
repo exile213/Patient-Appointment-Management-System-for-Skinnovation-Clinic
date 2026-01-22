@@ -741,11 +741,6 @@ def attendant_manage_profile(request):
                 return redirect('attendant:manage_profile')
             phone = phone_digits
         
-        # Check if username is already taken by another user
-        if User.objects.filter(username=username).exclude(id=user.id).exists():
-            messages.error(request, 'That username is already taken. Please choose another one.')
-            return redirect('attendant:manage_profile')
-        
         # Handle password change if provided
         password_changed = False
         if new_password:
