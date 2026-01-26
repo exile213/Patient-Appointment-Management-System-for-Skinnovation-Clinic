@@ -695,6 +695,7 @@ def attendant_manage_profile(request):
         last_name = request.POST.get('last_name', '').strip()
         middle_name = request.POST.get('middle_name', '').strip()
         phone = request.POST.get('phone', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
         profile_picture = request.FILES.get('profile_picture')
         
         # Validate required fields
@@ -764,6 +765,14 @@ def attendant_manage_profile(request):
             
             user.profile_picture = profile_picture
             messages.success(request, 'Profile picture updated successfully.')
+        
+        # Update password if provided
+        if new_password:
+            if len(new_password) < 6:
+                messages.error(request, 'Password must be at least 6 characters long.')
+                return redirect('attendant:manage_profile')
+            user.set_password(new_password)
+            messages.success(request, 'Password updated successfully.')
         
         user.save()
         
