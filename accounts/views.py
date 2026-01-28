@@ -7,7 +7,6 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from utils.email import send_mailjet_email
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -17,7 +16,6 @@ from django.views.decorators.http import require_http_methods
 import json
 from .models import User
 from .forms import CustomUserCreationForm, CustomPasswordResetForm, CustomSetPasswordForm
-from .email_service import MailtrapEmailService
 
 
 def login_selection(request):
@@ -274,11 +272,12 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             
-            # Send welcome email
+            # Send welcome email using Gmail API
             email_sent = False
             try:
-                email_service = MailtrapEmailService()
-                email_result = email_service.send_welcome_email(user)
+                from utils.gmail_service import GmailAPIService
+                gmail_service = GmailAPIService()
+                email_result = gmail_service.send_welcome_email(user)
                 if email_result.get('success'):
                     email_sent = True
                     print(f"Welcome email sent successfully to {user.email}")
@@ -418,18 +417,21 @@ def verify_password(request):
 
 
 def test_mailtrap(request):
-    """Test view to verify Mailtrap integration"""
+    """Test view to verify Gmail API integration"""
     if request.method == 'POST':
         email = request.POST.get('email', 'ksreyes.chmsu@gmail.com')
-        name = request.POST.get('name', 'Test User')
         
-        email_service = MailtrapEmailService()
-        result = email_service.send_test_email(email, name)
-        
-        if result['success']:
-            messages.success(request, f"Test email sent successfully to {email}!")
-        else:
-            messages.error(request, f"Failed to send test email: {result['message']}")
+        try:
+            from utils.gmail_service import GmailAPIService
+            gmail_service = GmailAPIService()
+            result = gmail_service.send_test_email(email)
+            
+            if result['success']:
+                messages.success(request, f"Test email sent successfully to {email}!")
+            else:
+                messages.error(request, f"Failed to send test email: {result['message']}")
+        except Exception as e:
+            messages.error(request, f"Failed to send test email: {str(e)}")
     
     return render(request, 'accounts/test_mailtrap.html')
 
@@ -466,26 +468,18 @@ class CustomPasswordResetView(PasswordResetView):
                     })
                 )
                 
-                # Send email using Django's email system
+                # Send email using Gmail API
                 subject = 'Password Reset - Skinovation Beauty Clinic'
-                message = render_to_string('accounts/password_reset_email.html', {
-                    'user': user,
-                    'reset_url': reset_url,
-                    'site_name': 'Skinovation Beauty Clinic',
-                })
                 
                 try:
-                    send_mailjet_email(
-                        subject,
-                        user.email,
-                        'accounts/password_reset_email.html',
-                        {
-                            'user': user,
-                            'reset_url': reset_url,
-                            'site_name': 'Skinovation Beauty Clinic',
-                        }
-                    )
-                    messages.success(self.request, 'Password reset email sent! Please check your inbox.')
+                    from utils.gmail_service import GmailAPIService
+                    gmail_service = GmailAPIService()
+                    result = gmail_service.send_password_reset_email(user, reset_url)
+                    
+                    if result.get('success'):
+                        messages.success(self.request, 'Password reset email sent! Please check your inbox.')
+                    else:
+                        messages.error(self.request, f"Failed to send email: {result.get('message')}")
                 except Exception as e:
                     messages.error(self.request, f"Failed to send email: {str(e)}")
             else:

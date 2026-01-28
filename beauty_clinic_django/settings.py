@@ -250,8 +250,14 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Skinovation Beauty Clinic <noreply@skinovation.com>')
 
-# Mailtrap API Configuration
+# Mailtrap API Configuration (deprecated - being replaced by Gmail API)
 MAILTRAP_API_TOKEN = config('MAILTRAP_API_TOKEN', default='')
+
+# Gmail API Configuration for Email Sending
+GMAIL_CLIENT_ID = config('GMAIL_CLIENT_ID', default='')
+GMAIL_CLIENT_SECRET = config('GMAIL_CLIENT_SECRET', default='')
+GMAIL_REFRESH_TOKEN = config('GMAIL_REFRESH_TOKEN', default='')
+GMAIL_SENDER_EMAIL = config('GMAIL_SENDER_EMAIL', default='noreply@skinovation.com')
 
 # Password Reset Settings
 PASSWORD_RESET_TIMEOUT = 3600  # 1 hour
