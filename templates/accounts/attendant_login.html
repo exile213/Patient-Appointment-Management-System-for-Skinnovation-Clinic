@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}Attendant Login - Skinovation Beauty Clinic{% endblock %}
 
@@ -320,6 +321,13 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-clipboard-list me-2"></i>Access Attendant Dashboard
                                 </button>
+                            </div>
+
+                            <!-- Social login: Google -->
+                            <div class="text-center my-3">
+                                <a class="btn btn-outline-danger" href="{% provider_login_url 'google' %}?user_type=attendant">
+                                    <i class="fab fa-google me-2"></i> Sign in with Google
+                                </a>
                             </div>
                         </form>
                     </div>

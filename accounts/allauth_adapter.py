@@ -7,18 +7,26 @@ User = get_user_model()
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
-    """Custom account adapter to handle redirects for patients after login."""
+    """Custom account adapter to handle redirects for all user types after login."""
     
     def get_login_redirect_url(self, request):
-        """Redirect patients to their profile page after login."""
+        """Redirect users based on their user_type."""
         if request.user.is_authenticated:
-            if hasattr(request.user, 'user_type') and request.user.user_type == 'patient':
-                return reverse('accounts:profile')
+            if hasattr(request.user, 'user_type'):
+                user_type = request.user.user_type
+                if user_type == 'patient':
+                    return reverse('accounts:profile')
+                elif user_type == 'admin':
+                    return reverse('staff:admin_dashboard')
+                elif user_type == 'owner':
+                    return reverse('owner:owner_dashboard')
+                elif user_type == 'attendant':
+                    return reverse('staff:attendant_dashboard')
         return super().get_login_redirect_url(request)
 
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
-    """Custom adapter to mark social signups as patients and prevent duplicates."""
+    """Custom adapter to handle social signups for all user types."""
 
     def pre_social_login(self, request, sociallogin):
         """Try to connect social account to existing user with same email."""
@@ -53,16 +61,12 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 pass
             return
 
-        # Find existing user by email (case-insensitive), prefer patient type
+        # Find existing user by email (case-insensitive)
         existing = User.objects.filter(email__iexact=email).first()
         if existing:
             try:
-                # Only connect if existing user is a patient
-                if existing.user_type == 'patient':
-                    sociallogin.connect(request, existing)
-                else:
-                    # Don't connect non-patient accounts
-                    return
+                # Connect the social account to the existing user
+                sociallogin.connect(request, existing)
             except Exception as e:
                 # If connection fails, try to use existing user
                 try:
@@ -71,11 +75,19 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                     pass
 
     def save_user(self, request, sociallogin, form=None):
-        """Set user_type to 'patient' for social signups and persist user fields."""
+        """Set user_type based on URL parameter for social signups."""
         user = sociallogin.user
-        # Ensure patient type
+        
+        # Check for user_type in the session or request (passed via URL parameter)
+        user_type = request.GET.get('user_type', 'patient')  # Default to patient
+        
+        # Validate user_type
+        valid_types = ['patient', 'admin', 'owner', 'attendant']
+        if user_type not in valid_types:
+            user_type = 'patient'
+        
         try:
-            user.user_type = 'patient'
+            user.user_type = user_type
         except Exception:
             pass
 
@@ -88,15 +100,31 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         return super().save_user(request, sociallogin, form)
 
     def get_connect_redirect_url(self, request, socialaccount):
-        """Redirect patients to their profile page after connecting social account."""
+        """Redirect users to appropriate dashboard after connecting social account."""
         user = socialaccount.user
-        if hasattr(user, 'user_type') and user.user_type == 'patient':
-            return reverse('accounts:profile')
+        if hasattr(user, 'user_type'):
+            user_type = user.user_type
+            if user_type == 'patient':
+                return reverse('accounts:profile')
+            elif user_type == 'admin':
+                return reverse('staff:admin_dashboard')
+            elif user_type == 'owner':
+                return reverse('owner:owner_dashboard')
+            elif user_type == 'attendant':
+                return reverse('staff:attendant_dashboard')
         return super().get_connect_redirect_url(request, socialaccount)
 
     def get_signup_redirect_url(self, request):
-        """Redirect patients to their profile page after social signup."""
+        """Redirect users to appropriate dashboard after social signup."""
         if request.user.is_authenticated:
-            if hasattr(request.user, 'user_type') and request.user.user_type == 'patient':
-                return reverse('accounts:profile')
+            if hasattr(request.user, 'user_type'):
+                user_type = request.user.user_type
+                if user_type == 'patient':
+                    return reverse('accounts:profile')
+                elif user_type == 'admin':
+                    return reverse('staff:admin_dashboard')
+                elif user_type == 'owner':
+                    return reverse('owner:owner_dashboard')
+                elif user_type == 'attendant':
+                    return reverse('staff:attendant_dashboard')
         return super().get_signup_redirect_url(request)
