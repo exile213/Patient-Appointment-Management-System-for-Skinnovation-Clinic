@@ -29,7 +29,15 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     """Custom adapter to handle social signups for all user types."""
 
     def pre_social_login(self, request, sociallogin):
-        """Try to connect social account to existing user with same email."""
+        """
+        Store user_type from URL in session and try to connect 
+        social account to existing user with same email.
+        """
+        # Store user_type in session if provided in URL
+        user_type = request.GET.get('user_type')
+        if user_type and user_type in ['patient', 'admin', 'owner', 'attendant']:
+            request.session['pending_user_type'] = user_type
+        
         # If already connected, nothing to do
         if sociallogin.is_existing:
             return
@@ -75,11 +83,27 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                     pass
 
     def save_user(self, request, sociallogin, form=None):
-        """Set user_type based on URL parameter for social signups."""
+        """Set user_type based on session storage or existing user for social signups."""
         user = sociallogin.user
         
-        # Check for user_type in the session or request (passed via URL parameter)
-        user_type = request.GET.get('user_type', 'patient')  # Default to patient
+        # First, check if this email already exists (connecting existing user)
+        email = getattr(user, 'email', None)
+        if email:
+            existing_user = User.objects.filter(email__iexact=email).first()
+            if existing_user and hasattr(existing_user, 'user_type'):
+                # Use the existing user's type
+                user.user_type = existing_user.user_type
+                # Clear session
+                request.session.pop('pending_user_type', None)
+                
+                # Ensure username exists
+                if not getattr(user, 'username', None):
+                    user.username = existing_user.username
+                
+                return super().save_user(request, sociallogin, form)
+        
+        # For new users, get user_type from session (set in pre_social_login)
+        user_type = request.session.get('pending_user_type', 'patient')
         
         # Validate user_type
         valid_types = ['patient', 'admin', 'owner', 'attendant']
@@ -90,6 +114,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             user.user_type = user_type
         except Exception:
             pass
+        
+        # Clear the session variable
+        request.session.pop('pending_user_type', None)
 
         # Ensure username exists
         if not getattr(user, 'username', None):
