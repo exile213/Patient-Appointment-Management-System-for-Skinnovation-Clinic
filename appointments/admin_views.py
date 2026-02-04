@@ -295,30 +295,33 @@ def admin_reassign_attendant(request, appointment_id):
         patient=appointment.patient
     )
     
-    # Send SMS notification
-    sms_result = send_appointment_sms(
+    # Send unified notification (both email and SMS simultaneously)
+    from utils.notifications import send_appointment_notification
+    notification_result = send_appointment_notification(
         appointment,
         'reassignment',
         previous_attendant=previous_attendant
     )
+    email_sent = notification_result.get('email_sent', False)
+    sms_sent = notification_result.get('sms_sent', False)
     
-    if sms_result.get('success'):
+    if email_sent and sms_sent:
         messages.success(
             request,
-            f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}. Patient notified via SMS.'
+            f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}. Patient notified via Email & SMS.'
+        )
+    elif email_sent or sms_sent:
+        notification_type = 'Email' if email_sent else 'SMS'
+        messages.success(
+            request,
+            f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}. Patient notified via {notification_type}.'
         )
     else:
-        error_msg = sms_result.get('error', 'Unknown error')
-        if 'phone number not available' in error_msg.lower():
-            messages.warning(
-                request,
-                f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}, but SMS could not be sent: Patient phone number is missing. Please contact patient directly.'
-            )
-        else:
-            messages.warning(
-                request,
-                f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}, but SMS notification failed: {error_msg}'
-            )
+        error_msg = '; '.join(notification_result.get('errors', ['Unknown error']))
+        messages.warning(
+            request,
+            f'Appointment reassigned to {new_attendant.first_name} {new_attendant.last_name}, but notifications failed: {error_msg}'
+        )
     
     return redirect('appointments:admin_appointment_detail', appointment_id=appointment_id)
 
@@ -405,20 +408,11 @@ def admin_confirm_appointment(request, appointment_id):
             patient=None  # Staff notification
         )
         
-        # Send SMS confirmation to patient with attendant details
-        sms_result = send_appointment_sms(appointment, 'confirmation')
-        patient_sms_sent = sms_result['success']
-        patient_sms_error = sms_result.get('error', '') if not patient_sms_sent else ''
-        
-        # Send EMAIL confirmation to patient
-        try:
-            from utils.notifications import send_appointment_email
-            email_result = send_appointment_email(appointment, 'confirmation')
-            patient_email_sent = email_result.get('success', False)
-            logger.info(f"Appointment confirmation email sent: {patient_email_sent}")
-        except Exception as e:
-            logger.error(f"Error sending confirmation email: {str(e)}")
-            patient_email_sent = False
+        # Send unified notification (both email and SMS simultaneously)
+        from utils.notifications import send_appointment_notification
+        notification_result = send_appointment_notification(appointment, 'confirmation')
+        patient_email_sent = notification_result.get('email_sent', False)
+        patient_sms_sent = notification_result.get('sms_sent', False)
         
         # Send SMS notification to attendant (only for service/package appointments)
         attendant_sms_sent = False
@@ -548,12 +542,19 @@ def admin_cancel_appointment(request, appointment_id):
             patient=None  # Owner notification
         )
         
-        # Send SMS cancellation notification
-        sms_result = send_appointment_sms(appointment, 'cancellation')
-        if sms_result['success']:
-            messages.success(request, f'Appointment for {appointment.patient.full_name} has been cancelled. SMS sent.')
+        # Send unified notification (both email and SMS simultaneously)
+        from utils.notifications import send_appointment_notification
+        notification_result = send_appointment_notification(appointment, 'cancellation')
+        email_sent = notification_result.get('email_sent', False)
+        sms_sent = notification_result.get('sms_sent', False)
+        
+        if email_sent and sms_sent:
+            messages.success(request, f'Appointment for {appointment.patient.full_name} has been cancelled. Patient notified via Email & SMS.')
+        elif email_sent or sms_sent:
+            notification_type = 'Email' if email_sent else 'SMS'
+            messages.success(request, f'Appointment for {appointment.patient.full_name} has been cancelled. Patient notified via {notification_type}.')
         else:
-            messages.success(request, f'Appointment for {appointment.patient.full_name} has been cancelled. (SMS failed)')
+            messages.success(request, f'Appointment for {appointment.patient.full_name} has been cancelled. (Notification delivery failed)')
         
         # Log appointment cancellation
         log_appointment_history('cancel', appointment, request.user)

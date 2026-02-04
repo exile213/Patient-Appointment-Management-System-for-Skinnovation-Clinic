@@ -1,6 +1,6 @@
 """
 Email and notification utilities for patient communications
-Sends appointment-related notifications via email to patients
+Sends appointment-related notifications via email and SMS to patients
 """
 import logging
 from django.conf import settings
@@ -288,3 +288,95 @@ def _strip_html_tags(html_text):
     import re
     clean_text = re.compile('<.*?>')
     return re.sub(clean_text, '', html_text)
+
+
+def send_appointment_notification(appointment, notification_type='confirmation', **kwargs):
+    """
+    Unified notification handler that sends both email and SMS simultaneously.
+    
+    This function ensures both email and SMS notifications are triggered together,
+    preventing situations where one succeeds and the other fails silently.
+    
+    Args:
+        appointment: Appointment object
+        notification_type (str): Type of notification - 'confirmation', 'reminder', 
+                                'cancellation', 'rescheduled', 'reassignment'
+        **kwargs: Additional arguments for SMS (e.g., previous_attendant for reassignment)
+    
+    Returns:
+        dict: Combined result with email and SMS status
+        {
+            'success': bool,  # True if at least one notification succeeded
+            'email_sent': bool,
+            'sms_sent': bool,
+            'email_result': dict,
+            'sms_result': dict,
+            'errors': list  # List of error messages if any
+        }
+    """
+    result = {
+        'success': False,
+        'email_sent': False,
+        'sms_sent': False,
+        'email_result': None,
+        'sms_result': None,
+        'errors': []
+    }
+    
+    # Send email notification
+    email_result = None
+    try:
+        email_result = send_appointment_email(appointment, notification_type)
+        result['email_result'] = email_result
+        result['email_sent'] = email_result.get('success', False)
+        if not result['email_sent']:
+            error_msg = email_result.get('error') or email_result.get('message', 'Unknown error')
+            result['errors'].append(f"Email failed: {error_msg}")
+            logger.warning(f"Email notification failed for appointment {appointment.id}: {error_msg}")
+    except Exception as e:
+        error_msg = str(e)
+        result['errors'].append(f"Email exception: {error_msg}")
+        logger.error(f"Exception sending email notification for appointment {appointment.id}: {error_msg}", exc_info=True)
+    
+    # Send SMS notification simultaneously
+    sms_result = None
+    try:
+        from services.utils import send_appointment_sms
+        
+        # Map notification types to SMS types
+        sms_type_map = {
+            'confirmation': 'confirmation',
+            'reminder': 'reminder',
+            'cancellation': 'cancellation',
+            'rescheduled': 'scheduled',  # Rescheduled appointments use 'scheduled' SMS type
+            'reassignment': 'reassignment'
+        }
+        sms_type = sms_type_map.get(notification_type, 'confirmation')
+        
+        sms_result = send_appointment_sms(appointment, sms_type, **kwargs)
+        result['sms_result'] = sms_result
+        result['sms_sent'] = sms_result.get('success', False)
+        if not result['sms_sent']:
+            error_msg = sms_result.get('error') or sms_result.get('message', 'Unknown error')
+            result['errors'].append(f"SMS failed: {error_msg}")
+            logger.warning(f"SMS notification failed for appointment {appointment.id}: {error_msg}")
+    except Exception as e:
+        error_msg = str(e)
+        result['errors'].append(f"SMS exception: {error_msg}")
+        logger.error(f"Exception sending SMS notification for appointment {appointment.id}: {error_msg}", exc_info=True)
+    
+    # Overall success if at least one notification succeeded
+    result['success'] = result['email_sent'] or result['sms_sent']
+    
+    # Log summary
+    if result['success']:
+        notification_summary = []
+        if result['email_sent']:
+            notification_summary.append('Email')
+        if result['sms_sent']:
+            notification_summary.append('SMS')
+        logger.info(f"Appointment {notification_type} notification sent via: {', '.join(notification_summary)} for appointment {appointment.id}")
+    else:
+        logger.error(f"Both email and SMS notifications failed for appointment {appointment.id}. Errors: {', '.join(result['errors'])}")
+    
+    return result
