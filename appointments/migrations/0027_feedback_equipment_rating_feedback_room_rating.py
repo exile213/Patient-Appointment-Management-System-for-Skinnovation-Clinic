@@ -7,24 +7,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(
-            sql="""
-            ALTER TABLE feedback
-            ADD COLUMN IF NOT EXISTS equipment_rating integer;
-            """,
-            reverse_sql="""
-            ALTER TABLE feedback
-            DROP COLUMN IF EXISTS equipment_rating;
-            """,
-        ),
-        migrations.RunSQL(
-            sql="""
-            ALTER TABLE feedback
-            ADD COLUMN IF NOT EXISTS room_rating integer;
-            """,
-            reverse_sql="""
-            ALTER TABLE feedback
-            DROP COLUMN IF EXISTS room_rating;
-            """,
-        ),
+        # Operations moved to 0030_feedback_equipment_rating_feedback_room_rating.py
+        # to ensure correct state tracking and handle existing columns
     ]
